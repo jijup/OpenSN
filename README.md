@@ -7,6 +7,6 @@ SDL2 is required to compile and run for visual output (see [https://www.libsdl.o
 Hashing implementations:
 
   1. Linear Function (implemented)
-    * `y * width + x`
+    - `y * width + x`
   2. Cantor Pairing Function (coming soon)
   3. Szudzik Pairing Function (coming soon)
