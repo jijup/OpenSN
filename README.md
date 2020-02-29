@@ -8,5 +8,6 @@ Hashing implementations:
 
   1. Linear Function (implemented)
       - `y * width + x`
-  2. Cantor Pairing Function (coming soon)
+  2. Cantor Pairing Function (implemented - one way)
+      - `((x + y) * (x + y + 1)) / 2 + y`
   3. Szudzik Pairing Function (coming soon)
