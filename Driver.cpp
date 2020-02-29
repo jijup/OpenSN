@@ -101,11 +101,11 @@ int main() {
 			//int index = y * width + x;
 
 			// Cantor Pairing Function
-			int index = ((x + y) * (x + y + 1)) / 2 + y;
+			//int index = ((x + y) * (x + y + 1)) / 2 + y;
 
 			// TO DO: IMPLEMENT SZUDZIK PAIRING FUNCITON
-			//
-			//
+			// Szudzik Pairing Function
+			int index = (x > y) ? (x*x + x + y) : (y*y + x);
 			
 			noiseArray[index] = noise;
 			indexSetArray[index] = index;
@@ -137,7 +137,10 @@ int main() {
 			//int index = y * width + x;
 
 			// Cantor Pairing Function
-			int index = ((x + y) * (x + y + 1)) / 2 + y;
+			//int index = ((x + y) * (x + y + 1)) / 2 + y;
+
+			// Szudzik Pairing Function
+			int index = (x > y) ? (x*x + x + y) : (y*y + x);
 			
 			//cout << index << endl;
 			noise = noiseArray[index];
@@ -160,9 +163,11 @@ int main() {
 		for (int y = 0; y < height; ++y) {
 			
 			//int index = y * width + x; // Initial function (linear)
-			int index = ((x + y) * (x + y + 1)) / 2 + y; // Cantor Pairing Function
-			
-			cout << "x: " << x << "y: " << y << " | indexSet: " << indexSetArray[index] << " | indexGet: " << indexGetArray[index] << endl;
+			//int index = ((x + y) * (x + y + 1)) / 2 + y; // Cantor Pairing function
+			int index = (x > y) ? (x*x + x + y) : (y*y + x); // Szudzik Pairing function
+
+			cout << "x: " << x << " y: " << y << " | indexSet: " << indexSetArray[index] 
+				<< " | indexGet: " << indexGetArray[index] << endl;
 		}
 	}
 
