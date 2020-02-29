@@ -2,7 +2,7 @@
 
 Perlin noise generation and implementation using various hashing techniques.
 
-SDL2 is required to compile and run for visual output (see [https://www.libsdl.org/download-2.0.php]).
+SDL2 is required to compile and run for visual output (see https://www.libsdl.org/download-2.0.php).
 
 Hashing implementations:
 
