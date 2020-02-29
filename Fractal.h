@@ -1,0 +1,46 @@
+/*
+ * Fractal.h
+ * 
+ * Fractal Brownian motion via sum of Perlin noise octaves.
+ *
+ * Author: Sheldon Taylor
+ */
+
+#ifndef _FRACTAL_H_
+#define _FRACTAL_H_
+
+#include "Perlin.h"
+
+class Fractal {
+public:
+	Fractal();
+	~Fractal();
+
+	// Given (X, Y, Z), 3D coordinates, returns a noise value in the range [-1, 1]
+	float noise(float xCoord, float yCoord, float zCoord);
+
+	// Sets the number of octaves
+	void setOctaves(int o);
+
+	// Sets the lacunarity for each octave (ideally [2, inf]).
+	void setLacunarity(float l);
+
+	// Sets the persistence for each octave (ideally [0.0, 0.5] or [0.0, 1.0]).
+	void setPersistence(float p);
+
+	// Sets the initial value for frequency and amplitude.
+	void setInitFrequency(float f);
+	void setInitAmplitude(float f);
+
+private:
+	Perlin *perlinSource;
+
+	int octaves; // Number of octaves (default is 8).
+	float lacunarity; // Frequency for each octave (default is 2.0).
+	float persistence; // Amplitude for each octave (default is 0.5).
+	float initFrequency; // Initial frequency (default of 1.0).
+	float initAmplitude; // Initial amplitude (default is 1.0)
+};
+
+#endif
+
