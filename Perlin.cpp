@@ -1,8 +1,7 @@
 /**
  * Perlin.cpp
  *
- * Copyright Chris Little 2012
- * Author: Chris Little
+ * Author: Sheldon Taylor (based off implementation by Chris Little)
  */
 
 #include "Perlin.h"

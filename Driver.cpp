@@ -102,6 +102,10 @@ int main() {
 
 			// Cantor Pairing Function
 			int index = ((x + y) * (x + y + 1)) / 2 + y;
+
+			// TO DO: IMPLEMENT SZUDZIK PAIRING FUNCITON
+			//
+			//
 			
 			noiseArray[index] = noise;
 			indexSetArray[index] = index;
@@ -119,6 +123,10 @@ int main() {
 
 	// Convert noise values to pixel colour values.
 	float temp = 1.0f / (max - min);
+
+	// TO DO: IMPLEMENT INVERSION OF CANTOR/SZUDZIK PAIRING FUNCITONS
+	//
+	//
 
 	for (int x = 0; x < width; ++x) {
 		for (int y = 0; y < height; ++y) {
@@ -147,7 +155,7 @@ int main() {
 		}
 	}
 
-	// FOR TESTING PURPOSES 
+	// FOR TESTING PURPOSES ONLY
 	for (int x = 0; x < width; ++x) {
 		for (int y = 0; y < height; ++y) {
 			
