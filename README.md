@@ -11,3 +11,4 @@ Hashing implementations:
   2. Cantor Pairing Function (implemented - one way)
       - `((x + y) * (x + y + 1)) / 2 + y`
   3. Szudzik Pairing Function (coming soon)
+      - `(x > y) ? (x^2 + x + y) : (y^2 + x)`
