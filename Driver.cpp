@@ -7,6 +7,7 @@
 
 #include <SDL2/SDL.h>
 #include <iostream>
+#include <math.h>
 #include "Fractal.h"
 
 using namespace std;
@@ -20,17 +21,19 @@ void colourPixel(SDL_Surface* surface, int x, int y, Uint32 pixel) {
 #undef main
 
 int main() {
-	int width = 1000;
-	//int width = 5;
-	int height = 750;
-	//int height = 5;
+	//int width = 1000;
+	int width = 400;
+	//int height = 750;
+	int height = 300;
 
 	// Initialize noise
 	Fractal *noiseGenerator = new Fractal();
 	noiseGenerator -> setInitFrequency(4.0f);
 
 	// Initialize data structure to store noise
-	float *noiseArray = new float[width * height];
+	//int arraySize = width * height;  // Linear (N)
+	int arraySize = width * width * height * height;  // Cantor Pairing (NxN)	
+	float *noiseArray = new float[arraySize];
 
 	// Initialize SDL window, renderer, image and texture
 	SDL_Window *window = NULL;
@@ -85,8 +88,8 @@ int main() {
 	float max = 0.0f;
 	//int index;
 	//vector<int> indexVec;
-	int *indexSetArray = new int[width * height];
-	int *indexGetArray = new int[width * height];
+	int *indexSetArray = new int[arraySize];
+	int *indexGetArray = new int[arraySize];
 	Uint8 colourByte;
 
 	for (int x = 0; x < width; ++x) {
@@ -95,10 +98,10 @@ int main() {
 			noise = noiseGenerator -> noise(float(x) * invWidth, float(y) * invHeight, 0.72);
 	
 			// Initial Hash Function
-			int index = y * width + x;
+			//int index = y * width + x;
 
 			// Cantor Pairing Function
-			//int index = ((x + y) * (x + y + 1)) / 2 + y;
+			int index = ((x + y) * (x + y + 1)) / 2 + y;
 			
 			noiseArray[index] = noise;
 			indexSetArray[index] = index;
@@ -123,10 +126,10 @@ int main() {
 			// Use gaussian distribution of noise values to fill [-1, 1] range.
 			
 			// Initial Hash Function
-			int index = y * width + x;
+			//int index = y * width + x;
 
 			// Cantor Pairing Function
-			//int index = ((x + y) * (x + y + 1)) / 2 + y;
+			int index = ((x + y) * (x + y + 1)) / 2 + y;
 			
 			//cout << index << endl;
 			noise = noiseArray[index];
@@ -148,8 +151,8 @@ int main() {
 	for (int x = 0; x < width; ++x) {
 		for (int y = 0; y < height; ++y) {
 			
-			int index = y * width + x; // Initial function (linear)
-			//int index = ((x + y) * (x + y + 1)) / 2 + y; // Cantor Pairing Function
+			//int index = y * width + x; // Initial function (linear)
+			int index = ((x + y) * (x + y + 1)) / 2 + y; // Cantor Pairing Function
 			
 			cout << "x: " << x << "y: " << y << " | indexSet: " << indexSetArray[index] << " | indexGet: " << indexGetArray[index] << endl;
 		}
