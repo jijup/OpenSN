@@ -1,9 +1,8 @@
 /*
  * Fractal.h
+ * Authors: Sheldon Taylor, Jiju Poovvancheri
  * 
  * Fractal Brownian motion via sum of Perlin noise octaves.
- *
- * Author: Sheldon Taylor
  */
 
 #ifndef _FRACTAL_H_

@@ -1,8 +1,8 @@
 /* 
  * Driver.cpp
- * Sheldon Taylor
- * 
- * Based on Chris Little's implementation of Perlin Noise (used primarily for SDL2 implementation). 
+ * Authors: Sheldon Taylor, Jiju Poovvancheri
+ *
+ * Implementation of Perlin noise via various hashing/pairing functions.
  */
 
 #include <SDL2/SDL.h>
@@ -15,8 +15,8 @@ using namespace std;
 #define TESTING 0	// Testing mode off
 //#define TESTING 1	// Testing mode on
 
-#define WIDTH 1000
-#define HEIGHT 750
+#define WIDTH 1000	// X Resolution
+#define HEIGHT 750	// Y Resolution
 
 // Define Pairing Function to be used (uncomment selected PAIRING_FUNCTION)
 //#define PAIRING_FUNCTION 0 	// Linear
@@ -117,7 +117,6 @@ int main() {
 	noiseGenerator -> setInitFrequency(4.0f);
 
 	// Intialize nosie array 	
-	//float *noiseArray = new float[ARRAY_SIZE];
 	float *noiseArray = new float[arr_size];
 
 	// Initialize SDL window, renderer, image and texture
@@ -126,42 +125,36 @@ int main() {
 	SDL_Surface *image = NULL;
 	SDL_Texture *imageTexture = NULL;
 
-	// Create an SDL window and renderer.
+	// SDL Window Creation
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-		cout << "SDL couldn't init." << endl;
-		return 1;
+		cout << "Error during SDL initialization." << endl;
+		return 0;
 	}
 	
 	window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, 0);	
 	if (!window) {
-		cout << "SDL couldn't create window." << endl;
-		return 2;
+		cout << "Error during window creation  (SDL)." << endl;
+		return 0;
 	}
 
+	// SDL Renderer Creation
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
 	if (!renderer) {
-		cout << "SDL couldn't retrieve the renderer." << endl;
-		return 3;
+		cout << "Error during renderer creation (SDL)." << endl;
+		return 0;
 	}
 
 	// Create an SDL surface to write the noise values to.
 	Uint32 rmask, gmask, bmask, amask;
-#if SDL_BYTEORDER == SDL_BIGENDIAN
 	rmask = 0xff000000;
 	gmask = 0x00ff0000;
 	bmask = 0x0000ff00;
 	amask = 0x000000ff;
-#else
-	rmask = 0x000000ff;
-	gmask = 0x0000ff00;
-	bmask = 0x00ff0000;
-	amask = 0xff000000;
-#endif
 
 	image = SDL_CreateRGBSurface(SDL_SWSURFACE, WIDTH, HEIGHT, 32, rmask, gmask, bmask, amask);
 	if (!image) {
-		cout << "Failed to create surface." << endl;
-		return 4;
+		cout << "Error during surface creation." << endl;
+		return 0;
 	}
 
 	// Generate a noise value for each pixel
@@ -235,14 +228,14 @@ int main() {
 		}
 	}
 
-	// Convert surface to texture that can be copied to the window.
+	// Conversion of surface to texture
 	imageTexture = SDL_CreateTextureFromSurface(renderer, image);
 	if (!imageTexture) {
-		cout << "Failed to convert surface to texture." << endl;
-		return 5;
+		cout << "Error during surface to texture conversion." << endl;
+		return 0;
 	}
 
-	// TO DO: IMPLEMENT WRITE TO BMP/PNG
+	// FIXME: IMPLEMENT WRITE TO BMP/PNG
 	//SDL_SaveBMP(image, "out.bmp");
 	
 	SDL_FreeSurface(image);
@@ -256,6 +249,7 @@ int main() {
 	SDL_Event event;
 	int tickDelay = int((1.0 / 25.0) * 1000);
 
+	// Quit app on ESC press
 	while (!quit) {
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
@@ -264,22 +258,21 @@ int main() {
 					break;
                 
 				case SDL_KEYDOWN:
-                    			// Quit on escape pressed
                     			if (event.key.keysym.sym == SDLK_ESCAPE)
                         		quit = true;
 			}
 		}
-
 		SDL_Delay(tickDelay);
 	}
 
-	// Cleanup
+	// Cleanup & delete unneeded items
 	SDL_DestroyTexture(imageTexture);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 
 	delete[] noiseArray;
+	delete[] indexArray;
 	delete noiseGenerator;
 	
 	return 0;

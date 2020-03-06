@@ -1,7 +1,7 @@
 /**
  * Perlin.cpp
  *
- * Author: Sheldon Taylor (based off implementation by Chris Little)
+ * Authors: Sheldon Taylor, Jiju Poovvancheri
  */
 
 #include "Perlin.h"
@@ -11,93 +11,88 @@
 
 Perlin::Perlin() {
 	srand(time(NULL));
-
-	p = new int[256];
-	Gx = new float[256];
-	Gy = new float[256];
-	Gz = new float[256];
+	
+	permutationTable = new int[256];
+	gradientX = new float[256];
+	gradientY = new float[256];
+	gradientZ = new float[256];
 
 	for (int i=0; i<256; ++i) {
-		p[i] = i;
+		permutationTable[i] = i;
 
-		Gx[i] = (float(rand()) / (RAND_MAX/2)) - 1.0f;
-		Gy[i] = (float(rand()) / (RAND_MAX/2)) - 1.0f;
-		Gz[i] = (float(rand()) / (RAND_MAX/2)) - 1.0f;
+		gradientX[i] = (float(rand()) / (RAND_MAX/2)) - 1.0f;
+		gradientY[i] = (float(rand()) / (RAND_MAX/2)) - 1.0f;
+		gradientZ[i] = (float(rand()) / (RAND_MAX/2)) - 1.0f;
 	}
 
-	int j=0;
-	int swp=0;
-	for (int i=0; i<256; i++) {
-		j = rand() & 255;
+	int swapIndex = 0;
+	int temp = 0;
+	for (int i = 0; i < 256; i++) {
+		swapIndex = rand() & 255;
 
-		swp = p[i];
-		p[i] = p[j];
-		p[j] = swp;
+		temp = permutationTable[i];
+		permutationTable[i] = permutationTable[swapIndex];
+		permutationTable[swapIndex] = temp;
 	}
 }
 
-Perlin::~Perlin()
-{
-	delete p;
-	delete Gx;
-	delete Gy;
-	delete Gz;
+Perlin::~Perlin() {
+	delete permutationTable;
+	delete gradientX;
+	delete gradientY;
+	delete gradientZ;
 }
 
+float Perlin::lerp(float x) {
+	return ((6.0f * x - 15.0f) * x + 10.0f) * pow(x, 3);
+}
 
-float Perlin::noise(float xCoord, float yCoord, float zCoord)
-{
+float Perlin::noise(float xCoord, float yCoord, float zCoord) {
 	// Unit cube vertex coordinates surrounding the sample point
-	int x0 = int(floorf(xCoord));
-	int x1 = x0 + 1;
-	int y0 = int(floorf(yCoord));
-	int y1 = y0 + 1;
-	int z0 = int(floorf(zCoord));
-	int z1 = z0 + 1;
+	int gradientX0 = int(floor(xCoord));
+	int gradientX1 = gradientX0 + 1;
+	int gradientY0 = int(floor(yCoord));
+	int gradientY1 = gradientY0 + 1;
+	int gradientZ0 = int(floor(zCoord));
+	int gradientZ1 = gradientZ0 + 1;
 
 	// Determine sample point position within unit cube
-	float px0 = xCoord - float(x0);
-	float px1 = px0 - 1.0f;
-	float py0 = yCoord - float(y0);
-	float py1 = py0 - 1.0f;
-	float pz0 = zCoord - float(z0);
-	float pz1 = pz0 - 1.0f;
+	float pointX0 = xCoord - float(gradientX0);
+	float pointX1 = pointX0 - 1.0f;
+	float pointY0 = yCoord - float(gradientY0);
+	float pointY1 = pointY0 - 1.0f;
+	float pointZ0 = zCoord - float(gradientZ0);
+	float pointZ1 = pointZ0 - 1.0f;
 
 	// Compute dot product between gradient and sample position vector
-	int gIndex = p[(x0 + p[(y0 + p[z0 & 255]) & 255]) & 255];
-	float d000 = Gx[gIndex]*px0 + Gy[gIndex]*py0 + Gz[gIndex]*pz0;
-	gIndex = p[(x1 + p[(y0 + p[z0 & 255]) & 255]) & 255];
-	float d001 = Gx[gIndex]*px1 + Gy[gIndex]*py0 + Gz[gIndex]*pz0;
+	int gradientIndex = permutationTable[(gradientX0 + permutationTable[(gradientY0 + permutationTable[gradientZ0 & 255]) & 255]) & 255];
+	float dotX0Y0Z0 = gradientX[gradientIndex] * pointX0 + gradientY[gradientIndex] * pointY0 + gradientZ[gradientIndex] * pointZ0;
+	gradientIndex = permutationTable[(gradientX1 + permutationTable[(gradientY0 + permutationTable[gradientZ0 & 255]) & 255]) & 255];
+	float dotX0Y0Z1 = gradientX[gradientIndex] * pointX1 + gradientY[gradientIndex] * pointY0 + gradientZ[gradientIndex] * pointZ0;
 	
-	gIndex = p[(x0 + p[(y1 + p[z0 & 255]) & 255]) & 255];
-	float d010 = Gx[gIndex]*px0 + Gy[gIndex]*py1 + Gz[gIndex]*pz0;
-	gIndex = p[(x1 + p[(y1 + p[z0 & 255]) & 255]) & 255];
-	float d011 = Gx[gIndex]*px1 + Gy[gIndex]*py1 + Gz[gIndex]*pz0;
+	gradientIndex = permutationTable[(gradientX0 + permutationTable[(gradientY1 + permutationTable[gradientZ0 & 255]) & 255]) & 255];
+	float dotX0Y1Z0 = gradientX[gradientIndex] * pointX0 + gradientY[gradientIndex] * pointY1 + gradientZ[gradientIndex] * pointZ0;
+	gradientIndex = permutationTable[(gradientX1 + permutationTable[(gradientY1 + permutationTable[gradientZ0 & 255]) & 255]) & 255];
+	float dotX0Y1Z1 = gradientX[gradientIndex] * pointX1 + gradientY[gradientIndex] * pointY1 + gradientZ[gradientIndex] * pointZ0;
 	
-	gIndex = p[(x0 + p[(y0 + p[z1 & 255]) & 255]) & 255];
-	float d100 = Gx[gIndex]*px0 + Gy[gIndex]*py0 + Gz[gIndex]*pz1;
-	gIndex = p[(x1 + p[(y0 + p[z1 & 255]) & 255]) & 255];
-	float d101 = Gx[gIndex]*px1 + Gy[gIndex]*py0 + Gz[gIndex]*pz1;
+	gradientIndex = permutationTable[(gradientX0 + permutationTable[(gradientY0 + permutationTable[gradientZ1 & 255]) & 255]) & 255];
+	float dotX1Y0Z0 = gradientX[gradientIndex] * pointX0 + gradientY[gradientIndex] * pointY0 + gradientZ[gradientIndex] * pointZ1;
+	gradientIndex = permutationTable[(gradientX1 + permutationTable[(gradientY0 + permutationTable[gradientZ1 & 255]) & 255]) & 255];
+	float dotX1Y0Z1 = gradientX[gradientIndex] * pointX1 + gradientY[gradientIndex] * pointY0 + gradientZ[gradientIndex] * pointZ1;
 
-	gIndex = p[(x0 + p[(y1 + p[z1 & 255]) & 255]) & 255];
-	float d110 = Gx[gIndex]*px0 + Gy[gIndex]*py1 + Gz[gIndex]*pz1;
-	gIndex = p[(x1 + p[(y1 + p[z1 & 255]) & 255]) & 255];
-	float d111 = Gx[gIndex]*px1 + Gy[gIndex]*py1 + Gz[gIndex]*pz1;
+	gradientIndex = permutationTable[(gradientX0 + permutationTable[(gradientY1 + permutationTable[gradientZ1 & 255]) & 255]) & 255];
+	float dotX1Y1Z0 = gradientX[gradientIndex] * pointX0 + gradientY[gradientIndex] * pointY1 + gradientZ[gradientIndex] * pointZ1;
+	gradientIndex = permutationTable[(gradientX1 + permutationTable[(gradientY1 + permutationTable[gradientZ1 & 255]) & 255]) & 255];
+	float dotX1Y1Z1 = gradientX[gradientIndex] * pointX1 + gradientY[gradientIndex] * pointY1 + gradientZ[gradientIndex] * pointZ1;
+	
+	float s = dotX0Y0Z0 + lerp(pointX0) * (dotX0Y0Z1 - dotX0Y0Z0);
+	float t = dotX0Y1Z0 + lerp(pointX0) * (dotX0Y1Z1 - dotX0Y1Z0);
+	float u = dotX1Y0Z0 + lerp(pointX0) * (dotX1Y0Z1 - dotX1Y0Z0);
+	float v = dotX1Y1Z0 + lerp(pointX0) * (dotX1Y1Z1 - dotX1Y1Z0);
+	float st = s + lerp(pointY0) * (t - s);
+	float uv = u + lerp(pointY0) * (v - u);
+	float result = st + lerp(pointZ0) * (uv - st);
 
-	// Interpolate dot product values at sample point 
-	// Uses polynomial interpolation 6x^5 - 15x^4 + 10x^3
-	float wx = ((6*px0 - 15)*px0 + 10)*px0*px0*px0;
-	float wy = ((6*py0 - 15)*py0 + 10)*py0*py0*py0;
-	float wz = ((6*pz0 - 15)*pz0 + 10)*pz0*pz0*pz0;
-
-	float xa = d000 + wx*(d001 - d000);
-	float xb = d010 + wx*(d011 - d010);
-	float xc = d100 + wx*(d101 - d100);
-	float xd = d110 + wx*(d111 - d110);
-	float ya = xa + wy*(xb - xa);
-	float yb = xc + wy*(xd - xc);
-	float value = ya + wz*(yb - ya);
-
-	return value;
+	return result;
 }
 

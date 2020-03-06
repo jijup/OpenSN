@@ -1,7 +1,8 @@
 /*
  * Fractal.cpp
+ * Authors: Sheldon Taylor, Jiju Poovvancheri
  *
- * Author: Sheldon Taylor
+ *
  */
 
 #include "Fractal.h"
