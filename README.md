@@ -16,8 +16,8 @@ SDL2 is required to compile and run for visual output (see https://www.libsdl.or
 ### Building & Running:
 
   1. CMake
-      - Run   `` from inside main directory.
-      - Run  `` from inside main directory.
+      - Run  `cmake -H. Bbuild` from inside main directory.
+      - Run  `cmake --build build -- -j3` from inside main directory.
       - Executable located in `/build/` folder and run with `./Perlin`.
   2. Makefile
       - Run `make` from inside main directory.
