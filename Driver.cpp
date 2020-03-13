@@ -5,7 +5,6 @@
  * Driver for the implementation of Perlin noise via various hashing/pairing functions.
  */
 
-//#include <SDL2/SDL.h>
 #include <SDL.h>
 #include <iostream>
 #include <fstream>
@@ -16,6 +15,9 @@ using namespace std;
 
 #define TESTING 0	// Testing mode off
 //#define TESTING 1	// Testing mode on
+
+//#define ANALYSIS 0	// Analysis mode off
+#define ANALYSIS 1	// Analysis mode on
 
 #define WIDTH 1000	// X Resolution
 #define HEIGHT 750	// Y Resolution
@@ -241,14 +243,16 @@ int main() {
 		}
 	}	
 
-	// FOR ANALYSIS PURPOSES - WRITE TO CSV
-	ofstream outFile;
-	outFile.open("../Analysis/amplitude_out.csv");
-	outFile << "GaussianAmplitude\n";
-	for (int i = 0; i < (HEIGHT * WIDTH); i++) {
-		outFile << ampDistributionArray[i] << "\n";
+	// FOR ANALYSIS PURPOSES
+	if (ANALYSIS) {
+		ofstream outFile;
+		outFile.open("../Analysis/amplitude_out.csv");
+		outFile << "GaussianAmplitude\n";
+		for (int i = 0; i < (HEIGHT * WIDTH); i++) {
+			outFile << ampDistributionArray[i] << "\n";
+		}
+		outFile.close();
 	}
-	outFile.close();
 	
 	// FOR TESTING PURPOSES
 	if (TESTING) {

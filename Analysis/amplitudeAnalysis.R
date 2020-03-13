@@ -13,5 +13,3 @@ ampPlot = ggplot(data, aes(x = GaussianAmplitude)) +
 
 ggsave("ampPlot.png", width = 10, height = 5)
 
-# Running Power Spectrum Analysis
-
