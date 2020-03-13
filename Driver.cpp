@@ -2,11 +2,13 @@
  * Driver.cpp
  * Authors: Sheldon Taylor, Jiju Poovvancheri
  *
- * Implementation of Perlin noise via various hashing/pairing functions.
+ * Driver for the implementation of Perlin noise via various hashing/pairing functions.
  */
 
-#include <SDL2/SDL.h>
+//#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <iostream>
+#include <fstream>
 #include <math.h>
 #include "Fractal.h"
 
@@ -19,8 +21,8 @@ using namespace std;
 #define HEIGHT 750	// Y Resolution
 
 // Define Pairing Function to be used (uncomment selected PAIRING_FUNCTION)
-//#define PAIRING_FUNCTION 0 	// Linear
-#define PAIRING_FUNCTION 1 	// Cantor
+#define PAIRING_FUNCTION 0 	// Linear
+//#define PAIRING_FUNCTION 1 	// Cantor
 //#define PAIRING_FUNCTION 2 	// Szudzik
 
 
@@ -76,10 +78,17 @@ int szudzikInvertY(int z) {
 	}
 }
 
+// Colours pixel at given position, (x, y). Assumes 32 bits per pixel.
+void colourPixel(SDL_Surface* surface, int x, int y, Uint32 pixel) {
+	Uint32 *p = (Uint32 *)surface -> pixels + y * surface -> w + x;
+	*p = pixel;
+}
 
 #if PAIRING_FUNCTION == 0	// Linear
 	#define TITLE 		"Perlin Noise - Linear" 
-	#define HASH(x, y)  	(y * WIDTH + x)
+	#define HASH(x, y)  	linearPair(x, y)
+	#define INVERT_X(z)	1
+	#define INVERT_Y(z)	1
 #elif PAIRING_FUNCTION == 1	// Cantor
 	#define TITLE 		"Perlin Noise - Cantor"
 	#define HASH(x, y)  	cantorPair(x, y)
@@ -95,15 +104,7 @@ int szudzikInvertY(int z) {
 	#define HASH(x, y)  	(y * WIDTH + x)
 #endif
 
-// Colours pixel at given position, (x, y). Assumes 32 bits per pixel.
-void colourPixel(SDL_Surface* surface, int x, int y, Uint32 pixel) {
-	Uint32 *p = (Uint32 *)surface -> pixels + y * surface -> w + x;
-	*p = pixel;
-}
-
-
 #undef main
-
 
 int main() {
 
@@ -118,6 +119,9 @@ int main() {
 
 	// Intialize nosie array 	
 	float *noiseArray = new float[arr_size];
+
+	// Initialize Amplitude Distribution Array
+	float *ampDistributionArray = new float[WIDTH * HEIGHT];
 
 	// Initialize SDL window, renderer, image and texture
 	SDL_Window *window = NULL;
@@ -191,25 +195,60 @@ int main() {
 	// Convert noise values to pixel colour values.
 	float temp = 1.0f / (max - min);
 
-	// Invert Hash Functions	
-	for (int i = 0; i < (HEIGHT * WIDTH); i++) {
+	// Invert Hash Functions
+	if (PAIRING_FUNCTION == 1 || PAIRING_FUNCTION == 2) {	
+		for (int i = 0; i < (HEIGHT * WIDTH); i++) {
 		
-		int index = indexArray[i];	
-		int inv_x = INVERT_X(index);
-		int inv_y = INVERT_Y(index);
+			int index = indexArray[i];	
+			int inv_x = INVERT_X(index);
+			int inv_y = INVERT_Y(index);
 
-		noise = noiseArray[index];
+			noise = noiseArray[index];
 			
-		// Use gaussian distribution of noise values to fill [-1, 1] range.
-		noise = -1.0f + 2.0f * (noise - min) * temp;
+			// Use gaussian distribution of noise values to fill [-1, 1] range.
+			noise = -1.0f + 2.0f * (noise - min) * temp;
+
+			// FOR ANALYSIS PURPOSES - AMPLITUDE DISTRIBUTION
+			ampDistributionArray[i] = noise;
 		
-		// Remap to RGB friendly colour values in range [0, 1].
-		noise += 1.0f;
-		noise *= 0.5f;
+			// Remap to RGB friendly colour values in range [0, 1].
+			noise += 1.0f;
+			noise *= 0.5f;
+
+			colourByte = Uint8(noise * 0xff);
+			colourPixel(image, inv_x, inv_y, SDL_MapRGB(image -> format, colourByte, colourByte, colourByte));
+		}
+	} else {
+		for (int x = 0; x < WIDTH; ++x) {
+			for (int y = 0; y < HEIGHT; ++y) {
+				
+				int index = HASH(x, y);
+				noise = noiseArray[index];
+			
+				// Use gaussian distribution of noise values to fill [-1, 1] range.
+				noise = -1.0f + 2.0f * (noise - min) * temp;
 		
-		colourByte = Uint8(noise * 0xff);
-		colourPixel(image, inv_x, inv_y, SDL_MapRGB(image -> format, colourByte, colourByte, colourByte));
+				// FOR ANALYSIS PURPOSES - AMPLITUDE DISTRIBUTION
+				ampDistributionArray[y * WIDTH + x] = noise;
+			
+				// Remap to RGB friendly colour values in range [0, 1].
+				noise += 1.0f;
+				noise *= 0.5f;
+			
+				colourByte = Uint8(noise * 0xff);
+				colourPixel(image, x, y, SDL_MapRGB(image -> format, colourByte, colourByte, colourByte));
+			}
+		}
+	}	
+
+	// FOR ANALYSIS PURPOSES - WRITE TO CSV
+	ofstream outFile;
+	outFile.open("../Analysis/amplitude_out.csv");
+	outFile << "GaussianAmplitude\n";
+	for (int i = 0; i < (HEIGHT * WIDTH); i++) {
+		outFile << ampDistributionArray[i] << "\n";
 	}
+	outFile.close();
 	
 	// FOR TESTING PURPOSES
 	if (TESTING) {

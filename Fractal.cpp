@@ -2,7 +2,7 @@
  * Fractal.cpp
  * Authors: Sheldon Taylor, Jiju Poovvancheri
  *
- *
+ * fBm Implementation.
  */
 
 #include "Fractal.h"

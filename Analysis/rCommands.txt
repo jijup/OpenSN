@@ -1,0 +1,29 @@
+==================
+AMPLITUDE ANALYSIS
+==================
+
+RUNNING: R < amplitudeAnalysis.R --no-save
+
+COMMANDS:
+
+library(ggplot2)
+setwd("~/Desktop/Research/Code/Perlin")
+data = read.table("amplitude_out.csv", header=TRUE, sep=",")
+
+theme_set(theme_classic() + theme(legend.position = "top"))
+
+ampPlot = ggplot(data, aes(x = GaussianAmplitude)) +
+    geom_histogram(aes(y = ..density..), 
+                   bins = 1000, alpha = 0.4) +
+    scale_color_manual(values = c("#00AFBB", "#E7B800")) + geom_density()
+
+ampPlot = ggplot(data, aes(x = GaussianAmplitude)) +
+    	geom_histogram(aes(y = ..density..), 
+        	bins = 1000, alpha = 0.7) + geom_density(alpha = 0.2, fill = "#42B8C0", colour = "#42B8C0") + 
+	ggtitle("Density of Amplitude Values (Post Gaussian Distrubution)")
+
+ggsave("ampPlot.png", width = 10, height = 5)
+
+
+
+

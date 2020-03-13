@@ -1,0 +1,12 @@
+cmake_minimum_required (VERSION 3.13)
+project (Perlin)
+
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
+find_package(SDL2 REQUIRED)
+include_directories(${SDL2_INCLUDE_DIRS})
+
+set(CMAKE_CXX_STANDARD 11)
+
+add_executable(Perlin Driver.cpp Perlin.cpp Fractal.cpp)
+target_link_libraries(Perlin ${SDL2_LIBRARIES} m)
+
