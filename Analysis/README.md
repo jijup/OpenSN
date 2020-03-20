@@ -9,3 +9,5 @@ Analysis performed:
 
 Required that R be installed on your machine (see https://www.r-project.org/).
 
+NOTE: If the Analysis Type is set to run multiple iterations, this will take some time.
+

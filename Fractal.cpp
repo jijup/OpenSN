@@ -13,7 +13,7 @@ Fractal::Fractal() {
 	octaves = 8;
 	lacunarity = 2.0f;
 	persistence = 0.5f;
-	initFrequency = 1.0f;
+	initFrequency = 2.0f;
 	initAmplitude = 1.0f;
 }
 

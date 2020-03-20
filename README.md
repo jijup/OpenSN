@@ -23,7 +23,7 @@ SDL2 is required to compile and run for visual output (see https://www.libsdl.or
       - Run `make` from inside main directory.
       - Executable locate in main directory and run with `./Perlin`.
 
-### Other Considerations
+### Other Considerations:
 
 There is both a testing and analysis mode that can be enabled/disabled in the `Driver.cpp` file. 
 
@@ -31,3 +31,9 @@ There is both a testing and analysis mode that can be enabled/disabled in the `D
       - Outputs hash function inputs, outputs, etc. to the command line.
   2. Analysis Mode
       - Outputs `*Analysis.csv` of which is used to analyze results of the various functions.
+  3. Image Output Mode
+      - Outputs an image of the Perlin noise generated.
+  4. Analysis Type
+      - Performs multiple iterations with same number of octaves/lacunarity/persistence
+        or performs multiple iterations with varying parameters.
+      - NOTE: This cannot be used in conjunction with the 'Image Output Mode'.

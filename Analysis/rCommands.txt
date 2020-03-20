@@ -7,7 +7,7 @@ RUNNING: R < amplitudeAnalysis.R --no-save
 COMMANDS:
 
 library(ggplot2)
-setwd("~/Desktop/Research/Code/Perlin")
+setwd("~/Desktop/Research/Code/Perlin/Analysis")
 data = read.table("amplitude_out.csv", header=TRUE, sep=",")
 
 theme_set(theme_classic() + theme(legend.position = "top"))
