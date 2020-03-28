@@ -37,3 +37,5 @@ There is both a testing and analysis mode that can be enabled/disabled in the `D
       - Performs multiple iterations with same number of octaves/lacunarity/persistence
         or performs multiple iterations with varying parameters.
       - NOTE: This cannot be used in conjunction with the 'Image Output Mode'.
+
+
