@@ -12,6 +12,8 @@ SDL2 is required to compile and run for visual output (see https://www.libsdl.or
       - `((x + y) * (x + y + 1)) / 2 + y`
   3. Szudzik Pairing Function (implemented)
       - `(x >= y) ? (x^2 + x + y) : (y^2 + x)`
+  4. Rosenberg-Strong Pairing Function (implemented)
+      - `(max(x, y))^2 + max(x, y) + x - y`
 
 ### Building & Running:
 
@@ -33,9 +35,19 @@ There is both a testing and analysis mode that can be enabled/disabled in the `D
       - Outputs `*Analysis.csv` of which is used to analyze results of the various functions.
   3. Image Output Mode
       - Outputs an image of the Perlin noise generated.
+      - Saves an image to .bmp
   4. Analysis Type
       - Performs multiple iterations with same number of octaves/lacunarity/persistence
         or performs multiple iterations with varying parameters.
       - NOTE: This cannot be used in conjunction with the 'Image Output Mode'.
+
+      
+### Noteworthy Items:
+
+  1. BMP issue on Mac OSX
+      - Output that is written to .bmp files won't open on Mac OSX native photo viewers. Adobe products
+        open the .bmp fine. Works fine on Windows.
+  2. Fournier Analysis 
+      - Currently under development (commented out of code).
 
 
