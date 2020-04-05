@@ -9,16 +9,32 @@
 //#include <SDL2/SDL.h>	// Makefile
 #include <iostream>
 #include <fstream>
+#include <string>
+#include <vector>
 #include <math.h>
 #include "Fractal.h"
 
+
 using namespace std;
 
+/**
+ * Constants
+ */
+#define PI 3.14159265
+#define WIDTH 1000       // X Resolution
+#define HEIGHT 1000      // Y Resolution
+
+/**
+ * Mode Configuration
+ */
 #define TESTING 0		// Testing mode off
 //#define TESTING 1		// Testing mode on
 
 //#define ANALYSIS 0		// Analysis mode off
-//#define ANALYSIS 1		// Analysis mode on
+#define ANALYSIS 1		// Analysis mode on
+
+#define FOURNIER 0      // Fournier analysis off
+//#define FOURNIER 1      // Fournier analysis on
 
 #define ANALYSIS_TYPE 0     	// Multiple iterations of same parameters
 //#define ANALYSIS_TYPE 1   	// Multiple iterations of varying parameters
@@ -26,15 +42,13 @@ using namespace std;
 //#define IMAGE_OUTPUT 0 	// Image output off
 #define IMAGE_OUTPUT 1		// Image output on
 
-#define WIDTH 1000		// X Resolution
-#define HEIGHT 750		// Y Resolution
-
-// Define Pairing Function to be used (uncomment selected PAIRING_FUNCTION)
 //#define PAIRING_FUNCTION 0 	// Linear
-#define PAIRING_FUNCTION 1 	// Cantor
+//#define PAIRING_FUNCTION 1 	// Cantor
 //#define PAIRING_FUNCTION 2 	// Szudzik
+#define PAIRING_FUNCTION 3 // Rosenberg-Strong
 
 
+// Linear Pairing Function
 int linearPair(int x, int y) {
 	return (y * WIDTH + x);
 }
@@ -74,7 +88,6 @@ int szudzikInvertX(int z) {
 	} else {
 		return temp;
 	}
-
 }
 
 // Szudzik Inversion of Y value
@@ -87,31 +100,60 @@ int szudzikInvertY(int z) {
 	}
 }
 
+// Rosenberg-Strong Pairing Function
+int rsPair(int x, int y) {
+    int tempMax = max(x, y);
+    return pow(tempMax, 2) + tempMax + x - y;
+}
+
+// Rosenberg-Strong Inversion M Calculation
+int rsInvert(int z) {
+    return floor(sqrt(z));
+}
+
 // Colours pixel at given position, (x, y). Assumes 32 bits per pixel.
 void colourPixel(SDL_Surface* surface, int x, int y, Uint32 pixel) {
 	Uint32 *p = (Uint32 *)surface -> pixels + y * surface -> w + x;
 	*p = pixel;
 }
 
-#if PAIRING_FUNCTION == 0	// Linear
-	#define TITLE 		"Perlin Noise - Linear" 
+#if PAIRING_FUNCTION == 0	    // Linear
+	#define TITLE 		    "Perlin Noise - Linear"
 	#define HASH(x, y)  	linearPair(x, y)
 	#define INVERT_X(z)	1
 	#define INVERT_Y(z)	1
 #elif PAIRING_FUNCTION == 1	// Cantor
-	#define TITLE 		"Perlin Noise - Cantor"
+	#define TITLE 		    "Perlin Noise - Cantor"
 	#define HASH(x, y)  	cantorPair(x, y)
 	#define INVERT_X(z)	cantorInvertX(z)
 	#define INVERT_Y(z)	cantorInvertY(z)
 #elif PAIRING_FUNCTION == 2	// Szudzik
-	#define TITLE 		"Perlin Noise - Szudzik"
+	#define TITLE 		    "Perlin Noise - Szudzik"
 	#define HASH(x, y)  	szudzikPair(x, y)
 	#define INVERT_X(z)	szudzikInvertX(z)
 	#define INVERT_Y(z)	szudzikInvertY(z)
-#else				// Other
+#elif PAIRING_FUNCTION == 3  // Rosenberg-Strong
+    #define TITLE         "Perlin Noise - Rosenberg-Strong"
+    #define HASH(x, y)    rsPair(x, y)
+    #define INVERT_X(z)   1
+    #define INVERT_Y(z)   1
+#else				          // Other
 	#define TITLE 		"Perlin Noise - Other"
 	#define HASH(x, y)  	(y * WIDTH + x)
 #endif
+
+struct point {
+    int x;
+    int y;
+    float colour;
+};
+
+/**
+ * Returns the maximum integer of two given integers.
+ */
+int max(int val1, int val2) {
+    return (val1 > val2) ? val1 : val2;
+}
 
 /**
  *
@@ -132,6 +174,7 @@ int generateImage() {
     
     // Initialize Amplitude Distribution Array
     float *ampDistributionArray = new float[WIDTH * HEIGHT];
+    
     
     // Initialize SDL window, renderer, image and texture
     SDL_Window *window = NULL;
@@ -179,8 +222,7 @@ int generateImage() {
     float max = 0.0f;
     
     Uint8 colourByte;
-    
-    
+    vector<point> points;
     
     for (int x = 0; x < WIDTH; ++x) {
         for (int y = 0; y < HEIGHT; ++y) {
@@ -190,7 +232,9 @@ int generateImage() {
             
             // Set noise value dependant on hashed value
             int index = HASH(x, y);
-            indexArray[indexArrayCurr++] = index;
+            if (PAIRING_FUNCTION == 1 || PAIRING_FUNCTION == 2) {
+                indexArray[indexArrayCurr++] = index;
+            }
             noiseArray[index] = noise;
             
             // Keep track of minimum and maximum noise values
@@ -209,6 +253,26 @@ int generateImage() {
     
     // Invert Hash Functions
     if (PAIRING_FUNCTION == 1 || PAIRING_FUNCTION == 2) {
+        
+        // FIXME: FOURNIER ANALYSIS
+        float *realOut;
+        realOut = new float[WIDTH * HEIGHT];
+        //realOut = malloc(WIDTH * HEIGHT * sizeof(float));
+        float *imgOut;
+        imgOut = new float[WIDTH * HEIGHT];
+        //imgOut = malloc(WIDTH * HEIGHT * sizeof(float));
+        float *ampOut;
+        ampOut = new float[WIDTH * HEIGHT];
+        //ampOut = malloc(WIDTH * HEIGHT * sizeof(float));
+        /*
+        for (int i = 0; i < WIDTH; i++) {
+            for (int j = 0; j < WIDTH; j++) {
+                realOut[i][j] = 0.0f;
+                imgOut[i][j] = 0.0f;
+                ampOut[i][j] = 0.0f;
+            }
+        }*/
+        
         for (int i = 0; i < (HEIGHT * WIDTH); i++) {
             
             int index = indexArray[i];
@@ -220,7 +284,83 @@ int generateImage() {
             // Use gaussian distribution of noise values to fill [-1, 1] range.
             noise = -1.0f + 2.0f * (noise - min) * temp;
             
-            // FOR ANALYSIS PURPOSES - AMPLITUDE DISTRIBUTION
+            // Ammplitude distribution array
+            ampDistributionArray[i] = noise;
+            
+            // Remap to RGB friendly colour values in range [0, 1].
+            noise += 1.0f;
+            noise *= 0.5f;
+            
+            // FIXME: Issue with Fournier Analysis Calculation - Currently disabled
+            if (ANALYSIS == 1 && FOURNIER == 1) {
+                /*
+                min = 1;
+                max = -1;
+                 */
+                for (int xSpace = 0; xSpace < WIDTH; xSpace++) {
+                    for (int ySpace = 0; ySpace < HEIGHT; ySpace++) {
+                        
+                        realOut[inv_x + inv_y] += (noise *
+                                                  cos(2.0f * PI * ((1.0f * inv_x * xSpace / WIDTH) +
+                                                                (1.0f * inv_y * ySpace / HEIGHT)))) / sqrt(WIDTH * HEIGHT);
+                        imgOut[inv_x + inv_y] -= (noise * sin(2.0f * PI *
+                                                             ((1.0f * inv_x * xSpace / WIDTH) +
+                                                              (1.0f * inv_y * ySpace / HEIGHT)))) / sqrt( WIDTH * HEIGHT);
+                         
+                        ampOut[inv_x + inv_y] = sqrt(realOut[inv_x + inv_y] * realOut[inv_x + inv_y] +
+                                                    imgOut[inv_x + inv_y] * imgOut[inv_x + inv_y]);
+                        
+                        /*
+                        if (ampOut[inv_x + inv_y] < min) {
+                            min = ampOut[inv_x + inv_y];
+                        }
+                        
+                        if (ampOut[inv_x + inv_y] > max) {
+                            max = ampOut[inv_x + inv_y];
+                        }
+                         */
+                    }
+                }
+                printf("Iteration %d of %d complete. REAL: %f\n", i, HEIGHT * WIDTH, ampOut[inv_x + inv_y]);
+                printf("Iteration %d of %d complete. IMAG: %f\n", i, HEIGHT * WIDTH, ampOut[inv_x + inv_y]);
+                printf("Iteration %d of %d complete. AMPL: %f\n", i, HEIGHT * WIDTH, ampOut[inv_x + inv_y]);
+                
+                printf("\nOld noise: %f\n", noise);
+                //temp = 1.0f / (max - min);
+                //noise = -1.0f + 2.0f * (ampOut[inv_x + inv_y] - min) * temp;
+                //printf("New noise: %f\n\n", noise);
+                printf("New noise: %f\n\n", ampOut[inv_x + inv_y]);
+            }
+            
+            colourByte = Uint8(noise * 0xff);
+            colourPixel(image, inv_x, inv_y, SDL_MapRGB(image -> format, colourByte, colourByte, colourByte));
+            
+            points.push_back(point());
+            points[i].x = inv_x;
+            points[i].y = inv_y;
+            points[i].colour = noise;
+        }
+    } else if (PAIRING_FUNCTION == 3) {
+        for (int i = 0; i < (HEIGHT * WIDTH); i++) {
+            int m = rsInvert(i);
+            
+            int inv_x = 0;
+            int inv_y = 0;
+            int tempVar = i - pow(m, 2);
+            if ((i - pow(m, 2)) < m) {
+                inv_x = i - pow(m, 2);
+                inv_y = m;
+            } else {
+                inv_x = m;
+                inv_y = pow(m, 2) + (2*m) - i;
+            }
+            
+            noise = noiseArray[i];
+
+            // Use gaussian distribution of noise values to fill [-1, 1] range.
+            noise = -1.0f + 2.0f * (noise - min) * temp;
+
+            // Amplitude distribution array (for analysis purposes)
             ampDistributionArray[i] = noise;
             
             // Remap to RGB friendly colour values in range [0, 1].
@@ -229,6 +369,11 @@ int generateImage() {
             
             colourByte = Uint8(noise * 0xff);
             colourPixel(image, inv_x, inv_y, SDL_MapRGB(image -> format, colourByte, colourByte, colourByte));
+            
+            points.push_back(point());
+            points[i].x = inv_x;
+            points[i].y = inv_y;
+            points[i].colour = noise;
         }
     } else {
         for (int x = 0; x < WIDTH; ++x) {
@@ -240,7 +385,7 @@ int generateImage() {
                 // Use gaussian distribution of noise values to fill [-1, 1] range.
                 noise = -1.0f + 2.0f * (noise - min) * temp;
                 
-                // FOR ANALYSIS PURPOSES - AMPLITUDE DISTRIBUTION
+                // Amplitude distribution array
                 ampDistributionArray[y * WIDTH + x] = noise;
                 
                 // Remap to RGB friendly colour values in range [0, 1].
@@ -249,6 +394,12 @@ int generateImage() {
                 
                 colourByte = Uint8(noise * 0xff);
                 colourPixel(image, x, y, SDL_MapRGB(image -> format, colourByte, colourByte, colourByte));
+                
+                points.push_back(point());
+                int i = x * HEIGHT + y;
+                points[i].x = x;
+                points[i].y = y;
+                points[i].colour = noise;
             }
         }
     }
@@ -287,16 +438,16 @@ int generateImage() {
     
     // Output image
     if (IMAGE_OUTPUT) {
+        
         // Conversion of surface to texture
         imageTexture = SDL_CreateTextureFromSurface(renderer, image);
         if (!imageTexture) {
             cout << "Error during surface to texture conversion." << endl;
             return 0;
         }
-        
-        // FIXME: IMPLEMENT WRITE TO BMP/PNG
-        //SDL_SaveBMP(image, "out.bmp");
-        
+
+        // Write to BMP (won't open on MAC OSX)
+        SDL_SaveBMP(image, "../Output/testing.bmp");
         SDL_FreeSurface(image);
         
         // Copy image to frame buffer and display
@@ -332,7 +483,9 @@ int generateImage() {
     }
     
     delete[] noiseArray;
-    delete[] indexArray;
+    if (PAIRING_FUNCTION == 1 || PAIRING_FUNCTION == 2) {
+        delete[] indexArray;
+    }
     delete noiseGenerator;
     
     return 0;
@@ -374,7 +527,9 @@ int performAnalysis(int currentIteration) {
             
             // Set noise value dependant on hashed value
             int index = HASH(x, y);
-            indexArray[indexArrayCurr++] = index;
+            if (PAIRING_FUNCTION == 1 || PAIRING_FUNCTION == 2) {
+                indexArray[indexArrayCurr++] = index;
+            }
             noiseArray[index] = noise;
             
             // Keep track of minimum and maximum noise values
@@ -404,7 +559,33 @@ int performAnalysis(int currentIteration) {
             // Use gaussian distribution of noise values to fill [-1, 1] range.
             noise = -1.0f + 2.0f * (noise - min) * temp;
             
-            // FOR ANALYSIS PURPOSES - AMPLITUDE DISTRIBUTION
+            // Amplitude distribution array (for analysis purposes)
+            ampDistributionArray[i] = noise;
+            
+            // Remap to RGB friendly colour values in range [0, 1].
+            noise += 1.0f;
+            noise *= 0.5f;
+        }
+    } else if (PAIRING_FUNCTION == 3) {
+        for (int i = 0; i < (HEIGHT * WIDTH); i++) {
+            int m = rsInvert(i);
+            
+            int inv_x;
+            int inv_y;
+            if ((i - pow(m, 2)) < m) {
+                inv_x = i - pow(m, 2);
+                inv_y = i;
+            } else {
+                inv_x = i;
+                inv_y = pow(m, 2) + (2*m) - i;
+            }
+            
+            noise = noiseArray[i];
+            
+            // Use gaussian distribution of noise values to fill [-1, 1] range.
+            noise = -1.0f + 2.0f * (noise - min) * temp;
+            
+            // Amplitude distribution array (for analysis purposes)
             ampDistributionArray[i] = noise;
             
             // Remap to RGB friendly colour values in range [0, 1].
@@ -421,7 +602,7 @@ int performAnalysis(int currentIteration) {
                 // Use gaussian distribution of noise values to fill [-1, 1] range.
                 noise = -1.0f + 2.0f * (noise - min) * temp;
                 
-                // FOR ANALYSIS PURPOSES - AMPLITUDE DISTRIBUTION
+                // Amplitude distribution array (for analysis purposes)
                 ampDistributionArray[y * WIDTH + x] = noise;
                 
                 // Remap to RGB friendly colour values in range [0, 1].
@@ -432,6 +613,7 @@ int performAnalysis(int currentIteration) {
     }
     
     // Print out and write analysis information to CSV when enabled
+    
     char filename[] = "../Analysis/amplitude_out.csv";
     ofstream outFile;
     outFile.open(filename, ios::out | ios::app);
@@ -512,7 +694,10 @@ int performAnalysis(int currOctave, int currLacunarity, int currPersistence) {
             
             // Set noise value dependant on hashed value
             int index = HASH(x, y);
-            indexArray[indexArrayCurr++] = index;
+            
+            if (PAIRING_FUNCTION == 1 || PAIRING_FUNCTION == 2) {
+                indexArray[indexArrayCurr++] = index;
+            }
             noiseArray[index] = noise;
             
             // Keep track of minimum and maximum noise values
@@ -542,7 +727,34 @@ int performAnalysis(int currOctave, int currLacunarity, int currPersistence) {
             // Use gaussian distribution of noise values to fill [-1, 1] range.
             noise = -1.0f + 2.0f * (noise - min) * temp;
             
-            // FOR ANALYSIS PURPOSES - AMPLITUDE DISTRIBUTION
+            // Amplitude distribution array (for analysis purposes)
+            ampDistributionArray[i] = noise;
+            
+            // Remap to RGB friendly colour values in range [0, 1].
+            noise += 1.0f;
+            noise *= 0.5f;
+        }
+    } else if (PAIRING_FUNCTION == 3) {
+        
+        for (int i = 0; i < (HEIGHT * WIDTH); i++) {
+            int m = rsInvert(i);
+            
+            int inv_x;
+            int inv_y;
+            if ((i - pow(m, 2)) < m) {
+                inv_x = i - pow(m, 2);
+                inv_y = i;
+            } else {
+                inv_x = i;
+                inv_y = pow(m, 2) + (2*m) - i;
+            }
+            
+            noise = noiseArray[i];
+            
+            // Use gaussian distribution of noise values to fill [-1, 1] range.
+            noise = -1.0f + 2.0f * (noise - min) * temp;
+            
+            // Amplitude distribution array (for analysis purposes)
             ampDistributionArray[i] = noise;
             
             // Remap to RGB friendly colour values in range [0, 1].
@@ -559,7 +771,7 @@ int performAnalysis(int currOctave, int currLacunarity, int currPersistence) {
                 // Use gaussian distribution of noise values to fill [-1, 1] range.
                 noise = -1.0f + 2.0f * (noise - min) * temp;
                 
-                // FOR ANALYSIS PURPOSES - AMPLITUDE DISTRIBUTION
+                // Amplitude distribution array (for analysis purposes)
                 ampDistributionArray[y * WIDTH + x] = noise;
                 
                 // Remap to RGB friendly colour values in range [0, 1].
@@ -608,8 +820,13 @@ int performAnalysis(int currOctave, int currLacunarity, int currPersistence) {
     return 0;
 }
 
+
 #undef main
 
+/**
+ *
+ *
+ */
 int main() {
 
     if (IMAGE_OUTPUT) {
