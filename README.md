@@ -6,25 +6,20 @@ SDL2 is required to compile and run for visual output (see https://www.libsdl.or
 
 ### Pairing Function Implementations:
 
-  1. Linear Function (implemented)
+  1. Linear Function 
       - `y * width + x`
-  2. Cantor Pairing Function (implemented)
+  2. Cantor Pairing Function
       - `((x + y) * (x + y + 1)) / 2 + y`
-  3. Szudzik Pairing Function (implemented)
+  3. Szudzik Pairing Function 
       - `(x >= y) ? (x^2 + x + y) : (y^2 + x)`
-  4. Rosenberg-Strong Pairing Function (implemented)
+  4. Rosenberg-Strong Pairing Function 
       - `(max(x, y))^2 + max(x, y) + x - y`
 
 ### Noise Implementations:
 
-  1. Perlin noise (implemented)
+  1. Perlin noise
   2. Gabor noise (in progress)
-
-### Texture Implementations:
-
-  1. Cloud texture (implemented)
-  2. Marble texture (in progress)
-  3. Wood texture (in progress)
+  3. Marble Noise via Perlin Noise 
 
 ### Building & Running:
 
@@ -37,8 +32,8 @@ SDL2 is required to compile and run for visual output (see https://www.libsdl.or
 
 There are various modes that can be enabled/disabled in the `Driver.cpp` file. 
 
-  1. Analysis Mode (in progress)
-      - Outputs `*Analysis.csv` of which is used to analyze results of the various functions.
+  1. Analysis Mode 
+      - Outputs `<AnalysisType>Analysis.csv` of which is used to analyze results of the various functions.
       - Can enable amplitude and Fournier (in progress) analysis.
   2. Save Image Mode
       - Saves an image to .bmp.
@@ -47,7 +42,7 @@ There are various modes that can be enabled/disabled in the `Driver.cpp` file.
           - Viewable without issue on Windows.
   3. Render Image Mode
       - Renders image via SDL.
-  4. Multiple Iteration Mode
+  4. Multiple Iteration Mode (in progress)
       - Performs multiple iterations for greater analysis datasets.
       - NOTE: This cannot be used in conjunction with the 'Render Image Mode'.
 
