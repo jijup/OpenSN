@@ -6,5 +6,5 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 
-add_executable(Perlin Driver.cpp Perlin.cpp Fractal.cpp Noise.cpp HashFunctions.cpp Analysis.cpp ImageSDL.cpp Gabor.cpp)
+add_executable(Perlin Driver.cpp Perlin.cpp Marble.cpp Gabor.cpp Fractal.cpp Noise.cpp HashFunctions.cpp Analysis.cpp ImageSDL.cpp)
 target_link_libraries(Perlin ${SDL2_LIBRARIES} m)

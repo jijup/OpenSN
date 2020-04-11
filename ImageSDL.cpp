@@ -90,6 +90,7 @@ void ImageSDL::renderImage(std::vector<Noise::Point> points, int writeBMP, int d
     if (writeBMP == 1) {
         // Write to BMP (won't open on MAC OSX)
         SDL_SaveBMP(image, "../Output/testing.bmp");
+        std::cout << "Image saved as .bmp file." << std::endl;
     }
 
     SDL_FreeSurface(image);

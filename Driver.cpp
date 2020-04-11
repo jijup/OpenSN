@@ -12,6 +12,7 @@
 #include <math.h>
 #include "Noise.h"
 #include "Point.h"
+#include "Analysis.h"
 #include "ImageSDL.h"
 
 using namespace std;
@@ -30,8 +31,8 @@ using namespace std;
 #define ANALYSIS 1		            // Analysis mode on
 
 /// TODO: ADD ANALYSIS_AMPLITUDE
-#define ANALYSIS_AMPLITUDE 0        // Amplitude analysis off
-//#define ANALYSIS_AMPLITUDE 1      // Amplitude analysis on
+//#define ANALYSIS_AMPLITUDE 0        // Amplitude analysis off
+#define ANALYSIS_AMPLITUDE 1      // Amplitude analysis on
 
 /// TODO: ADD ANALYSIS_FOURNIER
 #define ANALYSIS_FOURNIER 0         // Fournier analysis off
@@ -43,13 +44,14 @@ using namespace std;
 #define NUMBER_OF_ITERATIONS 10     // Number of iterations if multiple is enabled
 
 /// Texture Configuration
-#define TEXTURE_TYPE 0              // Cloud texture
-//#define TEXTURE_TYPE 1            // Marble texture
+//#define TEXTURE_TYPE 0              // Cloud texture
+#define TEXTURE_TYPE 1            // Marble texture
 //#define TEXTURE_TYPE 2            // Wood texture
 
 /// Noise Configuration
-#define NOISE_TYPE 0                // Perlin noise
+//#define NOISE_TYPE 0                // Perlin noise
 //#define NOISE_TYPE 1              // Gabor noise
+#define NOISE_TYPE 2                // Marble noise
 
 /// BMP Image Save Configuration
 //#define SAVE_IMAGE 0 	            // Save image off
@@ -63,9 +65,9 @@ using namespace std;
 
 /// Pairing Function Configuration
 //#define PAIRING_FUNCTION 0 	    // Linear
-//#define PAIRING_FUNCTION 1 	    // Cantor
+//#define PAIRING_FUNCTION 1 	        // Cantor
 //#define PAIRING_FUNCTION 2 	    // Szudzik
-#define PAIRING_FUNCTION 3          // Rosenberg-Strong
+#define PAIRING_FUNCTION 3        // Rosenberg-Strong
 
 #if PAIRING_FUNCTION == 0
 	#define TITLE 		            "Linear"
@@ -83,6 +85,7 @@ using namespace std;
 int main() {
 
     Noise NoiseInstance;
+    Analysis AnalysisInstance;
     ImageSDL imageInstance;
 
     if (MULTIPLE_ITERATIONS == 0) {
@@ -93,15 +96,34 @@ int main() {
             title = "Perlin Noise - " + title;
         } else if (NOISE_TYPE == 1) {
             title = "Gabor Noise - " + title;
+        } else if (NOISE_TYPE == 2) {
+            title = "Perlin Noise (with Marble Perturbation) - " + title;
         } else {
             // TODO: Throw error
         }
 
         if (NOISE_TYPE == 0) {
             vector<Noise::Point> noise = NoiseInstance.generatePerlin(PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, TEXTURE_TYPE);
+
             imageInstance.renderImage(noise, SAVE_IMAGE, RENDER_IMAGE, WIDTH, HEIGHT, title);
+            if (ANALYSIS == 1) {
+                AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, TEXTURE_TYPE, WIDTH, HEIGHT, ANALYSIS_AMPLITUDE, ANALYSIS_FOURNIER);
+            }
         } else if (NOISE_TYPE == 1) {
             vector<Noise::Point> noise = NoiseInstance.generateGabor(PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, TEXTURE_TYPE);
+            imageInstance.renderImage(noise, SAVE_IMAGE, RENDER_IMAGE, WIDTH, HEIGHT, title);
+
+            if (ANALYSIS == 1) {
+                AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, TEXTURE_TYPE, WIDTH, HEIGHT, ANALYSIS_AMPLITUDE, ANALYSIS_FOURNIER);
+            }
+        } else if (NOISE_TYPE == 2) {
+            vector<Noise::Point> noise = NoiseInstance.generateMarble(PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, TEXTURE_TYPE);
+            imageInstance.renderImage(noise, SAVE_IMAGE, RENDER_IMAGE, WIDTH, HEIGHT, title);
+
+            if (ANALYSIS == 1) {
+                AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, TEXTURE_TYPE, WIDTH, HEIGHT,
+                                             ANALYSIS_AMPLITUDE, ANALYSIS_FOURNIER);
+            }
         } else {
             // TODO: Handle error
         }
@@ -111,6 +133,7 @@ int main() {
         string title = xstr(TITLE);
         if (NOISE_TYPE == 0) {
             title = "Perlin Noise - " + title;
+
         } else if (NOISE_TYPE == 1) {
             title = "Gabor Noise - " + title;
         } else {
@@ -120,8 +143,18 @@ int main() {
         for (int i = 0; i < NUMBER_OF_ITERATIONS; i++) {
             if (NOISE_TYPE == 0) {
                 vector<Noise::Point> noise = NoiseInstance.generatePerlin(PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, TEXTURE_TYPE);
+                imageInstance.renderImage(noise, SAVE_IMAGE, 0, WIDTH, HEIGHT, title);
+
+                if (ANALYSIS == 1) {
+                    AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, TEXTURE_TYPE, WIDTH, HEIGHT, ANALYSIS_AMPLITUDE, ANALYSIS_FOURNIER);
+                }
             } else if (NOISE_TYPE == 1) {
-                vector<Noise::Point> noise = NoiseInstance.generateGabor(PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, TEXTURE_TYPE);
+                vector<Noise::Point> noise = NoiseInstance.generatePerlin(PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, TEXTURE_TYPE);
+                imageInstance.renderImage(noise, SAVE_IMAGE, 0, WIDTH, HEIGHT, title);
+
+                if (ANALYSIS == 1) {
+                    AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, TEXTURE_TYPE, WIDTH, HEIGHT, ANALYSIS_AMPLITUDE, ANALYSIS_FOURNIER);
+                }
             } else {
                 // TODO: Handle error
             }

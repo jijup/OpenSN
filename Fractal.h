@@ -9,10 +9,13 @@
 #define _FRACTAL_H_
 
 #include "Perlin.h"
+//#include "Gabor.h"
+#include "Marble.h"
 
 class Fractal {
 public:
-	Fractal();
+    Fractal();
+	Fractal(int noiseType);
 	~Fractal();
 
 	// Given (X, Y, Z), 3D coordinates, returns a noise value in the range [-1, 1]
@@ -31,8 +34,12 @@ public:
 	void setInitFrequency(float f);
 	void setInitAmplitude(float f);
 
+	int noiseType;
+
 private:
 	Perlin *perlinSource;
+	//Gabor *gaborSource;
+	Marble *marbleSource;
 
 	int octaves; // Number of octaves (default is 8).
 	float lacunarity; // Frequency for each octave (default is 2.0).
