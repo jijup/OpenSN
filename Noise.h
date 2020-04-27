@@ -29,13 +29,13 @@ public:
     };
     
     // Generates Perlin noise
-    std::vector<Noise::Point> generatePerlin(int pairingFunction, int noiseType, int width, int height, int textureType);
+    std::vector<Noise::Point> generatePerlin(int pairingFunction, int noiseType, int width, int height);
     
     // Generates Gabor noise
-    std::vector<Noise::Point> generateGabor(int pairingFunction, int noiseType, int width, int height, int textureType);
+    std::vector<Noise::Point> generateGabor(int pairingFunction, int noiseType, int width, int height);
 
     // Generates Marble noise
-    std::vector<Noise::Point> generateMarble(int pairingFunction, int noiseType, int width, int height, int textureType);
+    std::vector<Noise::Point> generateMarble(int pairingFunction, int noiseType, int width, int height);
 };
 
 #endif

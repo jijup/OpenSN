@@ -1,5 +1,5 @@
 /*
- * Texture.h
+ * Mesh.h
  * Authors: Sheldon Taylor, Jiju Poovvancheri
  *
  * Implementations for various texture perturbations.

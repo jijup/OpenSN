@@ -10,7 +10,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-//#include <SDL2/SDL.h>    // Makefile
 
 #ifndef _IMAGESDL_H_
 #define _IMAGESDL_H_

@@ -14,6 +14,8 @@
 #include "Point.h"
 #include "Analysis.h"
 #include "ImageSDL.h"
+#include "Mesh.h"
+#include "Texture.h"
 
 using namespace std;
 
@@ -27,12 +29,12 @@ using namespace std;
 #define str(s) #s
 
 /// Analysis Mode Configuration
-//#define ANALYSIS 0		        // Analysis mode off
-#define ANALYSIS 1		            // Analysis mode on
+#define ANALYSIS 0		            // Analysis mode off
+//#define ANALYSIS 1		        // Analysis mode on
 
 /// TODO: ADD ANALYSIS_AMPLITUDE
-//#define ANALYSIS_AMPLITUDE 0        // Amplitude analysis off
-#define ANALYSIS_AMPLITUDE 1      // Amplitude analysis on
+//#define ANALYSIS_AMPLITUDE 0      // Amplitude analysis off
+#define ANALYSIS_AMPLITUDE 1        // Amplitude analysis on
 
 /// TODO: ADD ANALYSIS_FOURNIER
 #define ANALYSIS_FOURNIER 0         // Fournier analysis off
@@ -43,25 +45,22 @@ using namespace std;
 //#define MULTIPLE_ITERATIONS 1     // Multiple iterations
 #define NUMBER_OF_ITERATIONS 10     // Number of iterations if multiple is enabled
 
-/// Texture Configuration
-//#define TEXTURE_TYPE 0              // Cloud texture
-#define TEXTURE_TYPE 1            // Marble texture
-//#define TEXTURE_TYPE 2            // Wood texture
-
 /// Noise Configuration
 //#define NOISE_TYPE 0                // Perlin noise
 //#define NOISE_TYPE 1              // Gabor noise
-#define NOISE_TYPE 2                // Marble noise
+#define NOISE_TYPE 2              // Marble noise
 
-/// BMP Image Save Configuration
-//#define SAVE_IMAGE 0 	            // Save image off
-#define SAVE_IMAGE 1		        // Save image on
+/// BMP Noise Image Save Configuration
+//#define SAVE_NOISE_IMAGE_BMP 0    // Save noise image as BMP off
+#define SAVE_NOISE_IMAGE_BMP 1		// Save noise image as BMP on
 
-/// Image Rendering Configuration
-//#define RENDER_IMAGE 0 	        // Render image off
-#define RENDER_IMAGE 1		        // Render image on
+/// Noise Image Rendering Configuration
+#define RENDER_NOISE_IMAGE 0 	    // Render noise image off
+//#define RENDER_NOISE_IMAGE 1	    // Render noise image on
 
-
+/// Application Configuration
+#define APPLICATION_TYPE 0          // Apply texture to vase (or other object)
+//#define APPLICATION_TYPE 1        // Procedural landscape model
 
 /// Pairing Function Configuration
 //#define PAIRING_FUNCTION 0 	    // Linear
@@ -81,12 +80,15 @@ using namespace std;
 	#define TITLE 		            "Other"
 #endif
 
+
 #undef main
 int main() {
 
     Noise NoiseInstance;
     Analysis AnalysisInstance;
     ImageSDL imageInstance;
+    Mesh meshInstance;
+    Texture textureInstance;
 
     if (MULTIPLE_ITERATIONS == 0) {
 
@@ -103,26 +105,126 @@ int main() {
         }
 
         if (NOISE_TYPE == 0) {
-            vector<Noise::Point> noise = NoiseInstance.generatePerlin(PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, TEXTURE_TYPE);
+            // Generate noise
+            vector<Noise::Point> noise = NoiseInstance.generatePerlin(PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT);
 
-            imageInstance.renderImage(noise, SAVE_IMAGE, RENDER_IMAGE, WIDTH, HEIGHT, title);
+            // Render and/or save noise
+            imageInstance.renderImage(noise, SAVE_NOISE_IMAGE_BMP, RENDER_NOISE_IMAGE, WIDTH, HEIGHT, title);
+
+            // Read in meshes from files
+            std::vector<Mesh::s_Mesh> meshes = meshInstance.generateMesh();
+
+            string pairingFunction = "";
+            if (PAIRING_FUNCTION == 0) {
+                pairingFunction = "Linear";
+            } else if (PAIRING_FUNCTION == 1) {
+                pairingFunction = "Cantor";
+            } else if (PAIRING_FUNCTION == 2) {
+                pairingFunction = "Szudzik";
+            } else if (PAIRING_FUNCTION == 3) {
+                pairingFunction = "RosenbergStrong";
+            } else {
+                // TODO: Throw error
+            }
+
+            string filename = "";
+            if (APPLICATION_TYPE == 0) {
+                filename += "Vase_Perlin_";
+            } else if (APPLICATION_TYPE == 1) {
+                filename += "ProceduralLandscape_Perlin_";
+            } else {
+                // TODO: Throw error
+            }
+
+            filename = filename + pairingFunction;
+
+            // Generate textures from noise and render
+            textureInstance.generateTexture(noise, meshes, filename);
+
+            // Run Analysis if enabled (Amplitude & Fournier)
             if (ANALYSIS == 1) {
-                AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, TEXTURE_TYPE, WIDTH, HEIGHT, ANALYSIS_AMPLITUDE, ANALYSIS_FOURNIER);
+                AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, ANALYSIS_AMPLITUDE, ANALYSIS_FOURNIER);
             }
         } else if (NOISE_TYPE == 1) {
-            vector<Noise::Point> noise = NoiseInstance.generateGabor(PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, TEXTURE_TYPE);
-            imageInstance.renderImage(noise, SAVE_IMAGE, RENDER_IMAGE, WIDTH, HEIGHT, title);
+            vector<Noise::Point> noise = NoiseInstance.generateGabor(PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT);
 
+            // Render and/or save noise
+            imageInstance.renderImage(noise, SAVE_NOISE_IMAGE_BMP, RENDER_NOISE_IMAGE, WIDTH, HEIGHT, title);
+
+            // Read in meshes from files
+            std::vector<Mesh::s_Mesh> meshes = meshInstance.generateMesh();
+
+            string pairingFunction = "";
+            if (PAIRING_FUNCTION == 0) {
+                pairingFunction = "Linear";
+            } else if (PAIRING_FUNCTION == 1) {
+                pairingFunction = "Cantor";
+            } else if (PAIRING_FUNCTION == 2) {
+                pairingFunction = "Szudzik";
+            } else if (PAIRING_FUNCTION == 3) {
+                pairingFunction = "RosenbergStrong";
+            } else {
+                // TODO: Throw error
+            }
+
+            string filename = "";
+            if (APPLICATION_TYPE == 0) {
+                filename += "Vase_Gabor_";
+            } else if (APPLICATION_TYPE == 1) {
+                filename += "ProceduralLandscape_Gabor_";
+            } else {
+                // TODO: Throw error
+            }
+
+            filename = filename + pairingFunction;
+
+            // Generate textures from noise and render
+            textureInstance.generateTexture(noise, meshes, filename);
+
+            // Run Analysis if enabled (Amplitude & Fournier)
             if (ANALYSIS == 1) {
-                AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, TEXTURE_TYPE, WIDTH, HEIGHT, ANALYSIS_AMPLITUDE, ANALYSIS_FOURNIER);
+                AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, ANALYSIS_AMPLITUDE, ANALYSIS_FOURNIER);
             }
         } else if (NOISE_TYPE == 2) {
-            vector<Noise::Point> noise = NoiseInstance.generateMarble(PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, TEXTURE_TYPE);
-            imageInstance.renderImage(noise, SAVE_IMAGE, RENDER_IMAGE, WIDTH, HEIGHT, title);
+            // Generate Noise
+            vector<Noise::Point> noise = NoiseInstance.generateMarble(PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT);
 
+            // Render and/or save noise
+            imageInstance.renderImage(noise, SAVE_NOISE_IMAGE_BMP, RENDER_NOISE_IMAGE, WIDTH, HEIGHT, title);
+
+            // Read in meshes from files
+            std::vector<Mesh::s_Mesh> meshes = meshInstance.generateMesh();
+
+            string pairingFunction = "";
+            if (PAIRING_FUNCTION == 0) {
+                pairingFunction = "Linear";
+            } else if (PAIRING_FUNCTION == 1) {
+                pairingFunction = "Cantor";
+            } else if (PAIRING_FUNCTION == 2) {
+                pairingFunction = "Szudzik";
+            } else if (PAIRING_FUNCTION == 3) {
+                pairingFunction = "RosenbergStrong";
+            } else {
+                // TODO: Throw error
+            }
+
+            string filename = "";
+            if (APPLICATION_TYPE == 0) {
+                filename += "Vase_Marble_";
+            } else if (APPLICATION_TYPE == 1) {
+                filename += "ProceduralLandscape_Marble_";
+            } else {
+                // TODO: Throw error
+            }
+
+            filename = filename + pairingFunction;
+
+            // Generate textures from noise and render
+            textureInstance.generateTexture(noise, meshes, filename);
+
+            // Run Analysis if enabled (Amplitude & Fournier)
             if (ANALYSIS == 1) {
-                AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, TEXTURE_TYPE, WIDTH, HEIGHT,
-                                             ANALYSIS_AMPLITUDE, ANALYSIS_FOURNIER);
+                AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, ANALYSIS_AMPLITUDE, ANALYSIS_FOURNIER);
             }
         } else {
             // TODO: Handle error
@@ -142,18 +244,18 @@ int main() {
 
         for (int i = 0; i < NUMBER_OF_ITERATIONS; i++) {
             if (NOISE_TYPE == 0) {
-                vector<Noise::Point> noise = NoiseInstance.generatePerlin(PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, TEXTURE_TYPE);
-                imageInstance.renderImage(noise, SAVE_IMAGE, 0, WIDTH, HEIGHT, title);
+                vector<Noise::Point> noise = NoiseInstance.generatePerlin(PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT);
+                imageInstance.renderImage(noise, SAVE_NOISE_IMAGE_BMP, 0, WIDTH, HEIGHT, title);
 
                 if (ANALYSIS == 1) {
-                    AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, TEXTURE_TYPE, WIDTH, HEIGHT, ANALYSIS_AMPLITUDE, ANALYSIS_FOURNIER);
+                    AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, ANALYSIS_AMPLITUDE, ANALYSIS_FOURNIER);
                 }
             } else if (NOISE_TYPE == 1) {
-                vector<Noise::Point> noise = NoiseInstance.generatePerlin(PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, TEXTURE_TYPE);
-                imageInstance.renderImage(noise, SAVE_IMAGE, 0, WIDTH, HEIGHT, title);
+                vector<Noise::Point> noise = NoiseInstance.generatePerlin(PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT);
+                imageInstance.renderImage(noise, SAVE_NOISE_IMAGE_BMP, 0, WIDTH, HEIGHT, title);
 
                 if (ANALYSIS == 1) {
-                    AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, TEXTURE_TYPE, WIDTH, HEIGHT, ANALYSIS_AMPLITUDE, ANALYSIS_FOURNIER);
+                    AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, ANALYSIS_AMPLITUDE, ANALYSIS_FOURNIER);
                 }
             } else {
                 // TODO: Handle error

@@ -3,8 +3,28 @@ project(Perlin)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
-find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIRS})
+#set(CMAKE_LIBRARY_PATH "/usr/local/lib")
 
-add_executable(Perlin Driver.cpp Perlin.cpp Marble.cpp Gabor.cpp Fractal.cpp Noise.cpp HashFunctions.cpp Analysis.cpp ImageSDL.cpp)
+# Import utilities
+include(common/config.cmake)
+include(common/Eigen.cmake)
+include(common/OpenGP.cmake)
+include(common/OpenGL.cmake)
+include(common/GLEW.cmake)
+include(common/GLFW.cmake)
+
+# Import SDL (imag e viewing & saving)
+include(common/SDL2.cmake)
+
+# Import Assimp for asset importation
+include(common/Assimp.cmake)
+
+add_executable(Perlin Driver.cpp Perlin.cpp Marble.cpp Gabor.cpp Fractal.cpp Noise.cpp HashFunctions.cpp Analysis.cpp ImageSDL.cpp Mesh.cpp Texture.cpp Shader.h external/stb_image/stb_image.cpp external/stb_image/stb_image_write.cpp)
 target_link_libraries(Perlin ${SDL2_LIBRARIES} m)
+target_link_libraries(Perlin ${ASSIMP_LIBRARIES} m)
+target_link_libraries(Perlin ${EIGEN3_LIBRARIES} m)
+target_link_libraries(Perlin ${OPENGP_LIBRARIES} m)
+target_link_libraries(Perlin ${OPENGL_LIBRARIES} m)
+target_link_libraries(Perlin ${GLEW_LIBRARIES} m)
+target_link_libraries(Perlin ${GLFW3_LIBRARIES} m)
+

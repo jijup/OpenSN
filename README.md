@@ -1,8 +1,6 @@
 # ProceduralNoise
 
-Perlin noise generation and implementation using various hashing techniques.
-
-SDL2 is required to compile and run for visual output (see https://www.libsdl.org/download-2.0.php).
+Noise generation, implementation and application using various hashing techniques.
 
 ### Pairing Function Implementations:
 
@@ -34,17 +32,24 @@ There are various modes that can be enabled/disabled in the `Driver.cpp` file.
 
   1. Analysis Mode 
       - Outputs `<AnalysisType>Analysis.csv` of which is used to analyze results of the various functions.
-      - Can enable amplitude and Fournier (in progress) analysis.
-  2. Save Image Mode
+      - Can enable amplitude and Fournier analysis (in progress).
+  2. Save Noise Image Mode
       - Saves an image to .bmp.
       - Issue with .bmp rendering on Mac OS. 
-          - Open with Photoshop/GIMP on and resave to resolve on Mac OS. 
+          - Open with Photoshop/GIMP on and re-save to resolve on Mac OS. 
           - Viewable without issue on Windows.
-  3. Render Image Mode
+  3. Render Noise Image Mode
       - Renders image via SDL.
-  4. Multiple Iteration Mode (in progress)
-      - Performs multiple iterations for greater analysis datasets.
-      - NOTE: This cannot be used in conjunction with the 'Render Image Mode'.
-
-
-
+  4. Application type
+      - Renders and saves generated noise in the following applications
+          - Texturing vase (and other OBJ files)
+          - Procedural landscape (in progress)
+          
+### Library Requirements:
+  1. SDL2 (soon to be removed)
+  2. ASSIMP
+  3. EIGEN3
+  4. OPENGP
+  5. OPENGL
+  6. GLEW
+  7. GLFW3 

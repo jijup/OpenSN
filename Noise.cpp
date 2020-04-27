@@ -19,14 +19,13 @@ Noise::~Noise() {}
  *      noiseType: type of noise to be used
  *      width: number of x-axis pixels
  *      height: number of y-axis pixels
- *      textureType: type of texture to implement
  *
  * Returns:
  *      vector: structs including Perlin noise values and coordinates.
  */
-std::vector<Noise::Point> Noise::generatePerlin(int pairingFunction, int noiseType, int width, int height, int textureType) {
+std::vector<Noise::Point> Noise::generatePerlin(int pairingFunction, int noiseType, int width, int height) {
 
-    std::cout << "Starting Perlin noise generation." << std::endl;
+    printf("\nStarting Perlin noise generation.\n");
 
     HashFunctions HashInstance;
     Fractal *noiseGenerator = new Fractal(noiseType);
@@ -221,7 +220,7 @@ std::vector<Noise::Point> Noise::generatePerlin(int pairingFunction, int noiseTy
         // TODO: Throw error
     }
 
-    std::cout << "Completed Perlin noise generation." << std::endl;
+    printf("\nSuccessfully generated Perlin noise.\n");
     return points;
 }
 
@@ -233,25 +232,36 @@ std::vector<Noise::Point> Noise::generatePerlin(int pairingFunction, int noiseTy
  *      noiseType: type of noise to be used
  *      width: number of x-axis pixels
  *      height: number of y-axis pixels
- *      textureType: type of texture to implement
  *
  * Returns:
  *      vector: structs including Gabor noise values and coordinates.
  */
-std::vector<Noise::Point> Noise::generateGabor(int pairingFunction, int noiseType, int width, int height, int textureType) {
+std::vector<Noise::Point> Noise::generateGabor(int pairingFunction, int noiseType, int width, int height) {
 
-    std::cout << "Starting Gabor noise generation." << std::endl;
+    printf("\nStarting Gabor noise generation.\n");
 
     // TODO: Implement Gabor noise
     std::vector<Noise::Point> points;
 
-    std::cout << "Completed Gabor noise generation." << std::endl;
+    printf("\nSuccessfully generated Gabor noise.\n");
     return points;
 }
 
-std::vector<Noise::Point> Noise::generateMarble(int pairingFunction, int noiseType, int width, int height, int textureType) {
+/*
+ * Generates Marble noise.
+ *
+ * Parameters:
+ *      pairingFunction: pairing function to be used
+ *      noiseType: type of noise to be used
+ *      width: number of x-axis pixels
+ *      height: number of y-axis pixels
+ *
+ * Returns:
+ *      vector: structs including Perlin noise values and coordinates.
+ */
+std::vector<Noise::Point> Noise::generateMarble(int pairingFunction, int noiseType, int width, int height) {
 
-    std::cout << "Starting Marble noise generation." << std::endl;
+    printf("\nStarting marble noise generation.\n");
 
     HashFunctions HashInstance;
     Fractal *noiseGenerator = new Fractal(noiseType);
@@ -446,7 +456,7 @@ std::vector<Noise::Point> Noise::generateMarble(int pairingFunction, int noiseTy
         // TODO: Throw error
     }
 
-    std::cout << "Completed Marble noise generation." << std::endl;
+    printf("Successfully generated marble noise.\n");
     return points;
 }
 

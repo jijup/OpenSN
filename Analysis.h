@@ -18,7 +18,7 @@ public:
     Analysis();
     ~Analysis();
 
-    void runAnalysis(std::vector<Noise::Point> points, int pairingFunction, int noiseType, int textureType, int width, int height, int ampAnalysis, int fournierAnalysis);
+    void runAnalysis(std::vector<Noise::Point> points, int pairingFunction, int noiseType, int width, int height, int ampAnalysis, int fournierAnalysis);
 
 
 };

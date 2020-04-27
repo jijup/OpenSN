@@ -3,6 +3,8 @@
  * Authors: Sheldon Taylor, Jiji Poovvancheri
  *
  * SDL based implementation of saving and rendering images.
+ *
+ * TODO: MOVING AWAY FROM SDL2 TO GLFW - TO BE REFACTORED.
  */
 
 #include "ImageSDL.h"
@@ -89,8 +91,9 @@ void ImageSDL::renderImage(std::vector<Noise::Point> points, int writeBMP, int d
 
     if (writeBMP == 1) {
         // Write to BMP (won't open on MAC OSX)
-        SDL_SaveBMP(image, "../Output/testing.bmp");
-        std::cout << "Image saved as .bmp file." << std::endl;
+        printf("\nAttempting to write noise as BMP.\n");
+        SDL_SaveBMP(image, "../Output/temp/noise_output.bmp");
+        printf("Successfully wrote noise as BMP.\n");
     }
 
     SDL_FreeSurface(image);
