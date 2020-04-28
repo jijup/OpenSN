@@ -21,6 +21,8 @@ void Mesh::readObjIntoMesh() {
     //std::string filename = "../Meshes/AdjustedVase.obj";
     std::string filename = "../Meshes/ModernVase.obj";
 
+    printf("    OBJ file read: %s\n", filename.c_str());
+
     // Load OBJ file
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(filename, aiProcess_Triangulate | aiProcess_GenNormals);
@@ -80,7 +82,9 @@ void Mesh::readObjIntoMesh() {
 std::vector<Mesh::s_Mesh> Mesh::generateMesh() {
 
     // Read object file into Mesh
+    printf("\nStarting mesh generation.\n");
     readObjIntoMesh();
+    printf("Successfully completed mesh generation.\n");
 
     return meshes;
 }

@@ -222,7 +222,7 @@ std::vector<Noise::Point> Noise::generatePerlin(int pairingFunction, int noiseTy
         // TODO: Throw error
     }
 
-    printf("\nSuccessfully generated Perlin noise.\n");
+    printf("Successfully generated Perlin noise.\n");
     return points;
 }
 

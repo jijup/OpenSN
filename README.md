@@ -33,8 +33,13 @@ Noise generation and applications using various hashing techniques.
 There are various modes that can be enabled/disabled in the `Driver.cpp` file. 
 
   1. Analysis Mode 
-      - Outputs `<AnalysisType>Analysis.csv` of which is used to analyze results of the various functions.
-      - Ability to enable/disable amplitude and Fournier analysis (in progress).
+      - Outputs `<Type>Analysis_Pair<#>_Noise<#>_W<#>_H<#>.csv` of which is used to analyze results of the various functions.
+        - Type: Fournier or Analysis
+        - Pair: 0 - Linear, 1 - Cantor, 2 - Szudzik, 3 - Rosenberg Strong
+        - Noise: 0 - Perlin, 1 - Gabor, 2 - Marble
+        - W: Width 
+        - H: Height
+      - Ability to enable/disable amplitude and Fourier analysis.
   2. Save Noise Image Mode
       - Saves an image to .bmp.
   3. Application type

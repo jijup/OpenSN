@@ -24,21 +24,17 @@ using namespace std;
 #define WIDTH 1000       // X Resolution
 #define HEIGHT 1000      // Y Resolution
 
-/// Stringification helper
-#define xstr(s) str(s)
-#define str(s) #s
-
 /// Analysis Mode Configuration
-#define ANALYSIS 0		            // Analysis mode off
-//#define ANALYSIS 1		        // Analysis mode on
+//#define ANALYSIS 0		        // Analysis mode off
+#define ANALYSIS 1		            // Analysis mode on
 
-/// TODO: ADD ANALYSIS_AMPLITUDE
-//#define ANALYSIS_AMPLITUDE 0      // Amplitude analysis off
-#define ANALYSIS_AMPLITUDE 1        // Amplitude analysis on
+/// Amplitude Analysis Mode Configuration
+#define ANALYSIS_AMPLITUDE 0        // Amplitude analysis off
+//#define ANALYSIS_AMPLITUDE 1      // Amplitude analysis on
 
-/// TODO: ADD ANALYSIS_FOURNIER
-#define ANALYSIS_FOURNIER 0         // Fournier analysis off
-//#define ANALYSIS_FOURNIER 1       // Fournier analysis on
+/// Fourier Analysis Mode Configuration
+//#define ANALYSIS_FOURIER 0       // Fourier analysis off
+#define ANALYSIS_FOURIER 1         // Fourier analysis on
 
 /// Iterative Configurations
 #define MULTIPLE_ITERATIONS 0       // Single iteration
@@ -46,9 +42,9 @@ using namespace std;
 #define NUMBER_OF_ITERATIONS 10     // Number of iterations if multiple is enabled
 
 /// Noise Configuration
-//#define NOISE_TYPE 0                // Perlin noise
+#define NOISE_TYPE 0                // Perlin noise
 //#define NOISE_TYPE 1              // Gabor noise
-#define NOISE_TYPE 2              // Marble noise
+//#define NOISE_TYPE 2              // Marble noise
 
 /// BMP Noise Image Save Configuration
 //#define SAVE_NOISE_IMAGE_BMP 0    // Save noise image as BMP off
@@ -116,7 +112,7 @@ int main() {
                 // TODO: Throw error
             }
 
-            // Render and/or save noise
+            // Save noise as BMP
             imageInstance.saveBMP(noise, SAVE_NOISE_IMAGE_BMP, WIDTH, HEIGHT, filenameNoise);
 
             // Read in meshes from files
@@ -127,9 +123,9 @@ int main() {
             // Generate textures from noise and render
             textureInstance.generateTexture(noise, meshes, filenameApp);
 
-            // Run Analysis if enabled (Amplitude & Fournier)
+            // Run Analysis if enabled (Amplitude & Fourier)
             if (ANALYSIS == 1) {
-                AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, ANALYSIS_AMPLITUDE, ANALYSIS_FOURNIER);
+                AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, ANALYSIS_AMPLITUDE, ANALYSIS_FOURIER);
             }
         } else if (NOISE_TYPE == 1) {
             vector<Noise::Point> noise = NoiseInstance.generateGabor(PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT);
@@ -145,7 +141,7 @@ int main() {
                 // TODO: Throw error
             }
 
-            // Render and/or save noise
+            // Save noise as BMP
             imageInstance.saveBMP(noise, SAVE_NOISE_IMAGE_BMP, WIDTH, HEIGHT, filenameNoise);
 
             // Read in meshes from files
@@ -156,9 +152,9 @@ int main() {
             // Generate textures from noise and render
             textureInstance.generateTexture(noise, meshes, filenameApp);
 
-            // Run Analysis if enabled (Amplitude & Fournier)
+            // Run Analysis if enabled (Amplitude & Fourier)
             if (ANALYSIS == 1) {
-                AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, ANALYSIS_AMPLITUDE, ANALYSIS_FOURNIER);
+                AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, ANALYSIS_AMPLITUDE, ANALYSIS_FOURIER);
             }
         } else if (NOISE_TYPE == 2) {
             // Generate Noise
@@ -175,7 +171,7 @@ int main() {
                 // TODO: Throw error
             }
 
-            // Render and/or save noise
+            // Save noise as BMP
             imageInstance.saveBMP(noise, SAVE_NOISE_IMAGE_BMP, WIDTH, HEIGHT, filenameNoise);
 
             // Read in meshes from files
@@ -186,9 +182,9 @@ int main() {
             // Generate textures from noise and render
             textureInstance.generateTexture(noise, meshes, filenameApp);
 
-            // Run Analysis if enabled (Amplitude & Fournier)
+            // Run Analysis if enabled (Amplitude & Fourier)
             if (ANALYSIS == 1) {
-                AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, ANALYSIS_AMPLITUDE, ANALYSIS_FOURNIER);
+                AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, ANALYSIS_AMPLITUDE, ANALYSIS_FOURIER);
             }
         } else {
             // TODO: Handle error
@@ -203,14 +199,14 @@ int main() {
                 imageInstance.saveBMP(noise, SAVE_NOISE_IMAGE_BMP, WIDTH, HEIGHT, filenameNoise);
 
                 if (ANALYSIS == 1) {
-                    AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, ANALYSIS_AMPLITUDE, ANALYSIS_FOURNIER);
+                    AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, ANALYSIS_AMPLITUDE, ANALYSIS_FOURIER);
                 }
             } else if (NOISE_TYPE == 1) {
                 vector<Noise::Point> noise = NoiseInstance.generatePerlin(PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT);
                 imageInstance.saveBMP(noise, SAVE_NOISE_IMAGE_BMP, WIDTH, HEIGHT, filenameNoise);
 
                 if (ANALYSIS == 1) {
-                    AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, ANALYSIS_AMPLITUDE, ANALYSIS_FOURNIER);
+                    AnalysisInstance.runAnalysis(noise, PAIRING_FUNCTION, NOISE_TYPE, WIDTH, HEIGHT, ANALYSIS_AMPLITUDE, ANALYSIS_FOURIER);
                 }
             } else {
                 // TODO: Handle error

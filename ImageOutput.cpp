@@ -48,8 +48,9 @@ void ImageOutput::saveBMP(std::vector<Noise::Point> points, int writeBMP, int wi
         printf("\nAttempting to write noise as BMP.\n");
 
         stbi_write_bmp(filename.c_str(), width, height, 1, data);
-
         printf("    BMP written: %s\n", filename.c_str());
+
+        stbi_write_bmp(filenameTemp.c_str(), width, height, 1, data);
         printf("    BMP written: %s\n", filenameTemp.c_str());
         printf("Successfully wrote noise as BMP.\n");
     }

@@ -1,13 +1,11 @@
-# Perlin Noise Analysis
+# Noise Analysis
 
 Analysis performed:
-  1. Amplitude Distribution 	(implemented)
+
+  1. Amplitude Distribution 
       - Running: `R < amplitudeAnalysis.R --no-save`
       - Output: PNG  
-  2. Radial Power Spectrum 	(in progress)
-  3. Power Spectrum Estimate 	(in progress)
+  2. Fourier Analysis
 
 Required that R be installed on your machine (see https://www.r-project.org/).
-
-NOTE: If the Analysis Type is set to run multiple iterations, this will take some time.
 

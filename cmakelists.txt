@@ -13,8 +13,16 @@ include(common/OpenGL.cmake)
 include(common/GLEW.cmake)
 include(common/GLFW.cmake)
 
-# Import Assimp for asset importation
+# Import Assimp
 include(common/Assimp.cmake)
+
+# Import OpenCV
+if(APPLE)
+    set(OpenCV_DIR "/usr/local/Cellar/opencv/4.0.1/lib/cmake/opencv4")
+endif()
+find_package(OpenCV REQUIRED)
+message(STATUS "Found OpenCV: ${OpenCV_LIBRARIES}")
+link_directories(${OpenCV_LIBRARY_DIRS})
 
 add_executable(Noise Driver.cpp Perlin.cpp Marble.cpp Gabor.cpp Fractal.cpp Noise.cpp HashFunctions.cpp Analysis.cpp ImageOutput.cpp Mesh.cpp Texture.cpp Shader.h external/stb_image/stb_image.cpp external/stb_image/stb_image_write.cpp)
 
@@ -24,4 +32,5 @@ target_link_libraries(Noise ${OPENGP_LIBRARIES} m)
 target_link_libraries(Noise ${OPENGL_LIBRARIES} m)
 target_link_libraries(Noise ${GLEW_LIBRARIES} m)
 target_link_libraries(Noise ${GLFW3_LIBRARIES} m)
+target_link_libraries(Noise ${OpenCV_LIBS} m)
 

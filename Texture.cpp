@@ -207,6 +207,8 @@ int Texture::setupBuffers(std::vector<Mesh::s_Mesh> meshes) {
  */
 int Texture::readTexture() {
 
+    printf("\nAttempting to read texture from file.\n");
+
     glGenTextures( 1, &texture );
     glBindTexture( GL_TEXTURE_2D, texture );
 
@@ -222,6 +224,7 @@ int Texture::readTexture() {
     // TODO: ADD FORMAT FROM NOISE VECTOR
     // Create texture and generate mipmaps
     unsigned char* image = stbi_load(filename.c_str(), &texWidth, &texHeight, 0, 4);
+    printf("    BMP file read: %s\n", filename.c_str());
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texWidth, texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
     glGenerateMipmap(GL_TEXTURE_2D);
@@ -229,6 +232,8 @@ int Texture::readTexture() {
     stbi_image_free(image);
 
     glBindTexture(GL_TEXTURE_2D, 0);
+
+    printf("Successfully read texture from file.\n");
 
     return 0;
 }
@@ -260,6 +265,7 @@ int Texture::savePNG(std::string filename, GLFWwindow* window) {
     stbi_flip_vertically_on_write(true);
     stbi_write_png(filename.c_str(), width, height, nrChannels, buffer.data(), stride);
 
+    printf("    PNG written: %s\n", filename.c_str());
     printf("Successfully wrote framebuffer to PNG.\n");
 
     return 0;
@@ -292,6 +298,7 @@ int Texture::saveBMP(std::string filename, GLFWwindow* window) {
     stbi_flip_vertically_on_write(true);
     stbi_write_bmp(filename.c_str(), width, height, nrChannels, buffer.data());
 
+    printf("    BMP written: %s\n", filename.c_str());
     printf("Successfully wrote framebuffer to BMP.\n");
 
     return 0;
