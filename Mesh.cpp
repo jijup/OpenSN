@@ -2,7 +2,7 @@
  * Mesh.cpp
  * Authors: Sheldon Taylor, Jiju Poovvancheri
  *
- * Implementation of mesh generation.
+ * Implementation of meshes generated from OBJ files.
  */
 
 #include "Mesh.h"

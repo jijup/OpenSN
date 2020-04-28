@@ -3,6 +3,8 @@
  * Authors: Sheldon Taylor, Jiju Poovvancheri
  *
  * Implementations for various texture perturbations.
+ *
+ * TODO: SEE LINK FOR POSSIBLE IMPROVEMENT https://thebookofshaders.com/edit.php?log=161128210559
  */
 
 #include "Marble.h"

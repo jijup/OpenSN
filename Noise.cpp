@@ -141,6 +141,8 @@ std::vector<Noise::Point> Noise::generatePerlin(int pairingFunction, int noiseTy
                 points[i].x = x;
                 points[i].y = y;
                 points[i].colour = noise;
+
+                //printf("X[%f] Y[%f] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
             }
         }
     } else if (pairingFunction == 1) {
@@ -377,6 +379,8 @@ std::vector<Noise::Point> Noise::generateMarble(int pairingFunction, int noiseTy
                 points[i].x = x;
                 points[i].y = y;
                 points[i].colour = noise;
+
+                //printf("X[%f] Y[%f] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
             }
         }
     } else if (pairingFunction == 1) {
@@ -400,6 +404,8 @@ std::vector<Noise::Point> Noise::generateMarble(int pairingFunction, int noiseTy
             points[i].x = inv_x;
             points[i].y = inv_y;
             points[i].colour = noise;
+
+            //printf("X[%f] Y[%f] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
         }
     } else if (pairingFunction == 2) {
 
@@ -422,6 +428,8 @@ std::vector<Noise::Point> Noise::generateMarble(int pairingFunction, int noiseTy
             points[i].x = inv_x;
             points[i].y = inv_y;
             points[i].colour = noise;
+
+            //printf("X[%f] Y[%f] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
         }
     } else if (pairingFunction == 3) {
         for (int i = 0; i < (height * width); i++) {
@@ -451,6 +459,8 @@ std::vector<Noise::Point> Noise::generateMarble(int pairingFunction, int noiseTy
             points[i].x = inv_x;
             points[i].y = inv_y;
             points[i].colour = noise;
+
+            //printf("X[%d] Y[%d] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
         }
     } else {
         // TODO: Throw error

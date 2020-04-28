@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(Perlin)
+project(Noise)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
@@ -13,18 +13,15 @@ include(common/OpenGL.cmake)
 include(common/GLEW.cmake)
 include(common/GLFW.cmake)
 
-# Import SDL (imag e viewing & saving)
-include(common/SDL2.cmake)
-
 # Import Assimp for asset importation
 include(common/Assimp.cmake)
 
-add_executable(Perlin Driver.cpp Perlin.cpp Marble.cpp Gabor.cpp Fractal.cpp Noise.cpp HashFunctions.cpp Analysis.cpp ImageSDL.cpp Mesh.cpp Texture.cpp Shader.h external/stb_image/stb_image.cpp external/stb_image/stb_image_write.cpp)
-target_link_libraries(Perlin ${SDL2_LIBRARIES} m)
-target_link_libraries(Perlin ${ASSIMP_LIBRARIES} m)
-target_link_libraries(Perlin ${EIGEN3_LIBRARIES} m)
-target_link_libraries(Perlin ${OPENGP_LIBRARIES} m)
-target_link_libraries(Perlin ${OPENGL_LIBRARIES} m)
-target_link_libraries(Perlin ${GLEW_LIBRARIES} m)
-target_link_libraries(Perlin ${GLFW3_LIBRARIES} m)
+add_executable(Noise Driver.cpp Perlin.cpp Marble.cpp Gabor.cpp Fractal.cpp Noise.cpp HashFunctions.cpp Analysis.cpp ImageOutput.cpp Mesh.cpp Texture.cpp Shader.h external/stb_image/stb_image.cpp external/stb_image/stb_image_write.cpp)
+
+target_link_libraries(Noise ${ASSIMP_LIBRARIES} m)
+target_link_libraries(Noise ${EIGEN3_LIBRARIES} m)
+target_link_libraries(Noise ${OPENGP_LIBRARIES} m)
+target_link_libraries(Noise ${OPENGL_LIBRARIES} m)
+target_link_libraries(Noise ${GLEW_LIBRARIES} m)
+target_link_libraries(Noise ${GLFW3_LIBRARIES} m)
 

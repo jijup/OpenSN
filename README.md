@@ -1,6 +1,6 @@
 # ProceduralNoise
 
-Noise generation, implementation and application using various hashing techniques.
+Noise generation and applications using various hashing techniques.
 
 ### Pairing Function Implementations:
 
@@ -15,9 +15,11 @@ Noise generation, implementation and application using various hashing technique
 
 ### Noise Implementations:
 
-  1. Perlin noise
-  2. Gabor noise (in progress)
-  3. Marble Noise via Perlin Noise 
+  1. Perlin Noise
+  2. Marble Noise
+  3. Gabor Noise (in progress)
+  4. Curl Noise (in progress)
+  5. Worley Noise (in progress)
 
 ### Building & Running:
 
@@ -32,24 +34,18 @@ There are various modes that can be enabled/disabled in the `Driver.cpp` file.
 
   1. Analysis Mode 
       - Outputs `<AnalysisType>Analysis.csv` of which is used to analyze results of the various functions.
-      - Can enable amplitude and Fournier analysis (in progress).
+      - Ability to enable/disable amplitude and Fournier analysis (in progress).
   2. Save Noise Image Mode
       - Saves an image to .bmp.
-      - Issue with .bmp rendering on Mac OS. 
-          - Open with Photoshop/GIMP on and re-save to resolve on Mac OS. 
-          - Viewable without issue on Windows.
-  3. Render Noise Image Mode
-      - Renders image via SDL.
-  4. Application type
+  3. Application type
       - Renders and saves generated noise in the following applications
-          - Texturing vase (and other OBJ files)
+          - Texturing OBJ files
           - Procedural landscape (in progress)
           
 ### Library Requirements:
-  1. SDL2 (soon to be removed)
-  2. ASSIMP
-  3. EIGEN3
-  4. OPENGP
-  5. OPENGL
-  6. GLEW
-  7. GLFW3 
+  1. [Assimp](https://www.assimp.org/)
+  2. [Eigen3](https://eigen.tuxfamily.org/dox/)
+  3. [OpenGP](https://github.com/OpenGP/OpenGP)
+  4. [OpenGL](https://www.opengl.org/)
+  5. [GLEW](http://glew.sourceforge.net/)
+  6. [GLFW3](https://www.glfw.org/)

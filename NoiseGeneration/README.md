@@ -22,6 +22,8 @@ A collection of various noise generation implementations and associated resource
   1. Curl Noise
       - [Implementation of Curl Noise](https://github.com/kbladin/Curl_Noise)
       - [2D Curl Noise Visualizer](https://al-ro.github.io/projects/curl/)
+  2. Cellular/Worley Noise
+      - [Cellular Noise from The Book of Shaders](https://thebookofshaders.com/12/)
 
 #### Software:
   1. [FastNoise](https://github.com/Auburns/FastNoise)
