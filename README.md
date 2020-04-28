@@ -54,3 +54,4 @@ There are various modes that can be enabled/disabled in the `Driver.cpp` file.
   4. [OpenGL](https://www.opengl.org/)
   5. [GLEW](http://glew.sourceforge.net/)
   6. [GLFW3](https://www.glfw.org/)
+  7. [OpenCV](https://opencv.org/)
