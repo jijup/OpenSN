@@ -2,15 +2,10 @@
  * Marble.cpp
  * Authors: Sheldon Taylor, Jiju Poovvancheri
  *
- * Implementations for various texture perturbations.
- *
- * TODO: SEE LINK FOR POSSIBLE IMPROVEMENT https://thebookofshaders.com/edit.php?log=161128210559
+ * Implementation of a marble texture perturbation.
  */
 
 #include "Marble.h"
-#include <cstdlib>
-#include <ctime>
-#include <cmath>
 
 Marble::Marble() {
     perlinSource = new Perlin();
@@ -18,10 +13,9 @@ Marble::Marble() {
 
 Marble::~Marble() {
     delete perlinSource;
-
 }
 
-/**
+/*
  * Marble texture perturbation.
  *
  * Parameters:
@@ -34,20 +28,17 @@ Marble::~Marble() {
  */
 float Marble::noise(float xCoord, float yCoord, float zCoord) {
 
-    float x = xCoord - (int)xCoord;
-    float y = yCoord - (int)yCoord;
-    float z = zCoord - (int)zCoord;
-
     float noiseValue = 0;
     float divisor = noiseValue;
+
+    // Standard values for noise calculation
     float persistence = 0.50;
     float frequency = 1;
     float amplitude = 2;
 
-    // Turbulence iterations
+    // Octave iteration
     int turbulenceIter = 1;
-    for (int i = 0; i < turbulenceIter; i++)
-    {
+    for (int i = 0; i < turbulenceIter; i++) {
         noiseValue += perlinSource->noise(xCoord * frequency, yCoord * frequency, zCoord * frequency) * amplitude;
         divisor += amplitude;
         frequency *= 2.0f;
@@ -55,11 +46,22 @@ float Marble::noise(float xCoord, float yCoord, float zCoord) {
     }
     noiseValue /= divisor;
 
+    // Height and width of image
+    // TODO: Pass as parameter
     float width = 1000;
     float height = 1000;
+
+    /// --- Start: Types of marble formations
+    // 1. Fine Grained Marble (more efficient)
+    //float turbulencePower = 128;
+    //float turbulenceSize = 8;
+
+    // 2. Rough Marble (better quality)
     float turbulencePower = 8;
     float turbulenceSize = 128;
+    /// --- End: Types of marble formation
 
+    // Perturb iterations
     while (turbulenceSize >= 1) {
         noiseValue += perlinSource->noise(xCoord * frequency, yCoord * frequency, zCoord * frequency) * turbulenceSize;
         divisor += amplitude;
@@ -68,14 +70,9 @@ float Marble::noise(float xCoord, float yCoord, float zCoord) {
         turbulenceSize /= 2.0;
     }
     noiseValue /= divisor;
-    noiseValue = fabs(noiseValue);
 
-    float intermediateNoise = xCoord / width + yCoord / height + turbulencePower*noiseValue / 256;
-
-    float newNoise = fabs(sin(intermediateNoise * 3.14159265358979));
-
-    return newNoise;
-
+    float tempNoise = xCoord / width + yCoord / height + turbulencePower*fabs(noiseValue) / 256;
+    return fabs(sin(tempNoise * 3.14159265358979));
 }
 
 

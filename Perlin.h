@@ -1,9 +1,13 @@
-/*
+/**
  * Perlin.h
  * Authors: Sheldon Taylor, Jiju Poovvancheri
  * 
  * A Perlin noise implementation.
  */
+
+#include <cstdlib>
+#include <ctime>
+#include <cmath>
 
 #ifndef _PERLIN_H_
 #define _PERLIN_H_

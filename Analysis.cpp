@@ -1,8 +1,10 @@
-/*
+/**
  * Analysis.cpp
  * Authors: Sheldon Taylor, Jiju Poovvancheri
  *
- * Implementations of various analysis techniques.
+ * Implementations of various analysis techniques. Usage of OpenCV documentation for Fourier analysis. See reference.
+ *
+ * Reference: (https://docs.opencv.org/3.4/d8/d01/tutorial_discrete_fourier_transform.html).
  */
 
 #include "Analysis.h"
@@ -49,21 +51,23 @@ void Analysis::runAnalysis(std::vector<Noise::Point> points, int pairingFunction
 
         printf("\nStarting Fourier analysis.\n");
 
-        // Read in noise file (via BMP)
+        // Read noise file via OpenCV imread (properly formats into cv::Mat object)
         const char* filename = "../Output/temp/noise_output.bmp";
-        cv::Mat I = imread( cv::samples::findFile( filename ), cv::IMREAD_GRAYSCALE);
-        if( I.empty()){
+        cv::Mat I = imread( cv::samples::findFile(filename), cv::IMREAD_GRAYSCALE);
+        if(I.empty()) {
             std::cout << "[Analysis.cpp] Error: reading image from" << filename << std::endl;
         }
 
         // Expand input image to optimal size
         cv::Mat padded;
-        int m = cv::getOptimalDFTSize( I.rows );
-        int n = cv::getOptimalDFTSize( I.cols );
+        int m = cv::getOptimalDFTSize(I.rows);
+        int n = cv::getOptimalDFTSize(I.cols);
 
         // Add zero values on border
         copyMakeBorder(I, padded, 0, m - I.rows, 0, n - I.cols, cv::BORDER_CONSTANT, cv::Scalar::all(0));
-        cv::Mat planes[] = {cv::Mat_<float>(padded), cv::Mat::zeros(padded.size(), CV_32F)};
+        cv::Mat planes[] = {
+                cv::Mat_<float>(padded), cv::Mat::zeros(padded.size(), CV_32F)
+        };
         cv::Mat complexI;
 
         // Add to the expanded another plane with zeros
@@ -140,5 +144,4 @@ void Analysis::runAnalysis(std::vector<Noise::Point> points, int pairingFunction
         printf("    Fourier analysis written: %s\n", title.c_str());
         printf("Successfully completed Fourier analysis.\n");
     }
-
 }

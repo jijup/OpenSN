@@ -1,4 +1,4 @@
-/*
+/**
  * Noise.h
  * Authors: Sheldon Taylor, Jiju Poovvancheri
  *

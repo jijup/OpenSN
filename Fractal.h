@@ -9,7 +9,7 @@
 #define _FRACTAL_H_
 
 #include "Perlin.h"
-//#include "Gabor.h"
+#include "Gabor.h"
 #include "Marble.h"
 
 class Fractal {
@@ -38,7 +38,7 @@ public:
 
 private:
 	Perlin *perlinSource;
-	//Gabor *gaborSource;
+	Gabor *gaborSource;
 	Marble *marbleSource;
 
 	int octaves; // Number of octaves (default is 8).

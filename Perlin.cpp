@@ -5,9 +5,6 @@
  */
 
 #include "Perlin.h"
-#include <cstdlib>
-#include <ctime>
-#include <cmath>
 
 Perlin::Perlin() {
 	srand(time(NULL));
@@ -84,15 +81,16 @@ float Perlin::noise(float xCoord, float yCoord, float zCoord) {
 	float dotX1Y1Z0 = gradientX[gradientIndex] * pointX0 + gradientY[gradientIndex] * pointY1 + gradientZ[gradientIndex] * pointZ1;
 	gradientIndex = permutationTable[(gradientX1 + permutationTable[(gradientY1 + permutationTable[gradientZ1 & 255]) & 255]) & 255];
 	float dotX1Y1Z1 = gradientX[gradientIndex] * pointX1 + gradientY[gradientIndex] * pointY1 + gradientZ[gradientIndex] * pointZ1;
-	
+
+	// Interpolate
 	float s = dotX0Y0Z0 + lerp(pointX0) * (dotX0Y0Z1 - dotX0Y0Z0);
 	float t = dotX0Y1Z0 + lerp(pointX0) * (dotX0Y1Z1 - dotX0Y1Z0);
 	float u = dotX1Y0Z0 + lerp(pointX0) * (dotX1Y0Z1 - dotX1Y0Z0);
 	float v = dotX1Y1Z0 + lerp(pointX0) * (dotX1Y1Z1 - dotX1Y1Z0);
 	float st = s + lerp(pointY0) * (t - s);
 	float uv = u + lerp(pointY0) * (v - u);
-	float result = st + lerp(pointZ0) * (uv - st);
 
+	float result = st + lerp(pointZ0) * (uv - st);
 	return result;
 }
 

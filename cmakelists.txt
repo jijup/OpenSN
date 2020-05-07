@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.15)
-project(Noise)
+project(Perlin)
 
 set(CMAKE_CXX_STANDARD 11)
+
+# Remove "-Wno-deprecated-register" flag raised in Eigen library
+set(CMAKE_CXX_FLAGS "-Wno-deprecated-register")
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
-#set(CMAKE_LIBRARY_PATH "/usr/local/lib")
 
 # Import utilities
 include(common/config.cmake)
@@ -24,13 +26,45 @@ find_package(OpenCV REQUIRED)
 message(STATUS "Found OpenCV: ${OpenCV_LIBRARIES}")
 link_directories(${OpenCV_LIBRARY_DIRS})
 
-add_executable(Noise Driver.cpp Perlin.cpp Marble.cpp Gabor.cpp Fractal.cpp Noise.cpp HashFunctions.cpp Analysis.cpp ImageOutput.cpp Mesh.cpp Texture.cpp Shader.h external/stb_image/stb_image.cpp external/stb_image/stb_image_write.cpp)
+add_executable(Perlin
+        Driver.cpp
+        Perlin.cpp
+        Marble.cpp
+        Gabor.cpp
+        Fractal.cpp
+        Noise.cpp
+        HashFunctions.cpp
+        Analysis.cpp
+        ImageOutput.cpp
+        Mesh.cpp
+        Texture.cpp
+        Camera.cpp
+        Renderer.cpp
+        Shader.h
+        external/stb_image/stb_image.cpp
+        external/stb_image/stb_image_write.cpp
+        external/imgui/imconfig.h
+        external/imgui/imgui.cpp
+        external/imgui/imgui.h
+        external/imgui/imgui_demo.cpp
+        external/imgui/imgui_draw.cpp
+        external/imgui/imgui_impl_glfw.cpp
+        external/imgui/imgui_impl_glfw.h
+        external/imgui/imgui_impl_opengl3.cpp
+        external/imgui/imgui_impl_opengl3.h
+        external/imgui/imgui_internal.h
+        external/imgui/imgui_widgets.cpp
+        external/imgui/imstb_rectpack.h
+        external/imgui/imstb_textedit.h
+        external/imgui/imstb_truetype.h
+        external/imgui/imgui_user.h
+        external/imgui/imgui_user.inl
+        )
 
-target_link_libraries(Noise ${ASSIMP_LIBRARIES} m)
-target_link_libraries(Noise ${EIGEN3_LIBRARIES} m)
-target_link_libraries(Noise ${OPENGP_LIBRARIES} m)
-target_link_libraries(Noise ${OPENGL_LIBRARIES} m)
-target_link_libraries(Noise ${GLEW_LIBRARIES} m)
-target_link_libraries(Noise ${GLFW3_LIBRARIES} m)
-target_link_libraries(Noise ${OpenCV_LIBS} m)
-
+target_link_libraries(Perlin ${ASSIMP_LIBRARIES} m)
+target_link_libraries(Perlin ${EIGEN3_LIBRARIES} m)
+target_link_libraries(Perlin ${OPENGP_LIBRARIES} m)
+target_link_libraries(Perlin ${OPENGL_LIBRARIES} m)
+target_link_libraries(Perlin ${GLEW_LIBRARIES} m)
+target_link_libraries(Perlin ${GLFW3_LIBRARIES} m)
+target_link_libraries(Perlin ${OpenCV_LIBS} m)

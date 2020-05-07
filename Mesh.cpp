@@ -74,6 +74,122 @@ void Mesh::readObjIntoMesh() {
 }
 
 /*
+ * Sets up coordinates for given mesh for use in buffers.
+ *
+ * Returns:
+ *      0 if succesfully completed. TODO: return -1 if failed
+ */
+int Mesh::setupMeshCoordinates() {
+
+    // Read vertices and indices into arrays
+    std::vector<Mesh::Vertex> mVertices = this->meshes[0].vertices;
+    std::vector<unsigned int> mIndices = this->meshes[0].indices;
+
+    //GLfloat vertices[mVertices.size() * 8];
+    for (int i = 0; i < mVertices.size(); ++i) {
+        this->pVertices.push_back(mVertices[i].position.x);
+        this->pVertices.push_back(mVertices[i].position.y);
+        this->pVertices.push_back(mVertices[i].position.z);
+
+        this->pVertices.push_back(mVertices[i].normal.x);
+        this->pVertices.push_back(mVertices[i].normal.y);
+        this->pVertices.push_back(mVertices[i].normal.z);
+
+        this->pVertices.push_back(mVertices[i].uv.x);
+        this->pVertices.push_back(mVertices[i].uv.y);
+    }
+
+    this->numIndices = mIndices.size();
+    this->pIndices = mIndices;
+
+    return 0;
+}
+
+/*
+ * Sets up coordinates for square to use in buffers.
+ *
+ * Returns:
+ *      0 if succesfully completed. TODO: return -1 if failed
+ */
+int Mesh::setupSquareCoordinates() {
+    GLfloat vertices[] = {
+            0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
+            0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
+            -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
+            -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f
+    };
+
+    GLuint indices[] = {
+            0, 1, 3,
+            1, 2, 3
+    };
+
+    this->numIndices = 6;
+    this->pVertices.assign(std::begin(vertices), std::end(vertices));
+    this->pIndices.assign(std::begin(indices), std::end(indices));
+
+    return 0;
+}
+
+/*
+ * Sets up coordinates for a cube to use in buffers.
+ *
+ * Returns:
+ *      0 if succesfully completed. TODO: return -1 if failed
+ */
+int Mesh::setupCubeCoordinates() {
+    GLfloat vertices[] = {
+            -1.0f,-1.0f,-1.0f,      1.0f, 0.0f, 0.0f,       0.000059f, 1.0f-0.000004f,
+            -1.0f,-1.0f, 1.0f,      1.0f, 0.0f, 0.0f,       0.000103f, 1.0f-0.336048f,
+            -1.0f, 1.0f, 1.0f,      1.0f, 0.0f, 0.0f,       0.335973f, 1.0f-0.335903f,
+            1.0f, 1.0f,-1.0f,       1.0f, 0.0f, 0.0f,       1.000023f, 1.0f-0.000013f,
+            -1.0f,-1.0f,-1.0f,      1.0f, 0.0f, 0.0f,       0.667979f, 1.0f-0.335851f,
+            -1.0f, 1.0f,-1.0f,      1.0f, 0.0f, 0.0f,       0.999958f, 1.0f-0.336064f,
+            1.0f,-1.0f, 1.0f,       1.0f, 0.0f, 0.0f,       0.667979f, 1.0f-0.335851f,
+            -1.0f,-1.0f,-1.0f,      1.0f, 0.0f, 0.0f,       0.336024f, 1.0f-0.671877f,
+            1.0f,-1.0f,-1.0f,       1.0f, 0.0f, 0.0f,       0.667969f, 1.0f-0.671889f,
+            1.0f, 1.0f,-1.0f,       1.0f, 0.0f, 0.0f,       1.000023f, 1.0f-0.000013f,
+            1.0f,-1.0f,-1.0f,       1.0f, 0.0f, 0.0f,       0.668104f, 1.0f-0.000013f,
+            -1.0f,-1.0f,-1.0f,      1.0f, 0.0f, 0.0f,       0.667979f, 1.0f-0.335851f,
+            -1.0f,-1.0f,-1.0f,      1.0f, 0.0f, 0.0f,       0.000059f, 1.0f-0.000004f,
+            -1.0f, 1.0f, 1.0f,      1.0f, 0.0f, 0.0f,       0.335973f, 1.0f-0.335903f,
+            -1.0f, 1.0f,-1.0f,      1.0f, 0.0f, 0.0f,       0.336098f, 1.0f-0.000071f,
+            1.0f,-1.0f, 1.0f,       1.0f, 0.0f, 0.0f,       0.667979f, 1.0f-0.335851f,
+            -1.0f,-1.0f, 1.0f,      1.0f, 0.0f, 0.0f,       0.335973f, 1.0f-0.335903f,
+            -1.0f,-1.0f,-1.0f,      1.0f, 0.0f, 0.0f,       0.336024f, 1.0f-0.671877f,
+            -1.0f, 1.0f, 1.0f,      1.0f, 0.0f, 0.0f,       1.000004f, 1.0f-0.671847f,
+            -1.0f,-1.0f, 1.0f,      1.0f, 0.0f, 0.0f,       0.999958f, 1.0f-0.336064f,
+            1.0f,-1.0f, 1.0f,       1.0f, 0.0f, 0.0f,       0.667979f, 1.0f-0.335851f,
+            1.0f, 1.0f, 1.0f,       1.0f, 0.0f, 0.0f,       0.668104f, 1.0f-0.000013f,
+            1.0f,-1.0f,-1.0f,       1.0f, 0.0f, 0.0f,       0.335973f, 1.0f-0.335903f,
+            1.0f, 1.0f,-1.0f,       1.0f, 0.0f, 0.0f,       0.667979f, 1.0f-0.335851f,
+            1.0f,-1.0f,-1.0f,       1.0f, 0.0f, 0.0f,       0.335973f, 1.0f-0.335903f,
+            1.0f, 1.0f, 1.0f,       1.0f, 0.0f, 0.0f,       0.668104f, 1.0f-0.000013f,
+            1.0f,-1.0f, 1.0f,       1.0f, 0.0f, 0.0f,       0.336098f, 1.0f-0.000071f,
+            1.0f, 1.0f, 1.0f,       1.0f, 0.0f, 0.0f,       0.000103f, 1.0f-0.336048f,
+            1.0f, 1.0f,-1.0f,       1.0f, 0.0f, 0.0f,       0.000004f, 1.0f-0.671870f,
+            -1.0f, 1.0f,-1.0f,      1.0f, 0.0f, 0.0f,       0.336024f, 1.0f-0.671877f,
+            1.0f, 1.0f, 1.0f,       1.0f, 0.0f, 0.0f,       0.000103f, 1.0f-0.336048f,
+            -1.0f, 1.0f,-1.0f,      1.0f, 0.0f, 0.0f,       0.336024f, 1.0f-0.671877f,
+            -1.0f, 1.0f, 1.0f,      1.0f, 0.0f, 0.0f,       0.335973f, 1.0f-0.335903f,
+            1.0f, 1.0f, 1.0f,       1.0f, 0.0f, 0.0f,       0.667969f, 1.0f-0.671889f,
+            -1.0f, 1.0f, 1.0f,      1.0f, 0.0f, 0.0f,       1.000004f, 1.0f-0.671847f,
+            1.0f,-1.0f, 1.0f,       1.0f, 0.0f, 0.0f,       0.667979f, 1.0f-0.335851f
+    };
+
+    GLuint indices[36];
+    for (int i = 0; i < 36; ++i) {
+        indices[i] = i;
+    }
+
+    this->numIndices = 36;
+    this->pVertices.assign(std::begin(vertices), std::end(vertices));
+    this->pIndices.assign(std::begin(indices), std::end(indices));
+
+    return 0;
+}
+
+/*
  * Drives mesh generation.
  *
  * Returns:
@@ -83,7 +199,11 @@ std::vector<Mesh::s_Mesh> Mesh::generateMesh() {
 
     // Read object file into Mesh
     printf("\nStarting mesh generation.\n");
+    printf("\nAttempting to read mesh from file.\n");
     readObjIntoMesh();
+    printf("\nSuccessfully read mesh from file.\n");
+    printf("Formatting mesh for rendering.\n");
+    setupMeshCoordinates();
     printf("Successfully completed mesh generation.\n");
 
     return meshes;

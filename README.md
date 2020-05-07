@@ -16,10 +16,29 @@ Noise generation and applications using various hashing techniques.
 ### Noise Implementations:
 
   1. Perlin Noise
-  2. Marble Noise
-  3. Gabor Noise (in progress)
+  2. Gabor Noise
+      - Heavily based on the SIGGRAPH paper [Procedural Noise using Sparse Gabor Convolution](http://graphics.cs.kuleuven.be/publications/LLDD09PNSGC/) and related C++ implementation from Ares Lageo, Sylvain Lefebvre, George Drettakis, Philip Dutre, Katholieke Universiteit Leuven and REVES/INRIA Sophia-Antipolis. 
+  3. Marble Noise
   4. Curl Noise (in progress)
   5. Worley Noise (in progress)
+
+### UI Implementation:
+A user inferface, utilizing [Dear, ImGui](https://github.com/ocornut/imgui), has been implemented. This allows for an enhanced view and increased interaction with the application of which is rendered. 
+
+![UI Image](res/readme/UI.png)
+
+###### UI Features:
+Allow user to dynamically generate noise, load meshes, run analysis, save images and render desired applications from the UI.
+
+  1. Save images from UI 
+      - Application 
+      - Noise (in progress)
+      - Analysis (in progress)
+
+  2. Generate noise (in progress)
+  3. Load meshes (in progress)
+  4. Load textures (in progress)
+  5. Run analysis (in progress)
 
 ### Building & Running:
 

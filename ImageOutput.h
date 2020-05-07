@@ -1,4 +1,4 @@
-/*
+/**
  * ImageOutput.h
  * Authors: Sheldon Taylor, Jiju Poovvancheri
  *
@@ -21,7 +21,7 @@ public:
     ImageOutput();
     ~ImageOutput();
     
-    /// Saves as BMP file
+    // Saves as BMP file
     void saveBMP(std::vector<Noise::Point> points, int writeBMP, int width, int height, std::string file);
 };
 

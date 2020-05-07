@@ -14,6 +14,8 @@
 #include <memory>
 #include <OpenGP/types.h>
 #include <glm/glm/glm.hpp>
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -51,8 +53,22 @@ public:
     // Driver function accessed from outside class
     std::vector<Mesh::s_Mesh> generateMesh();
 
+    // Load square
+    int setupSquareCoordinates();
+
+    // Load cube
+    int setupCubeCoordinates();
+
+    // Setup mesh coordinates for rendering
+    int setupMeshCoordinates();
+
     // Declare mesh vector
     std::vector<Mesh::s_Mesh> meshes;
+
+    // Vertices and indices of mesh
+    std::vector<GLfloat> pVertices;
+    std::vector<GLuint> pIndices;
+    int numIndices;
 };
 
 #endif

@@ -1,4 +1,4 @@
-/*
+/**
  * Fractal.cpp
  * Authors: Sheldon Taylor, Jiju Poovvancheri
  *
@@ -14,6 +14,7 @@ Fractal::Fractal(int noiseType) {
     this -> noiseType = noiseType;
 
     perlinSource = new Perlin();
+    gaborSource = new Gabor();
     marbleSource = new Marble();
 
 	octaves = 8;
@@ -25,7 +26,7 @@ Fractal::Fractal(int noiseType) {
 
 Fractal::~Fractal() {
 	delete perlinSource;
-    //delete gaborSource;
+    delete gaborSource;
     delete marbleSource;
 }
 
@@ -36,21 +37,24 @@ float Fractal::noise(float xCoord, float yCoord, float zCoord) {
 
 	for (int i = 0; i < octaves; i++) {
 
-	    if (noiseType == 0) {
+	    if (noiseType == 0) {           // Perlin
             sum += perlinSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
 
             freq *= lacunarity;
             amp *= persistence;
-        } else if (noiseType == 1) {
-            sum += perlinSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+        } else if (noiseType == 1) {    // Gabor
+            sum += gaborSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
 
-            freq *= lacunarity;
-            amp *= persistence;
-	    } else if (noiseType == 2) {
-            sum += marbleSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+            if (octaves == 1) {
+                break;
+            } else {
+                freq *= lacunarity;
+                amp *= persistence;
+            }
+	    } else if (noiseType == 2) {    // Marble
+            sum = marbleSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
 
-            //freq *= lacunarity;
-            //amp *= persistence;
+            break;
 	    } else {
 	        // TODO: Throw error
 	    }
