@@ -28,17 +28,16 @@ A user inferface, utilizing [Dear, ImGui](https://github.com/ocornut/imgui), has
 ![UI Image](res/readme/UI.png)
 
 ###### UI Features:
-Allow user to dynamically generate noise, load meshes, run analysis, save images and render desired applications from the UI.
+Primarily in progress. The goal is to allow user to dynamically generate noise, load meshes, run analysis, save images and render desired applications from the UI.
 
-  1. Save images from UI 
-      - Application 
-      - Noise (in progress)
-      - Analysis (in progress)
-
-  2. Generate noise (in progress)
-  3. Load meshes (in progress)
-  4. Load textures (in progress)
-  5. Run analysis (in progress)
+  1. Generate noise (in progress)
+  2. Load meshes (in progress)
+  3. Load textures (in progress)
+  4. Run analysis (in progress)
+  5. Save images via UI 
+      - Application Image
+      - Noise Image (in progress)
+      - Analysis Image (in progress)
 
 ### Building & Running:
 
@@ -74,3 +73,6 @@ There are various modes that can be enabled/disabled in the `Driver.cpp` file.
   5. [GLEW](http://glew.sourceforge.net/)
   6. [GLFW3](https://www.glfw.org/)
   7. [OpenCV](https://opencv.org/)
+  8. [OpenGL Mathematics](https://glm.g-truc.net/0.9.9/index.html)
+  9. [ImGui](https://github.com/ocornut/imgui)
+  10. [Single-File Public Domain Libraries](https://github.com/nothings/stb)
