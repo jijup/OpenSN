@@ -21,9 +21,9 @@ using namespace std;
 #define HEIGHT 1000                 // Y Resolution
 
 // Noise Type Configuration
-//#define NOISE_TYPE 0              // Perlin noise
+#define NOISE_TYPE 0                // Perlin noise
 //#define NOISE_TYPE 1              // Gabor noise
-#define NOISE_TYPE 2                // Marble noise
+//#define NOISE_TYPE 2              // Marble noise
 
 // Pairing Function Configuration
 //#define PAIRING_FUNCTION 0 	    // Linear
@@ -44,8 +44,8 @@ using namespace std;
 #define ANALYSIS 1		            // Analysis mode on
 
 // Amplitude Analysis Mode Configuration
-#define ANALYSIS_AMPLITUDE 0        // Amplitude analysis off
-//#define ANALYSIS_AMPLITUDE 1      // Amplitude analysis on
+//#define ANALYSIS_AMPLITUDE 0      // Amplitude analysis off
+#define ANALYSIS_AMPLITUDE 1        // Amplitude analysis on
 
 // Fourier Analysis Mode Configuration
 //#define ANALYSIS_FOURIER 0        // Fourier analysis off

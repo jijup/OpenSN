@@ -10,7 +10,12 @@
 #include <fstream>
 #include <string>
 #include <opencv2/opencv.hpp>
+#include <cmath>
 #include <stb_image/stb_image_write.h>
+
+#include <matplotlib-cpp/matplotlibcpp.h>
+//#include <matplotlibcpp.h>
+namespace plt = matplotlibcpp;
 
 #ifndef _ANALYSIS_H_
 #define _ANALYSIS_H_

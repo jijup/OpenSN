@@ -507,9 +507,9 @@ int Renderer::renderApplication() {
                 ImGui::Begin("Options", &toolActiveFlag, ImGuiWindowFlags_MenuBar);
 
                 // Selected parameters
-                ImGui::Text(this->imguiApplicationType);
-                ImGui::Text(this->imguiNoiseType);
-                ImGui::Text(this->imguiPairingFunction);
+                ImGui::Text("%s", this->imguiApplicationType);
+                ImGui::Text("%s", this->imguiNoiseType);
+                ImGui::Text("%s", this->imguiPairingFunction);
                 ImGui::NewLine();
 
                 // Background colour

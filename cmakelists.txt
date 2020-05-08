@@ -26,6 +26,9 @@ find_package(OpenCV REQUIRED)
 message(STATUS "Found OpenCV: ${OpenCV_LIBRARIES}")
 link_directories(${OpenCV_LIBRARY_DIRS})
 
+# import matplotlib-cpp
+find_package(Python2 COMPONENTS Development NumPy)
+
 add_executable(Perlin
         Driver.cpp
         Perlin.cpp
@@ -68,3 +71,5 @@ target_link_libraries(Perlin ${OPENGL_LIBRARIES} m)
 target_link_libraries(Perlin ${GLEW_LIBRARIES} m)
 target_link_libraries(Perlin ${GLFW3_LIBRARIES} m)
 target_link_libraries(Perlin ${OpenCV_LIBS} m)
+target_include_directories(Perlin PRIVATE ${Python2_INCLUDE_DIRS} ${Python2_NumPy_INCLUDE_DIRS})
+target_link_libraries(Perlin Python2::Python Python2::NumPy)

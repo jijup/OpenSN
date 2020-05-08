@@ -8,7 +8,6 @@
  */
 
 #include "Analysis.h"
-#include <string>
 
 Analysis::Analysis() {}
 
@@ -23,6 +22,24 @@ void Analysis::runAnalysis(std::vector<Noise::Point> points, int pairingFunction
 
         // Create title of output
         std::string title = "../Analysis/Amplitude/AmplitudeAnalysis_Pair" + std::to_string(pairingFunction) + "_Noise" + std::to_string(noiseType)
+                            + "_W" + std::to_string(width) + "_H" + std::to_string(height) + ".bmp";
+
+        std::vector<float> test_data;
+        for (int i = 0; i < points.size(); i++) {
+            test_data.push_back(points[i].colour);
+        }
+
+        plt::figure_size(1000, 1000);
+        plt::hist(test_data, 1000);
+        plt::save(title);
+
+        printf("    Amplitude analysis written: %s\n", title.c_str());
+        printf("Successfully completed amplitude analysis.\n");
+
+        /*
+        // PREVIOUS AMPLITUDE ANALYSIS - SAVE TO CSV
+        // Create title of output
+        std::string title = "../Analysis/Amplitude/AmplitudeAnalysis_Pair" + std::to_string(pairingFunction) + "_Noise" + std::to_string(noiseType)
              + "_W" + std::to_string(width) + "_H" + std::to_string(height) + ".csv";
 
         // Convert title to character array
@@ -31,8 +48,7 @@ void Analysis::runAnalysis(std::vector<Noise::Point> points, int pairingFunction
         strcpy(filename, title.c_str());
         std::ofstream outFile;
 
-        //outFile.open(filename, std::ios::out | std::ios::app);            // Enable if multiple iterations on
-        outFile.open(filename, std::ios::out);                              // Enable if multiple iterations off
+        outFile.open(filename, std::ios::out);
 
         outFile << "GaussianAmplitude\n";
 
@@ -44,6 +60,7 @@ void Analysis::runAnalysis(std::vector<Noise::Point> points, int pairingFunction
         outFile.close();
         printf("    Amplitude analysis written: %s\n", title.c_str());
         printf("Successfully completed amplitude analysis.\n");
+         */
     }
 
     // Fourier analysis
