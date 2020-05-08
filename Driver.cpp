@@ -21,15 +21,18 @@ using namespace std;
 #define HEIGHT 1000                 // Y Resolution
 
 // Noise Type Configuration
-#define NOISE_TYPE 0                // Perlin noise
+//#define NOISE_TYPE 0                // Perlin noise
 //#define NOISE_TYPE 1              // Gabor noise
 //#define NOISE_TYPE 2              // Marble noise
+#define NOISE_TYPE 3              // Worley noise
+//#define NOISE_TYPE 4              // Curl noise
+//#define NOISE_TYPE 5              // Bezier noise TODO: RENAME
 
 // Pairing Function Configuration
 //#define PAIRING_FUNCTION 0 	    // Linear
-#define PAIRING_FUNCTION 1 	        // Cantor
+//#define PAIRING_FUNCTION 1 	        // Cantor
 //#define PAIRING_FUNCTION 2 	    // Szudzik
-//#define PAIRING_FUNCTION 3        // Rosenberg-Strong
+#define PAIRING_FUNCTION 3        // Rosenberg-Strong
 
 // Noise Image Save Configuration
 //#define SAVE_NOISE_IMAGE 0        // Save noise image off

@@ -34,6 +34,8 @@ add_executable(Perlin
         Perlin.cpp
         Marble.cpp
         Gabor.cpp
+        Worley.cpp
+        Curl.cpp
         Fractal.cpp
         Noise.cpp
         HashFunctions.cpp

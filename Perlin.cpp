@@ -14,7 +14,7 @@ Perlin::Perlin() {
 	gradientY = new float[256];
 	gradientZ = new float[256];
 
-	for (int i=0; i<256; ++i) {
+	for (int i = 0; i < 256; ++i) {
 		permutationTable[i] = i;
 
 		gradientX[i] = (float(rand()) / (RAND_MAX/2)) - 1.0f;

@@ -19,8 +19,8 @@ Noise generation and applications using various hashing techniques.
   2. Gabor Noise
       - Heavily based on the SIGGRAPH paper [Procedural Noise using Sparse Gabor Convolution](http://graphics.cs.kuleuven.be/publications/LLDD09PNSGC/) and related C++ implementation from Ares Lageo, Sylvain Lefebvre, George Drettakis, Philip Dutre, Katholieke Universiteit Leuven and REVES/INRIA Sophia-Antipolis. 
   3. Marble Noise
-  4. Curl Noise (in progress)
-  5. Worley Noise (in progress)
+  4. Worley Noise
+  5. Curl Noise (in progress)
 
 ### UI Implementation:
 A user inferface, utilizing [Dear, ImGui](https://github.com/ocornut/imgui), has been implemented. This allows for an enhanced view and increased interaction with the application of which is rendered. 
@@ -54,7 +54,7 @@ There are various modes that can be enabled/disabled in the `Driver.cpp` file.
       - Outputs `<Type>Analysis_Pair<#>_Noise<#>_W<#>_H<#>.csv` of which is used to analyze results of the various functions.
         - Type: Fournier or Analysis
         - Pair: 0 - Linear, 1 - Cantor, 2 - Szudzik, 3 - Rosenberg Strong
-        - Noise: 0 - Perlin, 1 - Gabor, 2 - Marble
+        - Noise: 0 - Perlin, 1 - Gabor, 2 - Marble, 3 - Worley
         - W: Width 
         - H: Height
       - Ability to enable/disable amplitude and Fourier analysis.

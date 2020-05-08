@@ -11,6 +11,8 @@
 #include "Perlin.h"
 #include "Gabor.h"
 #include "Marble.h"
+#include "Worley.h"
+#include "Curl.h"
 
 class Fractal {
 public:
@@ -40,6 +42,8 @@ private:
 	Perlin *perlinSource;
 	Gabor *gaborSource;
 	Marble *marbleSource;
+	Worley *worleySource;
+	Curl *curlSource;
 
 	int octaves; // Number of octaves (default is 8).
 	float lacunarity; // Frequency for each octave (default is 2.0).

@@ -11,51 +11,62 @@ Fractal::Fractal() {}
 
 Fractal::Fractal(int noiseType) {
 
-    this -> noiseType = noiseType;
+    this->noiseType = noiseType;
 
-    perlinSource = new Perlin();
-    gaborSource = new Gabor();
-    marbleSource = new Marble();
+    this->perlinSource = new Perlin();
+    this->gaborSource = new Gabor();
+    this->marbleSource = new Marble();
+    this->worleySource = new Worley();
+    this->curlSource = new Curl();
 
-	octaves = 8;
-	lacunarity = 2.0f;
-	persistence = 0.5f;
-	initFrequency = 2.0f;
-	initAmplitude = 1.0f;
+    this->octaves = 8;
+    this->lacunarity = 2.0f;
+    this->persistence = 0.5f;
+    this->initFrequency = 2.0f;
+    this->initAmplitude = 1.0f;
 }
 
 Fractal::~Fractal() {
-	delete perlinSource;
-    delete gaborSource;
-    delete marbleSource;
+	delete this->perlinSource;
+    delete this->gaborSource;
+    delete this->marbleSource;
 }
 
 float Fractal::noise(float xCoord, float yCoord, float zCoord) {
 	float sum = 0;
-	float freq = initFrequency;
-	float amp = initAmplitude;
+	float freq = this->initFrequency;
+	float amp = this->initAmplitude;
 
-	for (int i = 0; i < octaves; i++) {
+	for (int i = 0; i < this->octaves; i++) {
 
-	    if (noiseType == 0) {           // Perlin
-            sum += perlinSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+	    if (this->noiseType == 0) {           // Perlin
+            sum += this->perlinSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
 
-            freq *= lacunarity;
-            amp *= persistence;
-        } else if (noiseType == 1) {    // Gabor
-            sum += gaborSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+            freq *= this->lacunarity;
+            amp *= this->persistence;
+        } else if (this->noiseType == 1) {    // Gabor
+            sum += this->gaborSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
 
-            if (octaves == 1) {
+            // FIXME: REMOVE?
+            if (this->octaves == 1) {
                 break;
             } else {
-                freq *= lacunarity;
-                amp *= persistence;
+                freq *= this->lacunarity;
+                amp *= this->persistence;
             }
-	    } else if (noiseType == 2) {    // Marble
-            sum = marbleSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+	    } else if (this->noiseType == 2) {    // Marble
+            sum = this->marbleSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
 
             break;
-	    } else {
+	    } else if (this->noiseType == 3) {    // Worley
+            sum = this->worleySource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+
+            break;
+        } else if (this->noiseType == 4) {    // Curl
+            sum = this->curlSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+
+            break;
+        } else {
 	        // TODO: Throw error
 	    }
 	}
@@ -65,23 +76,23 @@ float Fractal::noise(float xCoord, float yCoord, float zCoord) {
 
 void Fractal::setOctaves(int o) {
 	if (o > 0) {
-		octaves = o;
+        this->octaves = o;
 	}
 }
 
 void Fractal::setPersistence(float p) {
-	persistence = p;
+    this->persistence = p;
 }
 
 void Fractal::setLacunarity(float l) {
-	lacunarity = l;
+    this->lacunarity = l;
 }
 
 void Fractal::setInitFrequency(float f) {
-	initFrequency = f;
+    this->initFrequency = f;
 }
 
 void Fractal::setInitAmplitude(float a) {
-	initAmplitude = a;
+    this->initAmplitude = a;
 }
 

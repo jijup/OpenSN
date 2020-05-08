@@ -18,7 +18,7 @@ void Analysis::runAnalysis(std::vector<Noise::Point> points, int pairingFunction
     // Amplitude analysis
     if (ampAnalysis == 1) {
 
-        printf("\nStarting amplitude analysis.\n");
+        printf("Starting amplitude analysis.\n");
 
         // Create title of output
         std::string title = "../Analysis/Amplitude/AmplitudeAnalysis_Pair" + std::to_string(pairingFunction) + "_Noise" + std::to_string(noiseType)
@@ -66,7 +66,7 @@ void Analysis::runAnalysis(std::vector<Noise::Point> points, int pairingFunction
     // Fourier analysis
     if (fourierAnalysis == 1) {
 
-        printf("\nStarting Fourier analysis.\n");
+        printf("Starting Fourier analysis.\n");
 
         // Read noise file via OpenCV imread (properly formats into cv::Mat object)
         const char* filename = "../Output/temp/noise_output.bmp";

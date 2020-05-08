@@ -198,13 +198,13 @@ int Mesh::setupCubeCoordinates() {
 std::vector<Mesh::s_Mesh> Mesh::generateMesh() {
 
     // Read object file into Mesh
-    printf("\nStarting mesh generation.\n");
+    printf("\nStarting mesh generation.");
     printf("\nAttempting to read mesh from file.\n");
     readObjIntoMesh();
-    printf("\nSuccessfully read mesh from file.\n");
-    printf("Formatting mesh for rendering.\n");
+    printf("Successfully read mesh from file.");
+    printf("\nFormatting mesh for rendering.");
     setupMeshCoordinates();
-    printf("Successfully completed mesh generation.\n");
+    printf("\nSuccessfully completed mesh generation.\n");
 
     return meshes;
 }

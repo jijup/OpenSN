@@ -60,7 +60,7 @@ int Texture::readTexture() {
 int Texture::generateTexture() {
 
     // Read texture from file
-    printf("Start texture generation.\n");
+    printf("\nStart texture generation.");
     Texture::readTexture();
     printf("Successfully completed texture generation.\n");
 

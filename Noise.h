@@ -36,6 +36,12 @@ public:
 
     // Generates Marble noise
     std::vector<Noise::Point> generateMarble(int pairingFunction, int noiseType, int width, int height);
+
+    // Generates Worley noise
+    std::vector<Noise::Point> generateWorley(int pairingFunction, int noiseType, int width, int height);
+
+    // Generates Curl noise
+    std::vector<Noise::Point> generateCurl(int pairingFunction, int noiseType, int width, int height);
 };
 
 #endif

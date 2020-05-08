@@ -40,7 +40,7 @@ Renderer::Renderer(int width, int height, int noiseType, int pairingFunction, in
                    int applicationType, int analysisFlag, int amplitudeAnalysisFlag, int fourierAnalysisFlag) {
 
     this->translationStart = glm::vec3(0.000f, 0.000f, 0.000f);
-    this->rotationStart = glm::vec3(1.000f, 0.000f, 0.000f);
+    this->rotationStart = glm::vec3(0.000f, 1.000f, 0.000f);
     this->scaleStart = glm::vec3(0.075f, 0.075f, 0.075f);
 
     this->cameraPosition   = glm::vec3(0.0f, 1.0f,  20.0f);
@@ -99,6 +99,10 @@ std::string Renderer::generateFilenames(int filenameType) {
             title = "Gabor_Noise_" + title;
         } else if (this->noiseType == 2) {
             title = "Marble_Noise_" + title;
+        } else if (this->noiseType == 3) {
+            title = "Worley_Noise_" + title;
+        } else if (this->noiseType == 4) {
+            title = "Curl_Noise_" + title;
         } else {
             // TODO: Throw error
         }
@@ -111,7 +115,11 @@ std::string Renderer::generateFilenames(int filenameType) {
             title = "Gabor_" + title;
         } else if (this->noiseType == 2) {
             title = "Marble_" + title;
-        } else {
+        } else if (this->noiseType == 3) {
+            title = "Worley_" + title;
+        }else if (this->noiseType == 4) {
+            title = "Curl_" + title;
+        }else {
             // TODO: Throw error
         }
 
@@ -143,6 +151,10 @@ int Renderer::noiseHelper() {
         this->noise = this->NoiseInstance.generateGabor(this->pairingFunction, this->noiseType, this->width, this->height);
     } else if (this->noiseType == 2) {
         this->noise = this->NoiseInstance.generateMarble(this->pairingFunction, this->noiseType, this->width, this->height);
+    } else if (this->noiseType == 3) {
+        this->noise = this->NoiseInstance.generateWorley(this->pairingFunction, this->noiseType, this->width, this->height);
+    } else if (this->noiseType == 4) {
+        this->noise = this->NoiseInstance.generateCurl(this->pairingFunction, this->noiseType, this->width, this->height);
     } else {
         // TODO: Throw error
     }
@@ -222,6 +234,10 @@ int Renderer::updateImguiText() {
         imguiNoiseType = "Noise Type: Gabor";
     } else if (this->noiseType == 2) {
         imguiNoiseType = "Noise Type: Marble";
+    } else if (this->noiseType == 3) {
+        imguiNoiseType = "Noise Type: Worley";
+    } else if (this->noiseType == 4) {
+        imguiNoiseType = "Noise Type: Curl";
     } else {
         // TODO: Throw error
     }
