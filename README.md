@@ -18,9 +18,11 @@ Noise generation and applications using various hashing techniques.
   1. Perlin Noise
   2. Gabor Noise
       - Heavily based on the SIGGRAPH paper [Procedural Noise using Sparse Gabor Convolution](http://graphics.cs.kuleuven.be/publications/LLDD09PNSGC/) and related C++ implementation from Ares Lageo, Sylvain Lefebvre, George Drettakis, Philip Dutre, Katholieke Universiteit Leuven and REVES/INRIA Sophia-Antipolis. 
-  3. Marble Noise
+  3. Perlin Noise with Marble Perturbation
   4. Worley Noise
   5. Curl Noise (in progress)
+  6. Perlin Noise with Splatter Perturbation
+  7. Perlin Noise with Wood Perturbation
 
 ### UI Implementation:
 A user inferface, utilizing [Dear, ImGui](https://github.com/ocornut/imgui), has been implemented. This allows for an enhanced view and increased interaction with the application of which is rendered. 

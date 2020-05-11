@@ -36,6 +36,8 @@ add_executable(Perlin
         Gabor.cpp
         Worley.cpp
         Curl.cpp
+        Splatter.cpp
+        Wood.cpp
         Fractal.cpp
         Noise.cpp
         HashFunctions.cpp

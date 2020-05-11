@@ -12,7 +12,6 @@ Worley::Worley() {
 
     this->maxCells = 100;
     this->numCells = rand() % this->maxCells;
-    printf("    %d cells being generated.\n", this->numCells);
     this->cellPoints  = new glm::vec2[this->numCells];
 
     for (int i = 0; i < this->numCells; i++) {
@@ -56,9 +55,10 @@ float Worley::distance(glm::vec2 fromPoint, glm::vec2 toPoint) {
  *      float: Worley noise value
  */
 float Worley::noise(float sample_x, float sample_y, float sample_z) {
+    printf("    %d cells being generated.\n", this->numCells);
+
     glm::vec2 st = glm::vec2(sample_x, sample_y);
     float minimumDistance = this->maxDistance;
-    float result;
 
     for (int i = 0; i < this->numCells; i++) {
         float tempDistance = distance(st, cellPoints[i]);
@@ -66,10 +66,11 @@ float Worley::noise(float sample_x, float sample_y, float sample_z) {
         minimumDistance = minimum(tempDistance, minimumDistance);
     }
 
-    return sqrt(minimumDistance);
-
-    // Original function (square taken to shift amplitude to a mean of 0.5)
+    // Dark cellular appearance (amplitude distribution peaks at 0.25)
     //return minimumDistance;
+
+    // Light cellular appearance (amplitude distribution peaks at 0.50)
+    return sqrt(minimumDistance);
 }
 
 

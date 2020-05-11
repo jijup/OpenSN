@@ -18,6 +18,8 @@ Fractal::Fractal(int noiseType) {
     this->marbleSource = new Marble();
     this->worleySource = new Worley();
     this->curlSource = new Curl();
+    this->valueSplatterSource = new Splatter();
+    this->valueWoodSource = new Wood();
 
     this->octaves = 8;
     this->lacunarity = 2.0f;
@@ -30,6 +32,10 @@ Fractal::~Fractal() {
 	delete this->perlinSource;
     delete this->gaborSource;
     delete this->marbleSource;
+    delete this->worleySource;
+    delete this->curlSource;
+    delete this->valueSplatterSource;
+    delete this->valueWoodSource;
 }
 
 float Fractal::noise(float xCoord, float yCoord, float zCoord) {
@@ -47,13 +53,7 @@ float Fractal::noise(float xCoord, float yCoord, float zCoord) {
         } else if (this->noiseType == 1) {    // Gabor
             sum += this->gaborSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
 
-            // FIXME: REMOVE?
-            if (this->octaves == 1) {
-                break;
-            } else {
-                freq *= this->lacunarity;
-                amp *= this->persistence;
-            }
+            break;
 	    } else if (this->noiseType == 2) {    // Marble
             sum = this->marbleSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
 
@@ -64,6 +64,14 @@ float Fractal::noise(float xCoord, float yCoord, float zCoord) {
             break;
         } else if (this->noiseType == 4) {    // Curl
             sum = this->curlSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+
+            break;
+        } else if (this->noiseType == 5) {    // Value (splatter)
+            sum = this->valueSplatterSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+
+            break;
+        } else if (this->noiseType == 6) {    // Value (wood)
+            sum = this->valueWoodSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
 
             break;
         } else {

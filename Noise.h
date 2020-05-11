@@ -42,6 +42,12 @@ public:
 
     // Generates Curl noise
     std::vector<Noise::Point> generateCurl(int pairingFunction, int noiseType, int width, int height);
+
+    // Generate value noise (splatter)
+    std::vector<Noise::Point> generateSplatter(int pairingFunction, int noiseType, int width, int height);
+
+    // Generate value noise (wood)
+    std::vector<Noise::Point> generateWood(int pairingFunction, int noiseType, int width, int height);
 };
 
 #endif

@@ -13,6 +13,8 @@
 #include "Marble.h"
 #include "Worley.h"
 #include "Curl.h"
+#include "Splatter.h"
+#include "Wood.h"
 
 class Fractal {
 public:
@@ -44,6 +46,8 @@ private:
 	Marble *marbleSource;
 	Worley *worleySource;
 	Curl *curlSource;
+	Splatter *valueSplatterSource;
+	Wood *valueWoodSource;
 
 	int octaves; // Number of octaves (default is 8).
 	float lacunarity; // Frequency for each octave (default is 2.0).

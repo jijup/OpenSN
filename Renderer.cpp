@@ -98,11 +98,15 @@ std::string Renderer::generateFilenames(int filenameType) {
         } else if (this->noiseType == 1) {
             title = "Gabor_Noise_" + title;
         } else if (this->noiseType == 2) {
-            title = "Marble_Noise_" + title;
+            title = "Perlin_Noise_Marble" + title;
         } else if (this->noiseType == 3) {
             title = "Worley_Noise_" + title;
         } else if (this->noiseType == 4) {
             title = "Curl_Noise_" + title;
+        } else if (this->noiseType == 5) {
+            title = "Perlin_Noise_Splatter_" + title;
+        } else if (this->noiseType == 6) {
+            title = "Perlin_Noise_Wood_" + title;
         } else {
             // TODO: Throw error
         }
@@ -114,12 +118,16 @@ std::string Renderer::generateFilenames(int filenameType) {
         } else if (this->noiseType == 1) {
             title = "Gabor_" + title;
         } else if (this->noiseType == 2) {
-            title = "Marble_" + title;
+            title = "Perlin_Marble" + title;
         } else if (this->noiseType == 3) {
             title = "Worley_" + title;
-        }else if (this->noiseType == 4) {
+        } else if (this->noiseType == 4) {
             title = "Curl_" + title;
-        }else {
+        } else if (this->noiseType == 5) {
+            title = "Perlin_Splatter_" + title;
+        } else if (this->noiseType == 6) {
+            title = "Perlin_Wood_" + title;
+        } else {
             // TODO: Throw error
         }
 
@@ -155,6 +163,12 @@ int Renderer::noiseHelper() {
         this->noise = this->NoiseInstance.generateWorley(this->pairingFunction, this->noiseType, this->width, this->height);
     } else if (this->noiseType == 4) {
         this->noise = this->NoiseInstance.generateCurl(this->pairingFunction, this->noiseType, this->width, this->height);
+    } else if (this->noiseType == 5) {
+        this->noise = this->NoiseInstance.generateSplatter(this->pairingFunction, this->noiseType, this->width,
+                                                           this->height);
+    } else if (this->noiseType == 6) {
+        this->noise = this->NoiseInstance.generateWood(this->pairingFunction, this->noiseType, this->width,
+                                                       this->height);
     } else {
         // TODO: Throw error
     }
@@ -233,11 +247,15 @@ int Renderer::updateImguiText() {
     } else if (this->noiseType == 1) {
         imguiNoiseType = "Noise Type: Gabor";
     } else if (this->noiseType == 2) {
-        imguiNoiseType = "Noise Type: Marble";
+        imguiNoiseType = "Noise Type: Perlin (marble)";
     } else if (this->noiseType == 3) {
         imguiNoiseType = "Noise Type: Worley";
     } else if (this->noiseType == 4) {
         imguiNoiseType = "Noise Type: Curl";
+    } else if (this->noiseType == 5) {
+        imguiNoiseType = "Noise Type: Perlin (splatter)";
+    } else if (this->noiseType == 6) {
+        imguiNoiseType = "Noise Type: Perlin (wood)";
     } else {
         // TODO: Throw error
     }
