@@ -10,8 +10,8 @@
 Worley::Worley() {
     srand(time(NULL));
 
-    this->maxCells = 100;
-    this->numCells = rand() % this->maxCells;
+    this->maxCells = 90;
+    this->numCells = 10 + rand() % this->maxCells;
     this->cellPoints  = new glm::vec2[this->numCells];
 
     for (int i = 0; i < this->numCells; i++) {
@@ -49,31 +49,81 @@ float Worley::distance(glm::vec2 fromPoint, glm::vec2 toPoint) {
 }
 
 /*
+ * Calculates the distance between two 2-dimensional vectors.
+ *
+ * Returns:
+ *      float: distance between two vectors
+ */
+float Worley::manhattanDistance(glm::vec2 fromPoint, glm::vec2 toPoint) {
+    return fabs(fromPoint.x - toPoint.x) + fabs(fromPoint.y - toPoint.y);
+}
+
+/*
+ * Calculates the distance between two 2-dimensional vectors.
+ *
+ * Returns:
+ *      float: distance between two vectors
+ */
+float Worley::chebyshevDistance(glm::vec2 fromPoint, glm::vec2 toPoint) {
+    return fmax(fabs(fromPoint.x - toPoint.x), fabs(fromPoint.y - toPoint.y));
+}
+
+/*
  * Generates a Worley noise value.
  *
  * Returns:
  *      float: Worley noise value
  */
 float Worley::noise(float sample_x, float sample_y, float sample_z) {
-    printf("    %d cells being generated.\n", this->numCells);
 
     glm::vec2 st = glm::vec2(sample_x, sample_y);
-    float minimumDistance = this->maxDistance;
+    glm::vec2 rand = glm::vec2(0.5f + sin(sample_x * sample_y) * 0.5f);
+
+    /// Nth closest point
+    float minDist = this->maxDistance;
+    float secondMinDist = this->maxDistance;
+    float thirdMinDist = this->maxDistance;
 
     for (int i = 0; i < this->numCells; i++) {
-        float tempDistance = distance(st, cellPoints[i]);
 
-        minimumDistance = minimum(tempDistance, minimumDistance);
+        // Get current distance
+        //float currDistance = distance(st, cellPoints[i]);
+        float currDistance = manhattanDistance(st, cellPoints[i]);
+        //float currDistance = chebyshevDistance(st, cellPoints[i]);
+
+        if (currDistance < minDist) {
+            float tempDistance = minDist;
+            minDist = currDistance;
+            thirdMinDist = secondMinDist;
+            secondMinDist = tempDistance;
+        } else if (currDistance < secondMinDist) {
+            thirdMinDist = secondMinDist;
+            secondMinDist = currDistance;
+        } else if (currDistance < thirdMinDist) {
+            thirdMinDist = currDistance;
+        }
     }
 
-    // Dark cellular appearance (amplitude distribution peaks at 0.25)
-    //return minimumDistance;
+    // First closest point
+    return sqrt(minDist);
 
-    // Light cellular appearance (amplitude distribution peaks at 0.50)
-    return sqrt(minimumDistance);
+    // Second closest point
+    //return sqrt(secondMinDist);
+
+    // Second-First closest point
+    //return sqrt(secondMinDist - minDist);
+
+    // Third closest point
+    //return sqrt(thirdMinDist);
+
+    // Average of three closest points
+    //return (sqrt(minDist) + sqrt(secondMinDist) + sqrt(thirdMinDist)) / 3.0f;
+
+    // Testing
+    //printf("\nminDist: %f", glm::smoothstep(0.0f, 1.0f, sqrt(minDist)));
+
+
+    /// Moving Points Worley
+
+
 }
-
-
-
-
-

@@ -6,10 +6,12 @@
  */
 
 #include "Noise.h"
+
 #include <iostream>
 #include <fstream>
 #include <string>
 
+#include <tinycolormap/tinycolormap.hpp>
 #include <stb_image/stb_image.h>
 #include <stb_image/stb_image_write.h>
 

@@ -20,6 +20,9 @@
 
 #include <memory>
 #include <OpenGP/types.h>
+#include <OpenGP/GL/Texture.h>
+#include <OpenGP/GL/GPUMesh.h>
+#include <OpenGP/GL/Shader.h>
 #include <glm/glm/glm.hpp>
 #include <glm/glm/gtc/type_ptr.hpp>
 #include <glm/glm/gtc/matrix_transform.hpp>
@@ -50,8 +53,14 @@ public:
     // Helper function to determine type of noise to create
     int noiseHelper();
 
+    // Generate R32FTexture for landscape generation
+    OpenGP::R32FTexture* generateR32();
+
+    // Generate terrain mesh
+    void generateTerrianMesh();
+
     // Setup OpenGL buffers
-    int setupBuffers();
+    int setupBuffersMesh();
 
     // Set ImGui text rendering variables
     int updateImguiText();
@@ -68,9 +77,9 @@ public:
 private:
 
     ///----- Class instances
-    Noise NoiseInstance;
-    Analysis AnalysisInstance;
-    ImageOutput imageInstance;
+    Noise *NoiseInstance;
+    Analysis *AnalysisInstance;
+    ImageOutput *imageInstance;
     Mesh meshInstance;
     Texture textureInstance;
 
@@ -94,9 +103,12 @@ private:
     ///----- Application variables
     // Type of application (0 - Apply texture to Model | 1 - Procedural landscape generation)
     int applicationType;
+    int numMeshIndices;
 
-    // Meshes genereated
-    std::vector<Mesh::s_Mesh> meshes;
+    OpenGP::R32FTexture *heightTexture;
+    //OpenGP::Shader terrainShader;
+    OpenGP::GPUMesh *terrainMesh;
+
 
     ///----- Analysis variables
     bool analysisFlag;

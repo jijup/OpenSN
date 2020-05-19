@@ -12,7 +12,7 @@
 #include "Gabor.h"
 #include "Marble.h"
 #include "Worley.h"
-#include "Curl.h"
+#include "ExperimentalNoise.h"
 #include "Splatter.h"
 #include "Wood.h"
 
@@ -38,6 +38,16 @@ public:
 	void setInitFrequency(float f);
 	void setInitAmplitude(float f);
 
+    // Sets width and height within Perlin object
+	void setPerlinDimensions(int width, int height);
+
+	// Sets hashing mechanism
+	void setPairingFunction(int pairingFunction);
+    void setPairingFunctionMarble(int pairingFunction);
+    void setPairingFunctionExperimental(int pairingFunction);
+    void setPairingFunctionSplatter(int pairingFunction);
+    void setPairingFunctionWood(int pairingFunction);
+
 	int noiseType;
 
 private:
@@ -45,7 +55,7 @@ private:
 	Gabor *gaborSource;
 	Marble *marbleSource;
 	Worley *worleySource;
-	Curl *curlSource;
+	ExperimentalNoise *curlSource;
 	Splatter *valueSplatterSource;
 	Wood *valueWoodSource;
 

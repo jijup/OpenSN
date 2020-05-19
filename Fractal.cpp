@@ -17,7 +17,7 @@ Fractal::Fractal(int noiseType) {
     this->gaborSource = new Gabor();
     this->marbleSource = new Marble();
     this->worleySource = new Worley();
-    this->curlSource = new Curl();
+    this->curlSource = new ExperimentalNoise();
     this->valueSplatterSource = new Splatter();
     this->valueWoodSource = new Wood();
 
@@ -53,24 +53,37 @@ float Fractal::noise(float xCoord, float yCoord, float zCoord) {
         } else if (this->noiseType == 1) {    // Gabor
             sum += this->gaborSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
 
-            break;
+            freq *= this->lacunarity;
+            amp *= this->persistence;
+            //break;
 	    } else if (this->noiseType == 2) {    // Marble
             sum = this->marbleSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
 
             break;
 	    } else if (this->noiseType == 3) {    // Worley
-            sum = this->worleySource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+            if (xCoord == 0 && yCoord == 0 && i == 0) {
+                printf("    %d cells being generated.\n", this->worleySource->getNumberOfCells());
+            }
 
+            sum += this->worleySource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+            //freq *= this->lacunarity;
+            //amp *= this->persistence;
             break;
-        } else if (this->noiseType == 4) {    // Curl
-            sum = this->curlSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+        } else if (this->noiseType == 4) {    // Experimental Noise
+	        if (xCoord == 0 && yCoord == 0 && i == 0) {
+                printf("    %d Bezier curves being generated.\n", this->curlSource->getNumberOfCurves());
+	        }
 
+            sum += this->curlSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+
+            //freq *= this->lacunarity;
+            //amp *= this->persistence;
             break;
-        } else if (this->noiseType == 5) {    // Value (splatter)
+        } else if (this->noiseType == 5) {    // Perlin (splatter)
             sum = this->valueSplatterSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
 
             break;
-        } else if (this->noiseType == 6) {    // Value (wood)
+        } else if (this->noiseType == 6) {    // Perlin (wood)
             sum = this->valueWoodSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
 
             break;
@@ -80,6 +93,30 @@ float Fractal::noise(float xCoord, float yCoord, float zCoord) {
 	}
 
 	return sum;
+}
+
+void Fractal::setPerlinDimensions(int width, int height) {
+    this->perlinSource->setDimensions(width, height);
+}
+
+void Fractal::setPairingFunction(int pairingFunction) {
+    this->perlinSource->setPairingFunction(pairingFunction);
+}
+
+void Fractal::setPairingFunctionMarble(int pairingFunction) {
+    this->marbleSource->setPairingFunction(pairingFunction);
+}
+
+void Fractal::setPairingFunctionExperimental(int pairingFunction) {
+    this->curlSource->setPairingFunction(pairingFunction);
+}
+
+void Fractal::setPairingFunctionSplatter(int pairingFunction) {
+    this->valueSplatterSource->setPairingFunction(pairingFunction);
+}
+
+void Fractal::setPairingFunctionWood(int pairingFunction) {
+    this->valueWoodSource->setPairingFunction(pairingFunction);
 }
 
 void Fractal::setOctaves(int o) {

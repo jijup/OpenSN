@@ -32,6 +32,13 @@ float Wood::noise(float sample_x, float sample_y, float sample_z) {
     return glm::fract(perlinNoise * noise);
 }
 
+/*
+ * Sets hashing mechanism.
+ */
+void Wood::setPairingFunction(int pairingFunction) {
+    this->perlinSource->setPairingFunction(pairingFunction);
+}
+
 
 
 

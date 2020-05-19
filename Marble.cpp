@@ -75,5 +75,12 @@ float Marble::noise(float xCoord, float yCoord, float zCoord) {
     return fabs(sin(tempNoise * 3.14159265358979));
 }
 
+/*
+ * Sets hashing mechanism.
+ */
+void Marble::setPairingFunction(int pairingFunction) {
+    this->perlinSource->setPairingFunction(pairingFunction);
+}
+
 
 

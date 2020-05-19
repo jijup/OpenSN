@@ -86,6 +86,8 @@ std::string Renderer::generateFilenames(int filenameType) {
         title = "Szudzik";
     } else if (this->pairingFunction  == 3) {
         title = "RosenbergStrong";
+    } else if (this->pairingFunction  == 4) {
+        title = "Original";
     } else {
         // TODO: Throw error
     }
@@ -96,17 +98,17 @@ std::string Renderer::generateFilenames(int filenameType) {
         if (this->noiseType == 0) {
             title = "Perlin_Noise_" + title;
         } else if (this->noiseType == 1) {
-            title = "Gabor_Noise_" + title;
+            title = "Gabor_Noise";
         } else if (this->noiseType == 2) {
-            title = "Perlin_Noise_Marble" + title;
+            title = "Perlin_Marble_Noise_" + title;
         } else if (this->noiseType == 3) {
-            title = "Worley_Noise_" + title;
+            title = "Worley_Noise";
         } else if (this->noiseType == 4) {
-            title = "Curl_Noise_" + title;
+            title = "Testing_New_Noise_" + title;
         } else if (this->noiseType == 5) {
-            title = "Perlin_Noise_Splatter_" + title;
+            title = "Perlin_Splatter_Noise_" + title;
         } else if (this->noiseType == 6) {
-            title = "Perlin_Noise_Wood_" + title;
+            title = "Perlin_Wood_Noise_" + title;
         } else {
             // TODO: Throw error
         }
@@ -116,13 +118,15 @@ std::string Renderer::generateFilenames(int filenameType) {
         if (this->noiseType == 0) {
             title = "Perlin_" + title;
         } else if (this->noiseType == 1) {
-            title = "Gabor_" + title;
+            //title = "Gabor_" + title;
+            title = "Gabor";
         } else if (this->noiseType == 2) {
-            title = "Perlin_Marble" + title;
+            title = "Perlin_Marble_" + title;
         } else if (this->noiseType == 3) {
-            title = "Worley_" + title;
+            //title = "Worley_" + title;
+            title = "Worley";
         } else if (this->noiseType == 4) {
-            title = "Curl_" + title;
+            title = "Testing_New_" + title;
         } else if (this->noiseType == 5) {
             title = "Perlin_Splatter_" + title;
         } else if (this->noiseType == 6) {
@@ -154,21 +158,19 @@ std::string Renderer::generateFilenames(int filenameType) {
  */
 int Renderer::noiseHelper() {
     if (this->noiseType == 0) {
-        this->noise = this->NoiseInstance.generatePerlin(this->pairingFunction, this->noiseType, this->width, this->height);
+        this->noise = this->NoiseInstance->generatePerlin(this->pairingFunction, this->noiseType, this->width, this->height);
     } else if (this->noiseType == 1) {
-        this->noise = this->NoiseInstance.generateGabor(this->pairingFunction, this->noiseType, this->width, this->height);
+        this->noise = this->NoiseInstance->generateGabor(this->pairingFunction, this->noiseType, this->width, this->height);
     } else if (this->noiseType == 2) {
-        this->noise = this->NoiseInstance.generateMarble(this->pairingFunction, this->noiseType, this->width, this->height);
+        this->noise = this->NoiseInstance->generateMarble(this->pairingFunction, this->noiseType, this->width, this->height);
     } else if (this->noiseType == 3) {
-        this->noise = this->NoiseInstance.generateWorley(this->pairingFunction, this->noiseType, this->width, this->height);
+        this->noise = this->NoiseInstance->generateWorley(this->pairingFunction, this->noiseType, this->width, this->height);
     } else if (this->noiseType == 4) {
-        this->noise = this->NoiseInstance.generateCurl(this->pairingFunction, this->noiseType, this->width, this->height);
+        this->noise = this->NoiseInstance->generateExperiental(this->pairingFunction, this->noiseType, this->width, this->height);
     } else if (this->noiseType == 5) {
-        this->noise = this->NoiseInstance.generateSplatter(this->pairingFunction, this->noiseType, this->width,
-                                                           this->height);
+        this->noise = this->NoiseInstance->generateSplatter(this->pairingFunction, this->noiseType, this->width, this->height);
     } else if (this->noiseType == 6) {
-        this->noise = this->NoiseInstance.generateWood(this->pairingFunction, this->noiseType, this->width,
-                                                       this->height);
+        this->noise = this->NoiseInstance->generateWood(this->pairingFunction, this->noiseType, this->width, this->height);
     } else {
         // TODO: Throw error
     }
@@ -177,18 +179,101 @@ int Renderer::noiseHelper() {
 }
 
 /*
- * Sets up buffers depending on given inputs.
+ * Generate R32FTexture for landscape generation.
+ */
+OpenGP::R32FTexture* Renderer::generateR32() {
+    // FIXME: Inlcude hashing functions
+
+    // Convert to array
+    float tempNoise[this->width * this->height];
+    for (int i = 0; i < this->noise.size(); i++) {
+        int noiseIndex = this->noise[i].x + this->noise[i].y * this->height;
+        tempNoise[noiseIndex] = this->noise[i].colour;
+    }
+
+    OpenGP::R32FTexture* tex = new OpenGP::R32FTexture();
+    tex->upload_raw(width, height, tempNoise);
+
+    return tex;
+}
+
+/*
+ * Generates terrain mesh.
+ */
+void Renderer::generateTerrianMesh() {
+    // Generate a flat mesh for the terrain with given dimensions, using triangle strips
+    this->terrainMesh = new OpenGP::GPUMesh();
+
+    // Grid resolution
+    int n_width = this->width;
+    int n_height = this->height;
+
+    // Grid dimensions (centered at (0, 0))
+    float f_width = 1000.0f;
+    float f_height = 1000.0f;
+
+    std::vector<OpenGP::Vec3> points;
+    std::vector<unsigned int> indices;
+    std::vector<OpenGP::Vec2> texCoords;
+
+    // Generate vertex and texture coordinates
+    for (int j = 0; j < n_width; ++j) {
+        for (int i = 0; i < n_height; ++i) {
+
+            // Calculate vertex positions
+            float vertX = -f_width / 2 + j / (float)n_width * f_width;
+            float vertY = -f_height / 2 + i / (float)n_height * f_height;
+            float vertZ = 0.0f;
+            points.push_back(OpenGP::Vec3(vertX, vertY, vertZ));
+
+            // Calculate texture coordinates
+            float texX = i / (float)(n_width - 1);
+            float texY = j / (float)(n_height - 1);
+            texCoords.push_back(OpenGP::Vec2(texX, texY));
+        }
+    }
+
+    // Generate element indices via triangle strips
+    for(int j = 0; j < n_width - 1; ++j) {
+
+        // Push two vertices at the base of each strip
+        float baseX = j * n_width;
+        indices.push_back(baseX);
+
+        float baseY = ((j + 1) * n_width);
+        indices.push_back(baseY);
+
+        for(int i = 1; i < n_height; ++i) {
+
+            // Calculate next two vertices
+            float tempX = i + j * n_width;
+            indices.push_back(tempX);
+
+            float tempY = i + (j + 1) * n_height;
+            indices.push_back(tempY);
+        }
+
+        // A new strip will begin when this index is reached
+        indices.push_back(999999);
+    }
+
+    terrainMesh->set_vbo<OpenGP::Vec3>("vposition", points);
+    terrainMesh->set_triangles(indices);
+    terrainMesh->set_vtexcoord(texCoords);
+}
+
+/*
+ * Sets up buffers for meshes loaded from file.
  *
  * Returns:
  *      0 if succesfully completed. TODO: return -1 if failed
  */
-int Renderer::setupBuffers() {
+int Renderer::setupBuffersMesh() {
+    GLfloat verticesMesh[this->meshInstance.pVertices.size()];
+    GLuint indicesMesh[this->meshInstance.pIndices.size()];
 
-    GLfloat vertices[this->meshInstance.pVertices.size()];
-    std::copy(this->meshInstance.pVertices.begin(), this->meshInstance.pVertices.end(), vertices);
-
-    GLuint indices[this->meshInstance.pIndices.size()];
-    std::copy(this->meshInstance.pIndices.begin(), this->meshInstance.pIndices.end(), indices);
+    std::copy(this->meshInstance.pVertices.begin(), this->meshInstance.pVertices.end(), verticesMesh);
+    std::copy(this->meshInstance.pIndices.begin(), this->meshInstance.pIndices.end(), indicesMesh);
 
     glGenVertexArrays(1, &this->VAO);
     glGenBuffers(1, &this->VBO);
@@ -197,16 +282,17 @@ int Renderer::setupBuffers() {
     glBindVertexArray(this->VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(verticesMesh), verticesMesh, GL_STATIC_DRAW);
+    printf("\nsizeOfVerticesMesh: %lu | sizeOfVerticesMeshNew: %lu \n", sizeof(verticesMesh), this->meshInstance.numIndices * 8 * sizeof(GLfloat));
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesMesh), indicesMesh, GL_STATIC_DRAW);
 
     // Position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *) 0 );
     glEnableVertexAttribArray(0);
 
-    // Color attribute
+    // Color/Normal attribute
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
@@ -236,7 +322,9 @@ int Renderer::updateImguiText() {
     } else if (this->pairingFunction  == 2) {
         imguiPairingFunction = "Pairing Function: Szudzik";
     } else if (this->pairingFunction  == 3) {
-        imguiPairingFunction = "Pairing Function: RosenbergStrong";
+        imguiPairingFunction = "Pairing Function: Rosenberg-Strong";
+    } else if (this->pairingFunction  == 4) {
+        imguiPairingFunction = "Pairing Function: Original Perlin";
     } else {
         // TODO: Throw error
     }
@@ -251,7 +339,7 @@ int Renderer::updateImguiText() {
     } else if (this->noiseType == 3) {
         imguiNoiseType = "Noise Type: Worley";
     } else if (this->noiseType == 4) {
-        imguiNoiseType = "Noise Type: Curl";
+        imguiNoiseType = "Noise Type: Testing New Noise";
     } else if (this->noiseType == 5) {
         imguiNoiseType = "Noise Type: Perlin (splatter)";
     } else if (this->noiseType == 6) {
@@ -264,7 +352,7 @@ int Renderer::updateImguiText() {
     if (this->applicationType == 0) {
         imguiApplicationType = "Application: Vase";
     } else if (this->applicationType == 1) {
-        imguiApplicationType = "Application: ProceduralLandscape";
+        imguiApplicationType = "Application: Procedural Landscape";
     } else {
         // TODO: Throw error
     }
@@ -358,18 +446,18 @@ int Renderer::renderApplication() {
     std::string fileApp = Renderer::generateFilenames(1);
 
     // Save generated noise
-    this->imageInstance.saveBMP(this->noise, this->saveImageFlag, this->width, this->height, fileNoise);
-
-    // Generate mesh
-    this->meshes = this->meshInstance.generateMesh();
+    this->imageInstance->saveBMP(this->noise, this->saveImageFlag, this->width, this->height, fileNoise);
 
     // Run analysis
     if (this->analysisFlag == 1) {
         printf("\nStarting analysis.\n");
-        this->AnalysisInstance.runAnalysis(this->noise, this->pairingFunction, this->noiseType, this->width, this->height, this->amplitudeAnalysisFlag, this->fourierAnalysisFlag);
+        this->AnalysisInstance->runAnalysis(this->noise, this->pairingFunction, this->noiseType, this->width, this->height, this->amplitudeAnalysisFlag, this->fourierAnalysisFlag);
         printf("Successfully completed analysis.\n");
     }
 
+    delete imageInstance;
+    delete AnalysisInstance;
+    delete NoiseInstance;
 
     // GLFW Window Generation
     if (!glfwInit()) {
@@ -424,14 +512,25 @@ int Renderer::renderApplication() {
     // Create and compile shaders
     Shader ourShader("../res/shaders/core.vert", "../res/shaders/core.frag");
 
+    // Generate mesh
+    if (this->applicationType == 0) {               // Vase
+        this->meshInstance.generateMeshFromFile();
+    } else if (this->applicationType == 1) {        // Landscape
+        this->meshInstance.generateMeshFromNoise(this->noise, this->width, this->height);
+    } else {
+        // TODO: throw error
+    }
+
     // Setup buffers
-    Renderer::setupBuffers();
+    Renderer::setupBuffersMesh();
 
     // Generate texture from file
     this->textureInstance.generateTexture();
 
-    //glEnable(GL_SCISSOR_TEST); ///
+    /*
+    //glEnable(GL_SCISSOR_TEST);
     //glScissor(0,0, fbWidth * .75, fbHeight *.75);
+     */
 
     // ImGui initialization
     const char* glsl_version = "#version 330";
@@ -463,7 +562,7 @@ int Renderer::renderApplication() {
         // Activate shader
         ourShader.Use();
 
-        // Activate texture
+        // Activate textures
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, this->textureInstance.texture);
         glUniform1i(glGetUniformLocation(ourShader.Program, "marbleTexture"), 0);
@@ -489,12 +588,14 @@ int Renderer::renderApplication() {
         glm::mat4 transform = projection * view * model;
 
         // Get matrix's uniform location and set matrix
+
         GLint transformLocation = glGetUniformLocation(ourShader.Program, "transform");
         glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform));
 
         // Draw container
         glBindVertexArray(this->VAO);
         glDrawElements(GL_TRIANGLES, this->meshInstance.numIndices, GL_UNSIGNED_INT, 0);
+        //glDrawElements(GL_TRIANGLE_STRIP, this->meshInstance.numIndices, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
         // Main Menu Bar

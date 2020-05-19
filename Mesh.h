@@ -5,6 +5,8 @@
  * Implementation of meshes generated from OBJ files.
  */
 
+#include "Noise.h"
+
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -50,14 +52,14 @@ public:
     // Creates a mesh from an OBJ file
     void readObjIntoMesh();
 
-    // Driver function accessed from outside class
-    std::vector<Mesh::s_Mesh> generateMesh();
+    // Creates a mesh from Perlin noise values
+    void readNoiseIntoMesh(std::vector<Noise::Point> noise, int width, int height);
 
-    // Load square
-    int setupSquareCoordinates();
+    // Driver function accessed from outside class for mesh generation via external file
+    void generateMeshFromFile();
 
-    // Load cube
-    int setupCubeCoordinates();
+    // Driver function accessed from outside class for mesh generation via Noise
+    void generateMeshFromNoise(std::vector<Noise::Point> noise, int width, int height);
 
     // Setup mesh coordinates for rendering
     int setupMeshCoordinates();

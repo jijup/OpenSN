@@ -27,6 +27,9 @@ public:
     // Generates a Worley noise value between, given some 3D coordinates (X, Y, Z).
     float noise(float sample_x, float sample_y, float sample_z);
 
+    // Sets hashing mechanism
+    void setPairingFunction(int pairingFunction);
+
 private:
     Perlin *perlinSource;
     glm::vec2 randA;

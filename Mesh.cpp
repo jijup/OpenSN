@@ -60,6 +60,7 @@ void Mesh::readObjIntoMesh() {
 
         // Mesh faces
         for (unsigned int j = 0; j < mesh -> mNumFaces; ++j) {
+
             // Get the face
             aiFace face = mesh->mFaces[j];
 
@@ -69,8 +70,90 @@ void Mesh::readObjIntoMesh() {
         }
 
         Mesh::s_Mesh tempMesh = s_Mesh(vertices, indices);
-        meshes.push_back(tempMesh);
+        this->meshes.push_back(tempMesh);
     }
+}
+
+/*
+ * Reads noise values into Mesh struct.
+ */
+void Mesh::readNoiseIntoMesh(std::vector<Noise::Point> noise, int width, int height) {
+
+    std::vector<Vertex> vertices;
+    std::vector<Vertex> indexAdjVertices;
+    std::vector<unsigned int> indices;
+
+    // Set vertices and texture coordinates
+    for (int i = 0; i < noise.size(); i++) {
+
+        Vertex tempVertex;
+
+        // Set the positions
+        tempVertex.position.x = (float)noise[i].x / (float)width;
+        tempVertex.position.y = noise[i].colour;
+        tempVertex.position.z = (float)noise[i].y / (float)height;
+
+        // Set the normals
+        tempVertex.normal.x = 0.5f;
+        tempVertex.normal.y = 0.5f;
+        tempVertex.normal.z = 0.5f;
+
+        // Set the uv coordinates
+        tempVertex.uv.x = (float)noise[i].x / (float)width;
+        tempVertex.uv.y = (float)noise[i].y / (float)height;
+
+        vertices.push_back(tempVertex);
+    }
+
+    // Set indices
+    int counter = 0;
+    for (unsigned int i = 0; i < width - 1; i++) {
+        for (unsigned int j = 0; j < height - 1; j++) {
+    //for (unsigned int i = 0; i < 149; i++) {
+    //    for (unsigned int j = 0; j < 149; j++) {
+
+            int tempIndices[4];
+            tempIndices[0] = i * width + j;
+            tempIndices[1] = (i + 1) * width + j;
+            tempIndices[2] = i * width + j + 1;
+            tempIndices[3] = (i + 1) * width + j + 1;
+
+            // First triangle indices and vertices in current cell
+            indexAdjVertices.push_back(vertices[tempIndices[0]]);
+            indices.push_back(counter++);
+            indexAdjVertices.push_back(vertices[tempIndices[1]]);
+            indices.push_back(counter++);
+            indexAdjVertices.push_back(vertices[tempIndices[2]]);
+            indices.push_back(counter++);
+
+            // Second triangle indices and vertices in current cell
+            indexAdjVertices.push_back(vertices[tempIndices[1]]);
+            indices.push_back(counter++);
+            indexAdjVertices.push_back(vertices[tempIndices[2]]);
+            indices.push_back(counter++);
+            indexAdjVertices.push_back(vertices[tempIndices[3]]);
+            indices.push_back(counter++);
+
+        }
+    }
+
+    Mesh::s_Mesh tempMesh = s_Mesh(indexAdjVertices, indices);
+    this->meshes.push_back(tempMesh);
+
+    printf("sizeof vertices (before): %lu \n", sizeof(vertices));
+    std::vector<Vertex>().swap(vertices);
+    printf("sizeof vertices (before): %lu \n", sizeof(vertices));
+    std::vector<Vertex>().swap(indexAdjVertices);
+    std::vector<unsigned int>().swap(indices);
+
+    /*
+    vertices.clear();
+    vertices.shrink_to_fit();
+    indexAdjVertices.clear();
+    indexAdjVertices.shrink_to_fit();
+    indices.clear();
+    indices.shrink_to_fit();
+     */
 }
 
 /*
@@ -81,121 +164,36 @@ void Mesh::readObjIntoMesh() {
  */
 int Mesh::setupMeshCoordinates() {
 
-    // Read vertices and indices into arrays
-    std::vector<Mesh::Vertex> mVertices = this->meshes[0].vertices;
-    std::vector<unsigned int> mIndices = this->meshes[0].indices;
+    this->numIndices = this->meshes[0].indices.size();
 
-    //GLfloat vertices[mVertices.size() * 8];
-    for (int i = 0; i < mVertices.size(); ++i) {
-        this->pVertices.push_back(mVertices[i].position.x);
-        this->pVertices.push_back(mVertices[i].position.y);
-        this->pVertices.push_back(mVertices[i].position.z);
+    // Format vertices
+    printf("\n        numIndices: %lu | numVertices: %lu ", this->meshes[0].indices.size(), this->meshes[0].vertices.size());
+    for (int i = 0; i < this->meshes[0].vertices.size(); ++i) {
+        this->pVertices.push_back(this->meshes[0].vertices[i].position.x);
+        this->pVertices.push_back(this->meshes[0].vertices[i].position.y);
+        this->pVertices.push_back(this->meshes[0].vertices[i].position.z);
 
-        this->pVertices.push_back(mVertices[i].normal.x);
-        this->pVertices.push_back(mVertices[i].normal.y);
-        this->pVertices.push_back(mVertices[i].normal.z);
+        this->pVertices.push_back(this->meshes[0].vertices[i].normal.x);
+        this->pVertices.push_back(this->meshes[0].vertices[i].normal.y);
+        this->pVertices.push_back(this->meshes[0].vertices[i].normal.z);
 
-        this->pVertices.push_back(mVertices[i].uv.x);
-        this->pVertices.push_back(mVertices[i].uv.y);
+        this->pVertices.push_back(this->meshes[0].vertices[i].uv.x);
+        this->pVertices.push_back(this->meshes[0].vertices[i].uv.y);
     }
 
-    this->numIndices = mIndices.size();
-    this->pIndices = mIndices;
+    // Format indices
+    this->pIndices = this->meshes[0].indices;
 
     return 0;
 }
 
 /*
- * Sets up coordinates for square to use in buffers.
- *
- * Returns:
- *      0 if succesfully completed. TODO: return -1 if failed
- */
-int Mesh::setupSquareCoordinates() {
-    GLfloat vertices[] = {
-            0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
-            0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
-            -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
-            -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f
-    };
-
-    GLuint indices[] = {
-            0, 1, 3,
-            1, 2, 3
-    };
-
-    this->numIndices = 6;
-    this->pVertices.assign(std::begin(vertices), std::end(vertices));
-    this->pIndices.assign(std::begin(indices), std::end(indices));
-
-    return 0;
-}
-
-/*
- * Sets up coordinates for a cube to use in buffers.
- *
- * Returns:
- *      0 if succesfully completed. TODO: return -1 if failed
- */
-int Mesh::setupCubeCoordinates() {
-    GLfloat vertices[] = {
-            -1.0f,-1.0f,-1.0f,      1.0f, 0.0f, 0.0f,       0.000059f, 1.0f-0.000004f,
-            -1.0f,-1.0f, 1.0f,      1.0f, 0.0f, 0.0f,       0.000103f, 1.0f-0.336048f,
-            -1.0f, 1.0f, 1.0f,      1.0f, 0.0f, 0.0f,       0.335973f, 1.0f-0.335903f,
-            1.0f, 1.0f,-1.0f,       1.0f, 0.0f, 0.0f,       1.000023f, 1.0f-0.000013f,
-            -1.0f,-1.0f,-1.0f,      1.0f, 0.0f, 0.0f,       0.667979f, 1.0f-0.335851f,
-            -1.0f, 1.0f,-1.0f,      1.0f, 0.0f, 0.0f,       0.999958f, 1.0f-0.336064f,
-            1.0f,-1.0f, 1.0f,       1.0f, 0.0f, 0.0f,       0.667979f, 1.0f-0.335851f,
-            -1.0f,-1.0f,-1.0f,      1.0f, 0.0f, 0.0f,       0.336024f, 1.0f-0.671877f,
-            1.0f,-1.0f,-1.0f,       1.0f, 0.0f, 0.0f,       0.667969f, 1.0f-0.671889f,
-            1.0f, 1.0f,-1.0f,       1.0f, 0.0f, 0.0f,       1.000023f, 1.0f-0.000013f,
-            1.0f,-1.0f,-1.0f,       1.0f, 0.0f, 0.0f,       0.668104f, 1.0f-0.000013f,
-            -1.0f,-1.0f,-1.0f,      1.0f, 0.0f, 0.0f,       0.667979f, 1.0f-0.335851f,
-            -1.0f,-1.0f,-1.0f,      1.0f, 0.0f, 0.0f,       0.000059f, 1.0f-0.000004f,
-            -1.0f, 1.0f, 1.0f,      1.0f, 0.0f, 0.0f,       0.335973f, 1.0f-0.335903f,
-            -1.0f, 1.0f,-1.0f,      1.0f, 0.0f, 0.0f,       0.336098f, 1.0f-0.000071f,
-            1.0f,-1.0f, 1.0f,       1.0f, 0.0f, 0.0f,       0.667979f, 1.0f-0.335851f,
-            -1.0f,-1.0f, 1.0f,      1.0f, 0.0f, 0.0f,       0.335973f, 1.0f-0.335903f,
-            -1.0f,-1.0f,-1.0f,      1.0f, 0.0f, 0.0f,       0.336024f, 1.0f-0.671877f,
-            -1.0f, 1.0f, 1.0f,      1.0f, 0.0f, 0.0f,       1.000004f, 1.0f-0.671847f,
-            -1.0f,-1.0f, 1.0f,      1.0f, 0.0f, 0.0f,       0.999958f, 1.0f-0.336064f,
-            1.0f,-1.0f, 1.0f,       1.0f, 0.0f, 0.0f,       0.667979f, 1.0f-0.335851f,
-            1.0f, 1.0f, 1.0f,       1.0f, 0.0f, 0.0f,       0.668104f, 1.0f-0.000013f,
-            1.0f,-1.0f,-1.0f,       1.0f, 0.0f, 0.0f,       0.335973f, 1.0f-0.335903f,
-            1.0f, 1.0f,-1.0f,       1.0f, 0.0f, 0.0f,       0.667979f, 1.0f-0.335851f,
-            1.0f,-1.0f,-1.0f,       1.0f, 0.0f, 0.0f,       0.335973f, 1.0f-0.335903f,
-            1.0f, 1.0f, 1.0f,       1.0f, 0.0f, 0.0f,       0.668104f, 1.0f-0.000013f,
-            1.0f,-1.0f, 1.0f,       1.0f, 0.0f, 0.0f,       0.336098f, 1.0f-0.000071f,
-            1.0f, 1.0f, 1.0f,       1.0f, 0.0f, 0.0f,       0.000103f, 1.0f-0.336048f,
-            1.0f, 1.0f,-1.0f,       1.0f, 0.0f, 0.0f,       0.000004f, 1.0f-0.671870f,
-            -1.0f, 1.0f,-1.0f,      1.0f, 0.0f, 0.0f,       0.336024f, 1.0f-0.671877f,
-            1.0f, 1.0f, 1.0f,       1.0f, 0.0f, 0.0f,       0.000103f, 1.0f-0.336048f,
-            -1.0f, 1.0f,-1.0f,      1.0f, 0.0f, 0.0f,       0.336024f, 1.0f-0.671877f,
-            -1.0f, 1.0f, 1.0f,      1.0f, 0.0f, 0.0f,       0.335973f, 1.0f-0.335903f,
-            1.0f, 1.0f, 1.0f,       1.0f, 0.0f, 0.0f,       0.667969f, 1.0f-0.671889f,
-            -1.0f, 1.0f, 1.0f,      1.0f, 0.0f, 0.0f,       1.000004f, 1.0f-0.671847f,
-            1.0f,-1.0f, 1.0f,       1.0f, 0.0f, 0.0f,       0.667979f, 1.0f-0.335851f
-    };
-
-    GLuint indices[36];
-    for (int i = 0; i < 36; ++i) {
-        indices[i] = i;
-    }
-
-    this->numIndices = 36;
-    this->pVertices.assign(std::begin(vertices), std::end(vertices));
-    this->pIndices.assign(std::begin(indices), std::end(indices));
-
-    return 0;
-}
-
-/*
- * Drives mesh generation.
+ * Drives mesh generation from external files.
  *
  * Returns:
  *      Vector of Meshes (typically just one mesh)
  */
-std::vector<Mesh::s_Mesh> Mesh::generateMesh() {
+void Mesh::generateMeshFromFile() {
 
     // Read object file into Mesh
     printf("\nStarting mesh generation.");
@@ -205,8 +203,22 @@ std::vector<Mesh::s_Mesh> Mesh::generateMesh() {
     printf("\nFormatting mesh for rendering.");
     setupMeshCoordinates();
     printf("\nSuccessfully completed mesh generation.\n");
+}
 
-    return meshes;
+/*
+ * Drives mesh generation from noise values.
+ *
+ * Returns:
+ *      Vector of Meshes (typically just one mesh)
+ */
+void Mesh::generateMeshFromNoise(std::vector<Noise::Point> noise, int width, int height) {
+
+    // Read object file into Mesh
+    printf("\nStarting mesh generation.");
+    readNoiseIntoMesh(noise, width, height);
+    printf("\nFormatting mesh for rendering.");
+    setupMeshCoordinates();
+    printf("\nSuccessfully completed mesh generation.\n");
 }
 
 

@@ -29,7 +29,9 @@ std::vector<Noise::Point> Noise::generatePerlin(int pairingFunction, int noiseTy
 
     HashFunctions HashInstance;
     Fractal *noiseGenerator = new Fractal(noiseType);
-    noiseGenerator -> setInitFrequency(4.0f);
+    noiseGenerator->setPerlinDimensions(width, height);
+    noiseGenerator->setPairingFunction(pairingFunction);
+    noiseGenerator->setInitFrequency(4.0f);
     
     // Define array size
     unsigned long long int arr_size = pow(width, 2) * pow(height, 2);
@@ -51,66 +53,30 @@ std::vector<Noise::Point> Noise::generatePerlin(int pairingFunction, int noiseTy
     for (int x = 0; x < width; ++x) {
         for (int y = 0; y < height; ++y) {
             
-            // Generate noise value
+            // Generate noise value - f(x, y, z)
             noise = noiseGenerator -> noise(float(x) * invWidth, float(y) * invHeight, 0.72);
-            
+
+            /// Warping domain
+            /*
+            // Generate noise value - f((x, y, z) + f(x, y, z))
+            float fp1 = noiseGenerator -> noise(noise + float(x) * invWidth, noise + float(y) * invHeight, noise + 0.72);
+
+            // Generate noise value - f((x, y, z) + f((x, y, z) + f(x, y, z)))
+            float fp2 = noiseGenerator -> noise(fp1 + float(x) * invWidth, fp1 + float(y) * invHeight, fp1 + 0.72);
+            noise = fp2;
+            */
+
             // Set noise value dependant on hashed value
-            if (pairingFunction == 0) {
-                int index = HashInstance.linearPair(x, y, width);
-                noiseArray[index] = noise;
+            int index = HashInstance.linearPair(x, y, width);
+            noiseArray[index] = noise;
 
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
+            // Keep track of minimum and maximum noise values
+            if (noise < min) {
+                min = noise;
+            }
 
-                if (noise > max) {
-                    max = noise;
-                }
-            } else if (pairingFunction == 1) {
-                int index = HashInstance.cantorPair(x, y);
-                indexArray[indexArrayCurr++] = index;
-
-                noiseArray[index] = noise;
-
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
-
-                if (noise > max) {
-                    max = noise;
-                }
-            } else if (pairingFunction == 2) {
-                int index = HashInstance.szudzikPair(x, y);
-                indexArray[indexArrayCurr++] = index;
-
-                noiseArray[index] = noise;
-
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
-
-                if (noise > max) {
-                    max = noise;
-                }
-            } else if (pairingFunction == 3) {
-                int index = HashInstance.rsPair(x, y);
-                indexArray[indexArrayCurr++] = index;
-
-                noiseArray[index] = noise;
-
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
-
-                if (noise > max) {
-                    max = noise;
-                }
-            } else {
-                // TODO: Throw error
+            if (noise > max) {
+                max = noise;
             }
 
         }
@@ -120,61 +86,10 @@ std::vector<Noise::Point> Noise::generatePerlin(int pairingFunction, int noiseTy
     float temp = 1.0f / (max - min);
     
     // Invert Hash Functions
-    if (pairingFunction == 0) {
+    for (int x = 0; x < width; ++x) {
+        for (int y = 0; y < height; ++y) {
 
-        for (int x = 0; x < width; ++x) {
-            for (int y = 0; y < height; ++y) {
-
-                int index = HashInstance.linearPair(x, y, width);
-                noise = noiseArray[index];
-
-                // Use gaussian distribution of noise values to fill [-1, 1] range.
-                noise = -1.0f + 2.0f * (noise - min) * temp;
-
-                // Remap to RGB friendly colour values in range [0, 1].
-                noise += 1.0f;
-                noise *= 0.5f;
-
-                points.push_back(Noise::Point());
-
-                int i = x * height + y;
-                points[i].x = x;
-                points[i].y = y;
-                points[i].colour = noise;
-
-                //printf("X[%f] Y[%f] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
-            }
-        }
-    } else if (pairingFunction == 1) {
-        
-        for (int i = 0; i < (height * width); i++) {
-            
-            int index = indexArray[i];
-            int inv_x = HashInstance.cantorInvertX(index);
-            int inv_y = HashInstance.cantorInvertY(index);
-            
-            noise = noiseArray[index];
-            
-            // Use gaussian distribution of noise values to fill [-1, 1] range.
-            noise = -1.0f + 2.0f * (noise - min) * temp;
-            
-            // Remap to RGB friendly colour values in range [0, 1].
-            noise += 1.0f;
-            noise *= 0.5f;
-            
-            points.push_back(Noise::Point());
-            points[i].x = inv_x;
-            points[i].y = inv_y;
-            points[i].colour = noise;
-        }
-    } else if (pairingFunction == 2) {
-
-        for (int i = 0; i < (height * width); i++) {
-
-            int index = indexArray[i];
-            int inv_x = HashInstance.szudzikInvertX(index);
-            int inv_y = HashInstance.szudzikInvertY(index);
-
+            int index = HashInstance.linearPair(x, y, width);
             noise = noiseArray[index];
 
             // Use gaussian distribution of noise values to fill [-1, 1] range.
@@ -185,44 +100,22 @@ std::vector<Noise::Point> Noise::generatePerlin(int pairingFunction, int noiseTy
             noise *= 0.5f;
 
             points.push_back(Noise::Point());
-            points[i].x = inv_x;
-            points[i].y = inv_y;
-            points[i].colour = noise;
-        }
-    } else if (pairingFunction == 3) {
-        for (int i = 0; i < (height * width); i++) {
-            int m = HashInstance.rsInvert(i);
-            
-            int inv_x = 0;
-            int inv_y = 0;
-            int tempVar = i - pow(m, 2);
-            if ((i - pow(m, 2)) < m) {
-                inv_x = i - pow(m, 2);
-                inv_y = m;
-            } else {
-                inv_x = m;
-                inv_y = pow(m, 2) + (2*m) - i;
-            }
-            
-            noise = noiseArray[i];
 
-            // Use gaussian distribution of noise values to fill [-1, 1] range.
-            noise = -1.0f + 2.0f * (noise - min) * temp;
-
-            // Remap to RGB friendly colour values in range [0, 1].
-            noise += 1.0f;
-            noise *= 0.5f;
-            
-            points.push_back(Noise::Point());
-            points[i].x = inv_x;
-            points[i].y = inv_y;
+            int i = x * height + y;
+            points[i].x = x;
+            points[i].y = y;
             points[i].colour = noise;
+
+            //printf("X[%f] Y[%f] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
         }
-    } else {
-        // TODO: Throw error
     }
 
+
     printf("Successfully generated Perlin noise.\n");
+
+    delete noiseGenerator;
+    delete[] noiseArray;
+    delete[] indexArray;
     return points;
 }
 
@@ -244,7 +137,9 @@ std::vector<Noise::Point> Noise::generateGabor(int pairingFunction, int noiseTyp
 
     HashFunctions HashInstance;
     Fractal *noiseGenerator = new Fractal(noiseType);
-    noiseGenerator -> setInitFrequency(4.0f);
+    noiseGenerator->setPerlinDimensions(width, height);
+    noiseGenerator->setPairingFunction(pairingFunction);
+    noiseGenerator->setInitFrequency(4.0f);
 
     // Define array size
     unsigned long long int arr_size = pow(width, 2) * pow(height, 2);
@@ -270,64 +165,17 @@ std::vector<Noise::Point> Noise::generateGabor(int pairingFunction, int noiseTyp
             noise = noiseGenerator -> noise(float(x) * invWidth, float(y) * invHeight, 0.72);
 
             // Set noise value dependant on hashed value
-            if (pairingFunction == 0) {
-                int index = HashInstance.linearPair(x, y, width);
-                noiseArray[index] = noise;
+            int index = HashInstance.linearPair(x, y, width);
+            noiseArray[index] = noise;
 
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
-
-                if (noise > max) {
-                    max = noise;
-                }
-            } else if (pairingFunction == 1) {
-                int index = HashInstance.cantorPair(x, y);
-                indexArray[indexArrayCurr++] = index;
-
-                noiseArray[index] = noise;
-
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
-
-                if (noise > max) {
-                    max = noise;
-                }
-            } else if (pairingFunction == 2) {
-                int index = HashInstance.szudzikPair(x, y);
-                indexArray[indexArrayCurr++] = index;
-
-                noiseArray[index] = noise;
-
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
-
-                if (noise > max) {
-                    max = noise;
-                }
-            } else if (pairingFunction == 3) {
-                int index = HashInstance.rsPair(x, y);
-                indexArray[indexArrayCurr++] = index;
-
-                noiseArray[index] = noise;
-
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
-
-                if (noise > max) {
-                    max = noise;
-                }
-            } else {
-                // TODO: Throw error
+            // Keep track of minimum and maximum noise values
+            if (noise < min) {
+                min = noise;
             }
 
+            if (noise > max) {
+                max = noise;
+            }
         }
     }
 
@@ -335,39 +183,10 @@ std::vector<Noise::Point> Noise::generateGabor(int pairingFunction, int noiseTyp
     float temp = 1.0f / (max - min);
 
     // Invert Hash Functions
-    if (pairingFunction == 0) {
+    for (int x = 0; x < width; ++x) {
+        for (int y = 0; y < height; ++y) {
 
-        for (int x = 0; x < width; ++x) {
-            for (int y = 0; y < height; ++y) {
-
-                int index = HashInstance.linearPair(x, y, width);
-                noise = noiseArray[index];
-
-                // Use gaussian distribution of noise values to fill [-1, 1] range.
-                noise = -1.0f + 2.0f * (noise - min) * temp;
-
-                // Remap to RGB friendly colour values in range [0, 1].
-                noise += 1.0f;
-                noise *= 0.5f;
-
-                points.push_back(Noise::Point());
-
-                int i = x * height + y;
-                points[i].x = x;
-                points[i].y = y;
-                points[i].colour = noise;
-
-                //printf("X[%f] Y[%f] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
-            }
-        }
-    } else if (pairingFunction == 1) {
-
-        for (int i = 0; i < (height * width); i++) {
-
-            int index = indexArray[i];
-            int inv_x = HashInstance.cantorInvertX(index);
-            int inv_y = HashInstance.cantorInvertY(index);
-
+            int index = HashInstance.linearPair(x, y, width);
             noise = noiseArray[index];
 
             // Use gaussian distribution of noise values to fill [-1, 1] range.
@@ -378,66 +197,24 @@ std::vector<Noise::Point> Noise::generateGabor(int pairingFunction, int noiseTyp
             noise *= 0.5f;
 
             points.push_back(Noise::Point());
-            points[i].x = inv_x;
-            points[i].y = inv_y;
+
+            int i = x * height + y;
+            points[i].x = x;
+            points[i].y = y;
             points[i].colour = noise;
+
+            //printf("X[%f] Y[%f] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
         }
-    } else if (pairingFunction == 2) {
-
-        for (int i = 0; i < (height * width); i++) {
-
-            int index = indexArray[i];
-            int inv_x = HashInstance.szudzikInvertX(index);
-            int inv_y = HashInstance.szudzikInvertY(index);
-
-            noise = noiseArray[index];
-
-            // Use gaussian distribution of noise values to fill [-1, 1] range.
-            noise = -1.0f + 2.0f * (noise - min) * temp;
-
-            // Remap to RGB friendly colour values in range [0, 1].
-            noise += 1.0f;
-            noise *= 0.5f;
-
-            points.push_back(Noise::Point());
-            points[i].x = inv_x;
-            points[i].y = inv_y;
-            points[i].colour = noise;
-        }
-    } else if (pairingFunction == 3) {
-        for (int i = 0; i < (height * width); i++) {
-            int m = HashInstance.rsInvert(i);
-
-            int inv_x = 0;
-            int inv_y = 0;
-            int tempVar = i - pow(m, 2);
-            if ((i - pow(m, 2)) < m) {
-                inv_x = i - pow(m, 2);
-                inv_y = m;
-            } else {
-                inv_x = m;
-                inv_y = pow(m, 2) + (2*m) - i;
-            }
-
-            noise = noiseArray[i];
-
-            // Use gaussian distribution of noise values to fill [-1, 1] range.
-            noise = -1.0f + 2.0f * (noise - min) * temp;
-
-            // Remap to RGB friendly colour values in range [0, 1].
-            noise += 1.0f;
-            noise *= 0.5f;
-
-            points.push_back(Noise::Point());
-            points[i].x = inv_x;
-            points[i].y = inv_y;
-            points[i].colour = noise;
-        }
-    } else {
-        // TODO: Throw error
     }
 
     printf("Successfully generated Gabor noise.\n");
+
+    //std::vector<Noise::Point>().swap(points);
+
+    delete noiseGenerator;
+    delete[] noiseArray;
+    delete[] indexArray;
+
     return points;
 }
 
@@ -459,7 +236,9 @@ std::vector<Noise::Point> Noise::generateMarble(int pairingFunction, int noiseTy
 
     HashFunctions HashInstance;
     Fractal *noiseGenerator = new Fractal(noiseType);
-    noiseGenerator -> setInitFrequency(4.0f);
+    noiseGenerator->setPerlinDimensions(width, height);
+    noiseGenerator->setPairingFunctionMarble(pairingFunction);
+    noiseGenerator->setInitFrequency(4.0f);
 
     // Define array size
     unsigned long long int arr_size = pow(width, 2) * pow(height, 2);
@@ -485,62 +264,16 @@ std::vector<Noise::Point> Noise::generateMarble(int pairingFunction, int noiseTy
             noise = noiseGenerator -> noise(float(x) * invWidth, float(y) * invHeight, 0.72);
 
             // Set noise value dependant on hashed value
-            if (pairingFunction == 0) {
-                int index = HashInstance.linearPair(x, y, width);
-                noiseArray[index] = noise;
+            int index = HashInstance.linearPair(x, y, width);
+            noiseArray[index] = noise;
 
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
+            // Keep track of minimum and maximum noise values
+            if (noise < min) {
+                min = noise;
+            }
 
-                if (noise > max) {
-                    max = noise;
-                }
-            } else if (pairingFunction == 1) {
-                int index = HashInstance.cantorPair(x, y);
-                indexArray[indexArrayCurr++] = index;
-
-                noiseArray[index] = noise;
-
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
-
-                if (noise > max) {
-                    max = noise;
-                }
-            } else if (pairingFunction == 2) {
-                int index = HashInstance.szudzikPair(x, y);
-                indexArray[indexArrayCurr++] = index;
-
-                noiseArray[index] = noise;
-
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
-
-                if (noise > max) {
-                    max = noise;
-                }
-            } else if (pairingFunction == 3) {
-                int index = HashInstance.rsPair(x, y);
-                indexArray[indexArrayCurr++] = index;
-
-                noiseArray[index] = noise;
-
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
-
-                if (noise > max) {
-                    max = noise;
-                }
-            } else {
-                // TODO: Throw error
+            if (noise > max) {
+                max = noise;
             }
 
         }
@@ -550,39 +283,10 @@ std::vector<Noise::Point> Noise::generateMarble(int pairingFunction, int noiseTy
     float temp = 1.0f / (max - min);
 
     // Invert Hash Functions
-    if (pairingFunction == 0) {
+    for (int x = 0; x < width; ++x) {
+        for (int y = 0; y < height; ++y) {
 
-        for (int x = 0; x < width; ++x) {
-            for (int y = 0; y < height; ++y) {
-
-                int index = HashInstance.linearPair(x, y, width);
-                noise = noiseArray[index];
-
-                // Use gaussian distribution of noise values to fill [-1, 1] range.
-                noise = -1.0f + 2.0f * (noise - min) * temp;
-
-                // Remap to RGB friendly colour values in range [0, 1].
-                noise += 1.0f;
-                noise *= 0.5f;
-
-                points.push_back(Noise::Point());
-
-                int i = x * height + y;
-                points[i].x = x;
-                points[i].y = y;
-                points[i].colour = noise;
-
-                //printf("X[%f] Y[%f] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
-            }
-        }
-    } else if (pairingFunction == 1) {
-
-        for (int i = 0; i < (height * width); i++) {
-
-            int index = indexArray[i];
-            int inv_x = HashInstance.cantorInvertX(index);
-            int inv_y = HashInstance.cantorInvertY(index);
-
+            int index = HashInstance.linearPair(x, y, width);
             noise = noiseArray[index];
 
             // Use gaussian distribution of noise values to fill [-1, 1] range.
@@ -593,72 +297,22 @@ std::vector<Noise::Point> Noise::generateMarble(int pairingFunction, int noiseTy
             noise *= 0.5f;
 
             points.push_back(Noise::Point());
-            points[i].x = inv_x;
-            points[i].y = inv_y;
+
+            int i = x * height + y;
+            points[i].x = x;
+            points[i].y = y;
             points[i].colour = noise;
 
             //printf("X[%f] Y[%f] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
         }
-    } else if (pairingFunction == 2) {
-
-        for (int i = 0; i < (height * width); i++) {
-
-            int index = indexArray[i];
-            int inv_x = HashInstance.szudzikInvertX(index);
-            int inv_y = HashInstance.szudzikInvertY(index);
-
-            noise = noiseArray[index];
-
-            // Use gaussian distribution of noise values to fill [-1, 1] range.
-            noise = -1.0f + 2.0f * (noise - min) * temp;
-
-            // Remap to RGB friendly colour values in range [0, 1].
-            noise += 1.0f;
-            noise *= 0.5f;
-
-            points.push_back(Noise::Point());
-            points[i].x = inv_x;
-            points[i].y = inv_y;
-            points[i].colour = noise;
-
-            //printf("X[%f] Y[%f] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
-        }
-    } else if (pairingFunction == 3) {
-        for (int i = 0; i < (height * width); i++) {
-            int m = HashInstance.rsInvert(i);
-
-            int inv_x = 0;
-            int inv_y = 0;
-            int tempVar = i - pow(m, 2);
-            if ((i - pow(m, 2)) < m) {
-                inv_x = i - pow(m, 2);
-                inv_y = m;
-            } else {
-                inv_x = m;
-                inv_y = pow(m, 2) + (2*m) - i;
-            }
-
-            noise = noiseArray[i];
-
-            // Use gaussian distribution of noise values to fill [-1, 1] range.
-            noise = -1.0f + 2.0f * (noise - min) * temp;
-
-            // Remap to RGB friendly colour values in range [0, 1].
-            noise += 1.0f;
-            noise *= 0.5f;
-
-            points.push_back(Noise::Point());
-            points[i].x = inv_x;
-            points[i].y = inv_y;
-            points[i].colour = noise;
-
-            //printf("X[%d] Y[%d] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
-        }
-    } else {
-        // TODO: Throw error
     }
 
     printf("Successfully generated Perlin noise (with marble perturbation).\n");
+
+    //std::vector<Noise::Point>().swap(points);
+    delete noiseGenerator;
+    delete[] noiseArray;
+    delete[] indexArray;
     return points;
 }
 
@@ -680,7 +334,9 @@ std::vector<Noise::Point> Noise::generateWorley(int pairingFunction, int noiseTy
 
     HashFunctions HashInstance;
     Fractal *noiseGenerator = new Fractal(noiseType);
-    noiseGenerator -> setInitFrequency(4.0f);
+    noiseGenerator->setPerlinDimensions(width, height);
+    noiseGenerator->setPairingFunction(pairingFunction);
+    noiseGenerator->setInitFrequency(4.0f);
 
     // Define array size
     unsigned long long int arr_size = pow(width, 2) * pow(height, 2);
@@ -706,62 +362,16 @@ std::vector<Noise::Point> Noise::generateWorley(int pairingFunction, int noiseTy
             noise = noiseGenerator -> noise(float(x) * invWidth, float(y) * invHeight, 0.72);
 
             // Set noise value dependant on hashed value
-            if (pairingFunction == 0) {
-                int index = HashInstance.linearPair(x, y, width);
-                noiseArray[index] = noise;
+            int index = HashInstance.linearPair(x, y, width);
+            noiseArray[index] = noise;
 
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
+            // Keep track of minimum and maximum noise values
+            if (noise < min) {
+                min = noise;
+            }
 
-                if (noise > max) {
-                    max = noise;
-                }
-            } else if (pairingFunction == 1) {
-                int index = HashInstance.cantorPair(x, y);
-                indexArray[indexArrayCurr++] = index;
-
-                noiseArray[index] = noise;
-
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
-
-                if (noise > max) {
-                    max = noise;
-                }
-            } else if (pairingFunction == 2) {
-                int index = HashInstance.szudzikPair(x, y);
-                indexArray[indexArrayCurr++] = index;
-
-                noiseArray[index] = noise;
-
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
-
-                if (noise > max) {
-                    max = noise;
-                }
-            } else if (pairingFunction == 3) {
-                int index = HashInstance.rsPair(x, y);
-                indexArray[indexArrayCurr++] = index;
-
-                noiseArray[index] = noise;
-
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
-
-                if (noise > max) {
-                    max = noise;
-                }
-            } else {
-                // TODO: Throw error
+            if (noise > max) {
+                max = noise;
             }
 
         }
@@ -771,39 +381,10 @@ std::vector<Noise::Point> Noise::generateWorley(int pairingFunction, int noiseTy
     float temp = 1.0f / (max - min);
 
     // Invert Hash Functions
-    if (pairingFunction == 0) {
+    for (int x = 0; x < width; ++x) {
+        for (int y = 0; y < height; ++y) {
 
-        for (int x = 0; x < width; ++x) {
-            for (int y = 0; y < height; ++y) {
-
-                int index = HashInstance.linearPair(x, y, width);
-                noise = noiseArray[index];
-
-                // Use gaussian distribution of noise values to fill [-1, 1] range.
-                noise = -1.0f + 2.0f * (noise - min) * temp;
-
-                // Remap to RGB friendly colour values in range [0, 1].
-                noise += 1.0f;
-                noise *= 0.5f;
-
-                points.push_back(Noise::Point());
-
-                int i = x * height + y;
-                points[i].x = x;
-                points[i].y = y;
-                points[i].colour = noise;
-
-                //printf("X[%f] Y[%f] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
-            }
-        }
-    } else if (pairingFunction == 1) {
-
-        for (int i = 0; i < (height * width); i++) {
-
-            int index = indexArray[i];
-            int inv_x = HashInstance.cantorInvertX(index);
-            int inv_y = HashInstance.cantorInvertY(index);
-
+            int index = HashInstance.linearPair(x, y, width);
             noise = noiseArray[index];
 
             // Use gaussian distribution of noise values to fill [-1, 1] range.
@@ -814,77 +395,27 @@ std::vector<Noise::Point> Noise::generateWorley(int pairingFunction, int noiseTy
             noise *= 0.5f;
 
             points.push_back(Noise::Point());
-            points[i].x = inv_x;
-            points[i].y = inv_y;
+
+            int i = x * height + y;
+            points[i].x = x;
+            points[i].y = y;
             points[i].colour = noise;
 
             //printf("X[%f] Y[%f] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
         }
-    } else if (pairingFunction == 2) {
-
-        for (int i = 0; i < (height * width); i++) {
-
-            int index = indexArray[i];
-            int inv_x = HashInstance.szudzikInvertX(index);
-            int inv_y = HashInstance.szudzikInvertY(index);
-
-            noise = noiseArray[index];
-
-            // Use gaussian distribution of noise values to fill [-1, 1] range.
-            noise = -1.0f + 2.0f * (noise - min) * temp;
-
-            // Remap to RGB friendly colour values in range [0, 1].
-            noise += 1.0f;
-            noise *= 0.5f;
-
-            points.push_back(Noise::Point());
-            points[i].x = inv_x;
-            points[i].y = inv_y;
-            points[i].colour = noise;
-
-            //printf("X[%f] Y[%f] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
-        }
-    } else if (pairingFunction == 3) {
-        for (int i = 0; i < (height * width); i++) {
-            int m = HashInstance.rsInvert(i);
-
-            int inv_x = 0;
-            int inv_y = 0;
-            int tempVar = i - pow(m, 2);
-            if ((i - pow(m, 2)) < m) {
-                inv_x = i - pow(m, 2);
-                inv_y = m;
-            } else {
-                inv_x = m;
-                inv_y = pow(m, 2) + (2*m) - i;
-            }
-
-            noise = noiseArray[i];
-
-            // Use gaussian distribution of noise values to fill [-1, 1] range.
-            noise = -1.0f + 2.0f * (noise - min) * temp;
-
-            // Remap to RGB friendly colour values in range [0, 1].
-            noise += 1.0f;
-            noise *= 0.5f;
-
-            points.push_back(Noise::Point());
-            points[i].x = inv_x;
-            points[i].y = inv_y;
-            points[i].colour = noise;
-
-            //printf("X[%d] Y[%d] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
-        }
-    } else {
-        // TODO: Throw error
     }
 
     printf("Successfully generated Worley noise.\n");
+
+    //std::vector<Noise::Point>().swap(points);
+    delete noiseGenerator;
+    delete[] noiseArray;
+    delete[] indexArray;
     return points;
 }
 
 /*
- * Generates Curl noise.
+ * Generates ExperimentalNoise noise.
  *
  * Parameters:
  *      pairingFunction: pairing function to be used
@@ -893,15 +424,17 @@ std::vector<Noise::Point> Noise::generateWorley(int pairingFunction, int noiseTy
  *      height: number of y-axis pixels
  *
  * Returns:
- *      vector: structs including Curl noise values and coordinates.
+ *      vector: structs including ExperimentalNoise noise values and coordinates.
  */
-std::vector<Noise::Point> Noise::generateCurl(int pairingFunction, int noiseType, int width, int height) {
+std::vector<Noise::Point> Noise::generateExperiental(int pairingFunction, int noiseType, int width, int height) {
 
     printf("\nStarting curl noise generation.\n");
 
     HashFunctions HashInstance;
     Fractal *noiseGenerator = new Fractal(noiseType);
-    noiseGenerator -> setInitFrequency(4.0f);
+    noiseGenerator->setPerlinDimensions(width, height);
+    noiseGenerator->setPairingFunctionExperimental(pairingFunction);
+    noiseGenerator->setInitFrequency(4.0f);
 
     // Define array size
     unsigned long long int arr_size = pow(width, 2) * pow(height, 2);
@@ -927,62 +460,16 @@ std::vector<Noise::Point> Noise::generateCurl(int pairingFunction, int noiseType
             noise = noiseGenerator -> noise(float(x) * invWidth, float(y) * invHeight, 0.72);
 
             // Set noise value dependant on hashed value
-            if (pairingFunction == 0) {
-                int index = HashInstance.linearPair(x, y, width);
-                noiseArray[index] = noise;
+            int index = HashInstance.linearPair(x, y, width);
+            noiseArray[index] = noise;
 
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
+            // Keep track of minimum and maximum noise values
+            if (noise < min) {
+                min = noise;
+            }
 
-                if (noise > max) {
-                    max = noise;
-                }
-            } else if (pairingFunction == 1) {
-                int index = HashInstance.cantorPair(x, y);
-                indexArray[indexArrayCurr++] = index;
-
-                noiseArray[index] = noise;
-
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
-
-                if (noise > max) {
-                    max = noise;
-                }
-            } else if (pairingFunction == 2) {
-                int index = HashInstance.szudzikPair(x, y);
-                indexArray[indexArrayCurr++] = index;
-
-                noiseArray[index] = noise;
-
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
-
-                if (noise > max) {
-                    max = noise;
-                }
-            } else if (pairingFunction == 3) {
-                int index = HashInstance.rsPair(x, y);
-                indexArray[indexArrayCurr++] = index;
-
-                noiseArray[index] = noise;
-
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
-
-                if (noise > max) {
-                    max = noise;
-                }
-            } else {
-                // TODO: Throw error
+            if (noise > max) {
+                max = noise;
             }
 
         }
@@ -992,39 +479,10 @@ std::vector<Noise::Point> Noise::generateCurl(int pairingFunction, int noiseType
     float temp = 1.0f / (max - min);
 
     // Invert Hash Functions
-    if (pairingFunction == 0) {
+    for (int x = 0; x < width; ++x) {
+        for (int y = 0; y < height; ++y) {
 
-        for (int x = 0; x < width; ++x) {
-            for (int y = 0; y < height; ++y) {
-
-                int index = HashInstance.linearPair(x, y, width);
-                noise = noiseArray[index];
-
-                // Use gaussian distribution of noise values to fill [-1, 1] range.
-                noise = -1.0f + 2.0f * (noise - min) * temp;
-
-                // Remap to RGB friendly colour values in range [0, 1].
-                noise += 1.0f;
-                noise *= 0.5f;
-
-                points.push_back(Noise::Point());
-
-                int i = x * height + y;
-                points[i].x = x;
-                points[i].y = y;
-                points[i].colour = noise;
-
-                //printf("X[%f] Y[%f] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
-            }
-        }
-    } else if (pairingFunction == 1) {
-
-        for (int i = 0; i < (height * width); i++) {
-
-            int index = indexArray[i];
-            int inv_x = HashInstance.cantorInvertX(index);
-            int inv_y = HashInstance.cantorInvertY(index);
-
+            int index = HashInstance.linearPair(x, y, width);
             noise = noiseArray[index];
 
             // Use gaussian distribution of noise values to fill [-1, 1] range.
@@ -1035,72 +493,22 @@ std::vector<Noise::Point> Noise::generateCurl(int pairingFunction, int noiseType
             noise *= 0.5f;
 
             points.push_back(Noise::Point());
-            points[i].x = inv_x;
-            points[i].y = inv_y;
+
+            int i = x * height + y;
+            points[i].x = x;
+            points[i].y = y;
             points[i].colour = noise;
 
             //printf("X[%f] Y[%f] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
         }
-    } else if (pairingFunction == 2) {
-
-        for (int i = 0; i < (height * width); i++) {
-
-            int index = indexArray[i];
-            int inv_x = HashInstance.szudzikInvertX(index);
-            int inv_y = HashInstance.szudzikInvertY(index);
-
-            noise = noiseArray[index];
-
-            // Use gaussian distribution of noise values to fill [-1, 1] range.
-            noise = -1.0f + 2.0f * (noise - min) * temp;
-
-            // Remap to RGB friendly colour values in range [0, 1].
-            noise += 1.0f;
-            noise *= 0.5f;
-
-            points.push_back(Noise::Point());
-            points[i].x = inv_x;
-            points[i].y = inv_y;
-            points[i].colour = noise;
-
-            //printf("X[%f] Y[%f] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
-        }
-    } else if (pairingFunction == 3) {
-        for (int i = 0; i < (height * width); i++) {
-            int m = HashInstance.rsInvert(i);
-
-            int inv_x = 0;
-            int inv_y = 0;
-            int tempVar = i - pow(m, 2);
-            if ((i - pow(m, 2)) < m) {
-                inv_x = i - pow(m, 2);
-                inv_y = m;
-            } else {
-                inv_x = m;
-                inv_y = pow(m, 2) + (2*m) - i;
-            }
-
-            noise = noiseArray[i];
-
-            // Use gaussian distribution of noise values to fill [-1, 1] range.
-            noise = -1.0f + 2.0f * (noise - min) * temp;
-
-            // Remap to RGB friendly colour values in range [0, 1].
-            noise += 1.0f;
-            noise *= 0.5f;
-
-            points.push_back(Noise::Point());
-            points[i].x = inv_x;
-            points[i].y = inv_y;
-            points[i].colour = noise;
-
-            //printf("X[%d] Y[%d] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
-        }
-    } else {
-        // TODO: Throw error
     }
 
     printf("Successfully generated curl noise.\n");
+
+    //std::vector<Noise::Point>().swap(points);
+    delete noiseGenerator;
+    delete[] noiseArray;
+    delete[] indexArray;
     return points;
 }
 
@@ -1122,7 +530,9 @@ std::vector<Noise::Point> Noise::generateSplatter(int pairingFunction, int noise
 
     HashFunctions HashInstance;
     Fractal *noiseGenerator = new Fractal(noiseType);
-    noiseGenerator -> setInitFrequency(4.0f);
+    noiseGenerator->setPerlinDimensions(width, height);
+    noiseGenerator->setPairingFunctionSplatter(pairingFunction);
+    noiseGenerator->setInitFrequency(4.0f);
 
     // Define array size
     unsigned long long int arr_size = pow(width, 2) * pow(height, 2);
@@ -1148,62 +558,16 @@ std::vector<Noise::Point> Noise::generateSplatter(int pairingFunction, int noise
             noise = noiseGenerator -> noise(float(x) * invWidth, float(y) * invHeight, 0.72);
 
             // Set noise value dependant on hashed value
-            if (pairingFunction == 0) {
-                int index = HashInstance.linearPair(x, y, width);
-                noiseArray[index] = noise;
+            int index = HashInstance.linearPair(x, y, width);
+            noiseArray[index] = noise;
 
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
+            // Keep track of minimum and maximum noise values
+            if (noise < min) {
+                min = noise;
+            }
 
-                if (noise > max) {
-                    max = noise;
-                }
-            } else if (pairingFunction == 1) {
-                int index = HashInstance.cantorPair(x, y);
-                indexArray[indexArrayCurr++] = index;
-
-                noiseArray[index] = noise;
-
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
-
-                if (noise > max) {
-                    max = noise;
-                }
-            } else if (pairingFunction == 2) {
-                int index = HashInstance.szudzikPair(x, y);
-                indexArray[indexArrayCurr++] = index;
-
-                noiseArray[index] = noise;
-
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
-
-                if (noise > max) {
-                    max = noise;
-                }
-            } else if (pairingFunction == 3) {
-                int index = HashInstance.rsPair(x, y);
-                indexArray[indexArrayCurr++] = index;
-
-                noiseArray[index] = noise;
-
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
-
-                if (noise > max) {
-                    max = noise;
-                }
-            } else {
-                // TODO: Throw error
+            if (noise > max) {
+                max = noise;
             }
 
         }
@@ -1213,39 +577,10 @@ std::vector<Noise::Point> Noise::generateSplatter(int pairingFunction, int noise
     float temp = 1.0f / (max - min);
 
     // Invert Hash Functions
-    if (pairingFunction == 0) {
+    for (int x = 0; x < width; ++x) {
+        for (int y = 0; y < height; ++y) {
 
-        for (int x = 0; x < width; ++x) {
-            for (int y = 0; y < height; ++y) {
-
-                int index = HashInstance.linearPair(x, y, width);
-                noise = noiseArray[index];
-
-                // Use gaussian distribution of noise values to fill [-1, 1] range.
-                noise = -1.0f + 2.0f * (noise - min) * temp;
-
-                // Remap to RGB friendly colour values in range [0, 1].
-                noise += 1.0f;
-                noise *= 0.5f;
-
-                points.push_back(Noise::Point());
-
-                int i = x * height + y;
-                points[i].x = x;
-                points[i].y = y;
-                points[i].colour = noise;
-
-                //printf("X[%f] Y[%f] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
-            }
-        }
-    } else if (pairingFunction == 1) {
-
-        for (int i = 0; i < (height * width); i++) {
-
-            int index = indexArray[i];
-            int inv_x = HashInstance.cantorInvertX(index);
-            int inv_y = HashInstance.cantorInvertY(index);
-
+            int index = HashInstance.linearPair(x, y, width);
             noise = noiseArray[index];
 
             // Use gaussian distribution of noise values to fill [-1, 1] range.
@@ -1256,72 +591,22 @@ std::vector<Noise::Point> Noise::generateSplatter(int pairingFunction, int noise
             noise *= 0.5f;
 
             points.push_back(Noise::Point());
-            points[i].x = inv_x;
-            points[i].y = inv_y;
+
+            int i = x * height + y;
+            points[i].x = x;
+            points[i].y = y;
             points[i].colour = noise;
 
             //printf("X[%f] Y[%f] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
         }
-    } else if (pairingFunction == 2) {
-
-        for (int i = 0; i < (height * width); i++) {
-
-            int index = indexArray[i];
-            int inv_x = HashInstance.szudzikInvertX(index);
-            int inv_y = HashInstance.szudzikInvertY(index);
-
-            noise = noiseArray[index];
-
-            // Use gaussian distribution of noise values to fill [-1, 1] range.
-            noise = -1.0f + 2.0f * (noise - min) * temp;
-
-            // Remap to RGB friendly colour values in range [0, 1].
-            noise += 1.0f;
-            noise *= 0.5f;
-
-            points.push_back(Noise::Point());
-            points[i].x = inv_x;
-            points[i].y = inv_y;
-            points[i].colour = noise;
-
-            //printf("X[%f] Y[%f] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
-        }
-    } else if (pairingFunction == 3) {
-        for (int i = 0; i < (height * width); i++) {
-            int m = HashInstance.rsInvert(i);
-
-            int inv_x = 0;
-            int inv_y = 0;
-            int tempVar = i - pow(m, 2);
-            if ((i - pow(m, 2)) < m) {
-                inv_x = i - pow(m, 2);
-                inv_y = m;
-            } else {
-                inv_x = m;
-                inv_y = pow(m, 2) + (2*m) - i;
-            }
-
-            noise = noiseArray[i];
-
-            // Use gaussian distribution of noise values to fill [-1, 1] range.
-            noise = -1.0f + 2.0f * (noise - min) * temp;
-
-            // Remap to RGB friendly colour values in range [0, 1].
-            noise += 1.0f;
-            noise *= 0.5f;
-
-            points.push_back(Noise::Point());
-            points[i].x = inv_x;
-            points[i].y = inv_y;
-            points[i].colour = noise;
-
-            //printf("X[%d] Y[%d] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
-        }
-    } else {
-        // TODO: Throw error
     }
 
     printf("Successfully generated Perlin noise (with splatter perturbation).\n");
+
+    //std::vector<Noise::Point>().swap(points);
+    delete noiseGenerator;
+    delete[] noiseArray;
+    delete[] indexArray;
     return points;
 }
 
@@ -1343,7 +628,9 @@ std::vector<Noise::Point> Noise::generateWood(int pairingFunction, int noiseType
 
     HashFunctions HashInstance;
     Fractal *noiseGenerator = new Fractal(noiseType);
-    noiseGenerator -> setInitFrequency(4.0f);
+    noiseGenerator->setPerlinDimensions(width, height);
+    noiseGenerator->setPairingFunctionWood(pairingFunction);
+    noiseGenerator->setInitFrequency(4.0f);
 
     // Define array size
     unsigned long long int arr_size = pow(width, 2) * pow(height, 2);
@@ -1369,62 +656,16 @@ std::vector<Noise::Point> Noise::generateWood(int pairingFunction, int noiseType
             noise = noiseGenerator -> noise(float(x) * invWidth, float(y) * invHeight, 0.72);
 
             // Set noise value dependant on hashed value
-            if (pairingFunction == 0) {
-                int index = HashInstance.linearPair(x, y, width);
-                noiseArray[index] = noise;
+            int index = HashInstance.linearPair(x, y, width);
+            noiseArray[index] = noise;
 
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
+            // Keep track of minimum and maximum noise values
+            if (noise < min) {
+                min = noise;
+            }
 
-                if (noise > max) {
-                    max = noise;
-                }
-            } else if (pairingFunction == 1) {
-                int index = HashInstance.cantorPair(x, y);
-                indexArray[indexArrayCurr++] = index;
-
-                noiseArray[index] = noise;
-
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
-
-                if (noise > max) {
-                    max = noise;
-                }
-            } else if (pairingFunction == 2) {
-                int index = HashInstance.szudzikPair(x, y);
-                indexArray[indexArrayCurr++] = index;
-
-                noiseArray[index] = noise;
-
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
-
-                if (noise > max) {
-                    max = noise;
-                }
-            } else if (pairingFunction == 3) {
-                int index = HashInstance.rsPair(x, y);
-                indexArray[indexArrayCurr++] = index;
-
-                noiseArray[index] = noise;
-
-                // Keep track of minimum and maximum noise values
-                if (noise < min) {
-                    min = noise;
-                }
-
-                if (noise > max) {
-                    max = noise;
-                }
-            } else {
-                // TODO: Throw error
+            if (noise > max) {
+                max = noise;
             }
 
         }
@@ -1434,39 +675,10 @@ std::vector<Noise::Point> Noise::generateWood(int pairingFunction, int noiseType
     float temp = 1.0f / (max - min);
 
     // Invert Hash Functions
-    if (pairingFunction == 0) {
+    for (int x = 0; x < width; ++x) {
+        for (int y = 0; y < height; ++y) {
 
-        for (int x = 0; x < width; ++x) {
-            for (int y = 0; y < height; ++y) {
-
-                int index = HashInstance.linearPair(x, y, width);
-                noise = noiseArray[index];
-
-                // Use gaussian distribution of noise values to fill [-1, 1] range.
-                noise = -1.0f + 2.0f * (noise - min) * temp;
-
-                // Remap to RGB friendly colour values in range [0, 1].
-                noise += 1.0f;
-                noise *= 0.5f;
-
-                points.push_back(Noise::Point());
-
-                int i = x * height + y;
-                points[i].x = x;
-                points[i].y = y;
-                points[i].colour = noise;
-
-                //printf("X[%f] Y[%f] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
-            }
-        }
-    } else if (pairingFunction == 1) {
-
-        for (int i = 0; i < (height * width); i++) {
-
-            int index = indexArray[i];
-            int inv_x = HashInstance.cantorInvertX(index);
-            int inv_y = HashInstance.cantorInvertY(index);
-
+            int index = HashInstance.linearPair(x, y, width);
             noise = noiseArray[index];
 
             // Use gaussian distribution of noise values to fill [-1, 1] range.
@@ -1477,71 +689,21 @@ std::vector<Noise::Point> Noise::generateWood(int pairingFunction, int noiseType
             noise *= 0.5f;
 
             points.push_back(Noise::Point());
-            points[i].x = inv_x;
-            points[i].y = inv_y;
+
+            int i = x * height + y;
+            points[i].x = x;
+            points[i].y = y;
             points[i].colour = noise;
 
             //printf("X[%f] Y[%f] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
         }
-    } else if (pairingFunction == 2) {
-
-        for (int i = 0; i < (height * width); i++) {
-
-            int index = indexArray[i];
-            int inv_x = HashInstance.szudzikInvertX(index);
-            int inv_y = HashInstance.szudzikInvertY(index);
-
-            noise = noiseArray[index];
-
-            // Use gaussian distribution of noise values to fill [-1, 1] range.
-            noise = -1.0f + 2.0f * (noise - min) * temp;
-
-            // Remap to RGB friendly colour values in range [0, 1].
-            noise += 1.0f;
-            noise *= 0.5f;
-
-            points.push_back(Noise::Point());
-            points[i].x = inv_x;
-            points[i].y = inv_y;
-            points[i].colour = noise;
-
-            //printf("X[%f] Y[%f] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
-        }
-    } else if (pairingFunction == 3) {
-        for (int i = 0; i < (height * width); i++) {
-            int m = HashInstance.rsInvert(i);
-
-            int inv_x = 0;
-            int inv_y = 0;
-            int tempVar = i - pow(m, 2);
-            if ((i - pow(m, 2)) < m) {
-                inv_x = i - pow(m, 2);
-                inv_y = m;
-            } else {
-                inv_x = m;
-                inv_y = pow(m, 2) + (2*m) - i;
-            }
-
-            noise = noiseArray[i];
-
-            // Use gaussian distribution of noise values to fill [-1, 1] range.
-            noise = -1.0f + 2.0f * (noise - min) * temp;
-
-            // Remap to RGB friendly colour values in range [0, 1].
-            noise += 1.0f;
-            noise *= 0.5f;
-
-            points.push_back(Noise::Point());
-            points[i].x = inv_x;
-            points[i].y = inv_y;
-            points[i].colour = noise;
-
-            //printf("X[%d] Y[%d] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
-        }
-    } else {
-        // TODO: Throw error
     }
 
     printf("Successfully generated Perlin noise (with wood perturbation).\n");
+
+    //std::vector<Noise::Point>().swap(points);
+    delete noiseGenerator;
+    delete[] noiseArray;
+    delete[] indexArray;
     return points;
 }

@@ -96,6 +96,13 @@ float Splatter::noise(float sample_x, float sample_y, float sample_z) {
     return glm::smoothstep(0.0f, 0.02f, noise);
 }
 
+/*
+ * Sets hashing mechanism.
+ */
+void Splatter::setPairingFunction(int pairingFunction) {
+    this->perlinSource->setPairingFunction(pairingFunction);
+}
+
 
 
 

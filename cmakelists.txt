@@ -35,7 +35,7 @@ add_executable(Perlin
         Marble.cpp
         Gabor.cpp
         Worley.cpp
-        Curl.cpp
+        ExperimentalNoise.cpp
         Splatter.cpp
         Wood.cpp
         Fractal.cpp
@@ -43,11 +43,13 @@ add_executable(Perlin
         HashFunctions.cpp
         Analysis.cpp
         ImageOutput.cpp
+        loadTexture.h
         Mesh.cpp
         Texture.cpp
         Camera.cpp
         Renderer.cpp
         Shader.h
+        external/tinycolormap/tinycolormap.hpp
         external/stb_image/stb_image.cpp
         external/stb_image/stb_image_write.cpp
         external/imgui/imconfig.h

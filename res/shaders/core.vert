@@ -8,8 +8,7 @@ out vec2 texUV;
 
 uniform mat4 transform;
 
-void main()
-{
+void main() {
     gl_Position = transform * vec4(position, 1.0f);
     vColor = normal;
     texUV = vec2(uv.x, 1.0 - uv.y);

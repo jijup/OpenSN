@@ -7,8 +7,6 @@ out vec4 fColor;
 //uniform sampler2D marbleTexture;
 uniform sampler2D marbleTexture;
 
-void main()
-{
-    // Linearly interpolate between both textures (second texture is only slightly combined)
+void main() {
     fColor = texture(marbleTexture, texUV);
 }

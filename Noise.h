@@ -27,7 +27,7 @@ public:
         int y;
         float colour;
     };
-    
+
     // Generates Perlin noise
     std::vector<Noise::Point> generatePerlin(int pairingFunction, int noiseType, int width, int height);
     
@@ -40,8 +40,8 @@ public:
     // Generates Worley noise
     std::vector<Noise::Point> generateWorley(int pairingFunction, int noiseType, int width, int height);
 
-    // Generates Curl noise
-    std::vector<Noise::Point> generateCurl(int pairingFunction, int noiseType, int width, int height);
+    // Generates ExperimentalNoise noise
+    std::vector<Noise::Point> generateExperiental(int pairingFunction, int noiseType, int width, int height);
 
     // Generate value noise (splatter)
     std::vector<Noise::Point> generateSplatter(int pairingFunction, int noiseType, int width, int height);

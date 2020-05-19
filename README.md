@@ -23,6 +23,8 @@ Noise generation and applications using various hashing techniques.
   5. Curl Noise (in progress)
   6. Perlin Noise with Splatter Perturbation
   7. Perlin Noise with Wood Perturbation
+  8. Perlin Noise with Domain Perturbation
+  9. Worley Noise with Bezier Curves
 
 ### UI Implementation:
 A user inferface, utilizing [Dear, ImGui](https://github.com/ocornut/imgui), has been implemented. This allows for an enhanced view and increased interaction with the application of which is rendered. 
