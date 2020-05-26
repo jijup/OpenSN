@@ -1,10 +1,8 @@
 #version 330 core
+
 in vec3 vposition;
 
 out vec3 uvw;
-
-//uniform mat4 V;
-//uniform mat4 P;
 
 uniform mat4 transform;
 

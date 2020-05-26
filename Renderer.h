@@ -18,6 +18,9 @@
 #include "Analysis.h"
 #include "Texture.h"
 
+#include <OpenGP/external/LodePNG/lodepng.h>
+//#include "loadTexture.h"
+
 #include <memory>
 #include <OpenGP/types.h>
 #include <OpenGP/GL/Texture.h>
@@ -53,11 +56,10 @@ public:
     // Helper function to determine type of noise to create
     int noiseHelper();
 
-    // Generate R32FTexture for landscape generation
+    // Terrain
+    void genTerrainMesh();
+    void genCubeMesh();
     OpenGP::R32FTexture* generateR32();
-
-    // Generate terrain mesh
-    void generateTerrianMesh();
 
     // Setup OpenGL buffers
     int setupBuffersMesh();
@@ -84,31 +86,16 @@ private:
     Texture textureInstance;
 
     ///----- Noise Generation
-    // Noise dimensions
-    int width;
-    int height;
+    int width;                  // X dimensions
+    int height;                 // Y dimensions
+    int noiseType;              // Noise to generate (0 - Perlin | 1 - Gabor | 2 - Marble )
+    int pairingFunction;        // Pairing function to use (0 - Linear | 1 - Cantor | 2 - Szudzik | 3 - Rosenberg-Strong)
+    bool saveImageFlag;         // Flag to determine whether the noise generated should be saved as an image
 
-    // Type of noise to generate (0 - Perlin | 1 - Gabor | 2 - Marble )
-    int noiseType;
-
-    // Type of pairing function to use (0 - Linear | 1 - Cantor | 2 - Szudzik | 3 - Rosenberg-Strong)
-    int pairingFunction;
-
-    // Noise generated
-    std::vector<Noise::Point> noise;
-
-    // Flag to determine whether the noise generated should be saved as an image
-    bool saveImageFlag;
-
-    ///----- Application variables
-    // Type of application (0 - Apply texture to Model | 1 - Procedural landscape generation)
+    ///----- Application Variables
+    GLuint textures[8];
     int applicationType;
-    int numMeshIndices;
-
-    OpenGP::R32FTexture *heightTexture;
-    //OpenGP::Shader terrainShader;
-    OpenGP::GPUMesh *terrainMesh;
-
+    GLfloat waveMotion;
 
     ///----- Analysis variables
     bool analysisFlag;

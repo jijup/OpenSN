@@ -1,38 +1,26 @@
 #version 330 core
 
-uniform sampler2D noiseTex;
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec3 normal;
+layout (location = 2) in vec2 uv;
 
-in vec3 vposition;
-in vec2 vtexcoord;
+out vec3 fragPos;                   //out vec3 vColor;
+out vec2 texUV;
+out float waterHeight;
 
-out vec3 fragPos;
-out vec2 uv;
-
-//uniform mat4 M;
-//uniform mat4 V;
-//uniform mat4 P;
 uniform mat4 transform;
+uniform sampler2D noiseTexture;
 
 void main() {
 
-    uv = vtexcoord;
-
-    // Earth scene
-    float water = 0.7f;
-
-    // Lunar scene
-    //float water = 0.0f;
-
-    // Calculate height
-    float h = (texture(noiseTex, uv).r + 1.0f) / 2.0f;
+    float water = 0.45f;
+    float h = texture(noiseTexture, uv).r;
     h = max(h, water);
 
-    // Set fragment position
-    fragPos = vposition.xyz + vec3(0,0,h);
+    fragPos = vec3(position) + vec3(0.0f, h, 0.0f);
+    gl_Position = transform * (vec4(fragPos, 1.0f));
+    //texUV = vec2(uv.x, 1.0 - uv.y);
+    texUV = vec2(uv.x, uv.y);
 
-    // Set gl_Position
-    gl_Position = transform * vec4(fragPos, 1.0f);
-
-    // Set height of water
-    //waterHeight = water;
+    waterHeight = water;
 }

@@ -16,25 +16,25 @@
 using namespace std;
 
 /// Noise Dimension Configuration
-#define WIDTH 1000                  // X Resolution
-#define HEIGHT 1000                 // Y Resolution
+#define WIDTH 1000                // X Resolution
+#define HEIGHT 1000               // Y Resolution
 
 /// Noise Type Configuration
-#define NOISE_TYPE 0                // Perlin noise
+//#define NOISE_TYPE 0                // Perlin noise
 //#define NOISE_TYPE 1              // Gabor noise
-//#define NOISE_TYPE 2              // Perlin noise (marble)
+#define NOISE_TYPE 2              // Perlin noise (marble)
 //#define NOISE_TYPE 3              // Worley noise
-//#define NOISE_TYPE 4              // New noise                        TODO: IMPLEMENT
+//#define NOISE_TYPE 4              // New noise
 //#define NOISE_TYPE 5              // Perlin noise (splatter)
 //#define NOISE_TYPE 6              // Perlin noise (wood)
-//#define NOISE_TYPE 7              // Bezier noise                     TODO: IMPLEMENT & RENAME
+//#define NOISE_TYPE 7              // Curl noise                     TODO: IMPLEMENT & RENAME
 
 /// Pairing Function Configuration
 //#define PAIRING_FUNCTION 0 	    // Linear
-#define PAIRING_FUNCTION 1 	        // Cantor
+//#define PAIRING_FUNCTION 1 	        // Cantor
 //#define PAIRING_FUNCTION 2 	    // Szudzik
 //#define PAIRING_FUNCTION 3        // Rosenberg-Strong
-//#define PAIRING_FUNCTION 4        // Original Perlin Noise Pairing Function
+#define PAIRING_FUNCTION 4        // Original Perlin Noise Pairing Function
 
 /// Noise Image Save Configuration
 //#define SAVE_NOISE_IMAGE 0        // Save noise image off
@@ -62,7 +62,8 @@ int main() {
 
     printf("\nStarting application...\n-----------------------\n");
 
-    Renderer renderer = Renderer(WIDTH, HEIGHT, NOISE_TYPE, PAIRING_FUNCTION, SAVE_NOISE_IMAGE, APPLICATION_TYPE, ANALYSIS, ANALYSIS_AMPLITUDE, ANALYSIS_FOURIER);
+    //Renderer renderer = Renderer(WIDTH, HEIGHT, NOISE_TYPE, PAIRING_FUNCTION, SAVE_NOISE_IMAGE, APPLICATION_TYPE, ANALYSIS, ANALYSIS_AMPLITUDE, ANALYSIS_FOURIER);
+    Renderer renderer(WIDTH, HEIGHT, NOISE_TYPE, PAIRING_FUNCTION, SAVE_NOISE_IMAGE, APPLICATION_TYPE, ANALYSIS, ANALYSIS_AMPLITUDE, ANALYSIS_FOURIER);
     renderer.renderApplication();
 
     printf("\n--------------------\nApplication exited.\n");

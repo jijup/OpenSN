@@ -23,25 +23,13 @@ Noise generation and applications using various hashing techniques.
   5. Curl Noise (in progress)
   6. Perlin Noise with Splatter Perturbation
   7. Perlin Noise with Wood Perturbation
-  8. Perlin Noise with Domain Perturbation
-  9. Worley Noise with Bezier Curves
+  8. Worley Noise with Bezier Curves
 
 ### UI Implementation:
 A user inferface, utilizing [Dear, ImGui](https://github.com/ocornut/imgui), has been implemented. This allows for an enhanced view and increased interaction with the application of which is rendered. 
 
-![UI Image](res/readme/UI.png)
-
-###### UI Features:
-Primarily in progress. The goal is to allow user to dynamically generate noise, load meshes, run analysis, save images and render desired applications from the UI.
-
-  1. Generate noise (in progress)
-  2. Load meshes (in progress)
-  3. Load textures (in progress)
-  4. Run analysis (in progress)
-  5. Save images via UI 
-      - Application Image
-      - Noise Image (in progress)
-      - Analysis Image (in progress)
+![UI Image](res/readme/Vase.bmp)
+![UI Image](res/readme/ProceduralLandscape.bmp)
 
 ### Building & Running:
 

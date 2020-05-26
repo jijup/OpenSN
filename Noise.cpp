@@ -64,7 +64,7 @@ std::vector<Noise::Point> Noise::generatePerlin(int pairingFunction, int noiseTy
             // Generate noise value - f((x, y, z) + f((x, y, z) + f(x, y, z)))
             float fp2 = noiseGenerator -> noise(fp1 + float(x) * invWidth, fp1 + float(y) * invHeight, fp1 + 0.72);
             noise = fp2;
-            */
+             */
 
             // Set noise value dependant on hashed value
             int index = HashInstance.linearPair(x, y, width);
@@ -78,7 +78,6 @@ std::vector<Noise::Point> Noise::generatePerlin(int pairingFunction, int noiseTy
             if (noise > max) {
                 max = noise;
             }
-
         }
     }
     
@@ -355,6 +354,13 @@ std::vector<Noise::Point> Noise::generateWorley(int pairingFunction, int noiseTy
 
     std::vector<Noise::Point> points;
 
+    /// Progress variables
+    int currLevel = 0;
+    int percentFinished = 0;
+    time_t startTime;
+    time(&startTime);
+    /// End progress variables
+
     for (int x = 0; x < width; ++x) {
         for (int y = 0; y < height; ++y) {
 
@@ -373,9 +379,43 @@ std::vector<Noise::Point> Noise::generateWorley(int pairingFunction, int noiseTy
             if (noise > max) {
                 max = noise;
             }
-
         }
+
+        /// ======= Display progress
+        int progressFlag = 1;   //  0 - off  ||  1 - on
+        if (progressFlag == 1) {
+            if (x > currLevel) {
+
+                int minutes, seconds;
+
+                // Increment level and percent
+                currLevel += 10;
+                percentFinished += 1;
+
+                // Get current time
+                time_t currTime;
+                time(&currTime);
+
+                // Calculate total seconds to completion
+                float timeDiff = difftime(currTime, startTime);
+                float totalSeconds = timeDiff * (100.0f / ((float)percentFinished)) * (1.0f - ((float)percentFinished / 100.0f));
+                int totalSecondsInt = (int) floor(totalSeconds);
+
+                // Update minutes/seconds then print
+                minutes = totalSecondsInt / 60;
+                seconds = totalSecondsInt % 60;
+
+                if (percentFinished > 5) {
+                    printf("    Percent completed: %2d%% [Estimated time to completion: %d:%02d]\n", percentFinished - 5, minutes, seconds);
+                } else {
+                    printf("    Percent completed: --%% [Estimated time to completion: -:--]\n");
+                }
+            }
+        }
+        /// ======= End display progress
     }
+
+    printf("max: %f | min: %f\n", max, min);
 
     // Convert noise values to pixel colour values.
     float temp = 1.0f / (max - min);
@@ -428,7 +468,7 @@ std::vector<Noise::Point> Noise::generateWorley(int pairingFunction, int noiseTy
  */
 std::vector<Noise::Point> Noise::generateExperiental(int pairingFunction, int noiseType, int width, int height) {
 
-    printf("\nStarting curl noise generation.\n");
+    printf("\nStarting experimental noise generation.\n");
 
     HashFunctions HashInstance;
     Fractal *noiseGenerator = new Fractal(noiseType);
@@ -459,6 +499,24 @@ std::vector<Noise::Point> Noise::generateExperiental(int pairingFunction, int no
             // Generate noise value
             noise = noiseGenerator -> noise(float(x) * invWidth, float(y) * invHeight, 0.72);
 
+            /// Warp domain
+            /**/
+            // Generate noise value - f((x, y, z) + f(x, y, z))
+            //float fp1 = noiseGenerator -> noise(noise + float(x) * invWidth, noise + float(y) * invHeight, noise + 0.72);
+            //noise = fp1;
+
+            // Generate noise value - f((x, y, z) + f((x, y, z) + f(x, y, z)))
+            //float fp2 = noiseGenerator -> noise(fp1 + float(x) * invWidth, fp1 + float(y) * invHeight, fp1 + 0.72);
+            //noise = fp2;
+
+            // Generate noise value - f((x, y, z) + f((x, y, z) + f((x, y, z) + f(x, y, z))))
+            //float fp3 = noiseGenerator -> noise(fp2 + float(x) * invWidth, fp2 + float(y) * invHeight, fp2 + 0.72);
+            //noise = fp3;
+
+            //noise = (noise + fp1) / 2.0f;
+            //noise = (noise + fp1 + fp2) / 3.0f;
+            //noise = (noise + fp1 + fp2 + fp3) / 4.0f;
+
             // Set noise value dependant on hashed value
             int index = HashInstance.linearPair(x, y, width);
             noiseArray[index] = noise;
@@ -474,6 +532,9 @@ std::vector<Noise::Point> Noise::generateExperiental(int pairingFunction, int no
 
         }
     }
+
+    // Debug
+    printf("    max: %f | min: %f\n", max, min);
 
     // Convert noise values to pixel colour values.
     float temp = 1.0f / (max - min);
@@ -492,6 +553,8 @@ std::vector<Noise::Point> Noise::generateExperiental(int pairingFunction, int no
             noise += 1.0f;
             noise *= 0.5f;
 
+            //printf("before_noise: %f | after_noise: %f\n", temp, noise);
+
             points.push_back(Noise::Point());
 
             int i = x * height + y;
@@ -503,7 +566,7 @@ std::vector<Noise::Point> Noise::generateExperiental(int pairingFunction, int no
         }
     }
 
-    printf("Successfully generated curl noise.\n");
+    printf("Successfully generated experimental noise.\n");
 
     //std::vector<Noise::Point>().swap(points);
     delete noiseGenerator;

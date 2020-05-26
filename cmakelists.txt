@@ -29,21 +29,37 @@ link_directories(${OpenCV_LIBRARY_DIRS})
 # import matplotlib-cpp
 find_package(Python2 COMPONENTS Development NumPy)
 
+# Texture imports
+file(COPY ${PROJECT_SOURCE_DIR}/res/Textures/grass.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${PROJECT_SOURCE_DIR}/res/Textures/sand.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${PROJECT_SOURCE_DIR}/res/Textures/rock.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${PROJECT_SOURCE_DIR}/res/Textures/snow.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${PROJECT_SOURCE_DIR}/res/Textures/water.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${PROJECT_SOURCE_DIR}/res/Textures/water_waves.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${PROJECT_SOURCE_DIR}/res/Textures/lunar.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+# Skybox imports
+file(COPY ${PROJECT_SOURCE_DIR}/res/Textures/miramar_bk.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${PROJECT_SOURCE_DIR}/res/Textures/miramar_dn.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${PROJECT_SOURCE_DIR}/res/Textures/miramar_ft.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${PROJECT_SOURCE_DIR}/res/Textures/miramar_lf.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${PROJECT_SOURCE_DIR}/res/Textures/miramar_rt.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${PROJECT_SOURCE_DIR}/res/Textures/miramar_up.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
 add_executable(Perlin
         Driver.cpp
-        Perlin.cpp
-        Marble.cpp
-        Gabor.cpp
-        Worley.cpp
-        ExperimentalNoise.cpp
-        Splatter.cpp
-        Wood.cpp
+        NoiseTypes/Perlin.cpp
+        NoiseTypes/Marble.cpp
+        NoiseTypes/Gabor.cpp
+        NoiseTypes/Worley.cpp
+        NoiseTypes/ExperimentalNoise.cpp
+        NoiseTypes/Splatter.cpp
+        NoiseTypes/Wood.cpp
         Fractal.cpp
         Noise.cpp
         HashFunctions.cpp
         Analysis.cpp
         ImageOutput.cpp
-        loadTexture.h
         Mesh.cpp
         Texture.cpp
         Camera.cpp

@@ -7,11 +7,12 @@
 
 #include "Fractal.h"
 #include "HashFunctions.h"
-#include "Marble.h"
+//#include "NoiseTypes/Marble.h"
 #include <iostream>
 #include <string>
 #include <vector>
 #include <math.h>
+#include <random>
 
 #ifndef _NOISE_H_
 #define _NOISE_H_

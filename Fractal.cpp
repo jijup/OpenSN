@@ -51,34 +51,37 @@ float Fractal::noise(float xCoord, float yCoord, float zCoord) {
             freq *= this->lacunarity;
             amp *= this->persistence;
         } else if (this->noiseType == 1) {    // Gabor
-            sum += this->gaborSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+            if (xCoord == 0 && yCoord == 0 && i == 0) {
+                this->octaves = 1;
+            }
+
+	        sum += this->gaborSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
 
             freq *= this->lacunarity;
             amp *= this->persistence;
-            //break;
 	    } else if (this->noiseType == 2) {    // Marble
             sum = this->marbleSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
 
             break;
 	    } else if (this->noiseType == 3) {    // Worley
             if (xCoord == 0 && yCoord == 0 && i == 0) {
-                printf("    %d cells being generated.\n", this->worleySource->getNumberOfCells());
+                printf("    Number of cells being generated: %d.\n", this->worleySource->getNumberOfCells());
+                this->octaves = 1;
             }
 
             sum += this->worleySource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
-            //freq *= this->lacunarity;
-            //amp *= this->persistence;
-            break;
+            freq *= this->lacunarity;
+            amp *= this->persistence;
         } else if (this->noiseType == 4) {    // Experimental Noise
 	        if (xCoord == 0 && yCoord == 0 && i == 0) {
-                printf("    %d Bezier curves being generated.\n", this->curlSource->getNumberOfCurves());
+                printf("    Number of Bezier curves being generated: %d.\n", this->curlSource->getNumberOfCurves());
+                this->octaves = 1;
 	        }
 
             sum += this->curlSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
 
-            //freq *= this->lacunarity;
-            //amp *= this->persistence;
-            break;
+            freq *= this->lacunarity;
+            amp *= this->persistence;
         } else if (this->noiseType == 5) {    // Perlin (splatter)
             sum = this->valueSplatterSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
 

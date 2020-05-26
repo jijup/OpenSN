@@ -22,6 +22,7 @@ public:
 
     // Constructor
     Shader (const GLchar *vertexPath, const GLchar *fragmentPath) {
+
         std::string vertexCode;
         std::string fragmentCode;
         std::ifstream vShaderFile;
@@ -100,9 +101,14 @@ public:
         glDeleteShader(fragment);
     }
 
-    // Uses the current shader
-    void Use() {
+    // Binds the current shader
+    void bind() {
         glUseProgram(this->Program);
+    }
+
+    // Unbinds the current shader
+    void unbind() {
+        glUseProgram(0);
     }
 };
 

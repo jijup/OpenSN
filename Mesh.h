@@ -31,46 +31,22 @@ public:
     Mesh();
     ~Mesh();
 
-    struct Vertex {
-        glm::vec3 position;
-        glm::vec3 normal;
-        glm::vec2 uv;
-    };
-
-    struct s_Mesh {
-
-        // Declare per mesh variables
-        std::vector<Vertex> vertices;
-        std::vector<unsigned int> indices;
-
-        s_Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices) {
-            this->vertices = vertices;
-            this->indices  = indices;
-        }
-    };
-
     // Creates a mesh from an OBJ file
-    void readObjIntoMesh();
+    void generateFileMesh();
 
-    // Creates a mesh from Perlin noise values
-    void readNoiseIntoMesh(std::vector<Noise::Point> noise, int width, int height);
+    // Creates a flat mesh
+    void generateFlatMesh(int width, int height);
 
     // Driver function accessed from outside class for mesh generation via external file
     void generateMeshFromFile();
 
     // Driver function accessed from outside class for mesh generation via Noise
-    void generateMeshFromNoise(std::vector<Noise::Point> noise, int width, int height);
+    void generateMeshFromNoise(int width, int height);
 
-    // Setup mesh coordinates for rendering
-    int setupMeshCoordinates();
-
-    // Declare mesh vector
-    std::vector<Mesh::s_Mesh> meshes;
-
-    // Vertices and indices of mesh
-    std::vector<GLfloat> pVertices;
-    std::vector<GLuint> pIndices;
+    // Mesh variables
     int numIndices;
+    GLfloat *verticesMesh;
+    GLuint *indicesMesh;
 };
 
 #endif

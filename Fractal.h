@@ -8,13 +8,13 @@
 #ifndef _FRACTAL_H_
 #define _FRACTAL_H_
 
-#include "Perlin.h"
-#include "Gabor.h"
-#include "Marble.h"
-#include "Worley.h"
-#include "ExperimentalNoise.h"
-#include "Splatter.h"
-#include "Wood.h"
+#include "NoiseTypes/Perlin.h"
+#include "NoiseTypes/Gabor.h"
+#include "NoiseTypes/Marble.h"
+#include "NoiseTypes/Worley.h"
+#include "NoiseTypes/ExperimentalNoise.h"
+#include "NoiseTypes/Splatter.h"
+#include "NoiseTypes/Wood.h"
 
 class Fractal {
 public:

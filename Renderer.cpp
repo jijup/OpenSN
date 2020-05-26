@@ -9,60 +9,80 @@
 
 Renderer::Renderer() {
 
+    this->waveMotion = 0.0f;
+
+    // Object initial location
     this->translationStart = glm::vec3(0.000f, 0.000f, 0.000f);
     this->rotationStart = glm::vec3(1.000f, 0.000f, 0.000f);
     this->scaleStart = glm::vec3(0.075f, 0.075f, 0.075f);
 
+    // Camera initial location
     this->cameraPosition   = glm::vec3(0.0f, 1.0f,  20.0f);
     this->cameraLookatOrigin   = glm::vec3(0.0f, 0.0f,  0.0f);
     this->cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
 
+    // Initial factors
     this->fovFactor = 90.0f;
     this->rotateFactor = 0.0f;
     this->scaleFactor = 1.0f;
 
+    // Initial dimensions
     this->width = 1000;
     this->height = 1000;
+
+    // Runtime information
     this->noiseType = 0;
     this->pairingFunction = 1;
-    this->saveImageFlag = 1;
     this->applicationType = 0;
+
+    // Flags
+    this->saveImageFlag = 1;
     this->analysisFlag = 1;
     this->amplitudeAnalysisFlag = 0;
     this->fourierAnalysisFlag = 1;
 
+    // ImGui setup
     this->ImguiActiveFlag = true;
-
     updateImguiText();
 }
 
 Renderer::Renderer(int width, int height, int noiseType, int pairingFunction, int saveImageFlag,
                    int applicationType, int analysisFlag, int amplitudeAnalysisFlag, int fourierAnalysisFlag) {
 
+    this->waveMotion = 0.0f;
+
+    // Object initial location
     this->translationStart = glm::vec3(0.000f, 0.000f, 0.000f);
     this->rotationStart = glm::vec3(0.000f, 1.000f, 0.000f);
     this->scaleStart = glm::vec3(0.075f, 0.075f, 0.075f);
 
+    // Camera initial location
     this->cameraPosition   = glm::vec3(0.0f, 1.0f,  20.0f);
     this->cameraLookatOrigin   = glm::vec3(0.0f, 0.0f,  0.0f);
     this->cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
 
+    // Initial factors
     this->fovFactor = 90.0f;
     this->rotateFactor = 0.0f;
     this->scaleFactor = 1.0f;
 
+    // Initial dimensions
     this->width = width;
     this->height = height;
+
+    // Runtime information
     this->noiseType = noiseType;
     this->pairingFunction = pairingFunction;
-    this->saveImageFlag = saveImageFlag;
     this->applicationType = applicationType;
+
+    // Flags
+    this->saveImageFlag = saveImageFlag;
     this->analysisFlag = analysisFlag;
     this->amplitudeAnalysisFlag = amplitudeAnalysisFlag;
     this->fourierAnalysisFlag = fourierAnalysisFlag;
 
+    // ImGui setup
     this->ImguiActiveFlag = true;
-
     updateImguiText();
 }
 
@@ -151,142 +171,27 @@ std::string Renderer::generateFilenames(int filenameType) {
 }
 
 /*
- * Generate noise.
- *
- * Returns:
- *      0 if succesfully completed. TODO: return -1 if failed
- */
-int Renderer::noiseHelper() {
-    if (this->noiseType == 0) {
-        this->noise = this->NoiseInstance->generatePerlin(this->pairingFunction, this->noiseType, this->width, this->height);
-    } else if (this->noiseType == 1) {
-        this->noise = this->NoiseInstance->generateGabor(this->pairingFunction, this->noiseType, this->width, this->height);
-    } else if (this->noiseType == 2) {
-        this->noise = this->NoiseInstance->generateMarble(this->pairingFunction, this->noiseType, this->width, this->height);
-    } else if (this->noiseType == 3) {
-        this->noise = this->NoiseInstance->generateWorley(this->pairingFunction, this->noiseType, this->width, this->height);
-    } else if (this->noiseType == 4) {
-        this->noise = this->NoiseInstance->generateExperiental(this->pairingFunction, this->noiseType, this->width, this->height);
-    } else if (this->noiseType == 5) {
-        this->noise = this->NoiseInstance->generateSplatter(this->pairingFunction, this->noiseType, this->width, this->height);
-    } else if (this->noiseType == 6) {
-        this->noise = this->NoiseInstance->generateWood(this->pairingFunction, this->noiseType, this->width, this->height);
-    } else {
-        // TODO: Throw error
-    }
-
-    return 0;
-}
-
-/*
- * Generate R32FTexture for landscape generation.
- */
-OpenGP::R32FTexture* Renderer::generateR32() {
-    // FIXME: Inlcude hashing functions
-
-    // Convert to array
-    float tempNoise[this->width * this->height];
-    for (int i = 0; i < this->noise.size(); i++) {
-        int noiseIndex = this->noise[i].x + this->noise[i].y * this->height;
-        tempNoise[noiseIndex] = this->noise[i].colour;
-    }
-
-    OpenGP::R32FTexture* tex = new OpenGP::R32FTexture();
-    tex->upload_raw(width, height, tempNoise);
-
-    return tex;
-}
-
-/*
- * Generates terrain mesh.
- */
-void Renderer::generateTerrianMesh() {
-    // Generate a flat mesh for the terrain with given dimensions, using triangle strips
-    this->terrainMesh = new OpenGP::GPUMesh();
-
-    // Grid resolution
-    int n_width = this->width;
-    int n_height = this->height;
-
-    // Grid dimensions (centered at (0, 0))
-    float f_width = 1000.0f;
-    float f_height = 1000.0f;
-
-    std::vector<OpenGP::Vec3> points;
-    std::vector<unsigned int> indices;
-    std::vector<OpenGP::Vec2> texCoords;
-
-    // Generate vertex and texture coordinates
-    for (int j = 0; j < n_width; ++j) {
-        for (int i = 0; i < n_height; ++i) {
-
-            // Calculate vertex positions
-            float vertX = -f_width / 2 + j / (float)n_width * f_width;
-            float vertY = -f_height / 2 + i / (float)n_height * f_height;
-            float vertZ = 0.0f;
-            points.push_back(OpenGP::Vec3(vertX, vertY, vertZ));
-
-            // Calculate texture coordinates
-            float texX = i / (float)(n_width - 1);
-            float texY = j / (float)(n_height - 1);
-            texCoords.push_back(OpenGP::Vec2(texX, texY));
-        }
-    }
-
-    // Generate element indices via triangle strips
-    for(int j = 0; j < n_width - 1; ++j) {
-
-        // Push two vertices at the base of each strip
-        float baseX = j * n_width;
-        indices.push_back(baseX);
-
-        float baseY = ((j + 1) * n_width);
-        indices.push_back(baseY);
-
-        for(int i = 1; i < n_height; ++i) {
-
-            // Calculate next two vertices
-            float tempX = i + j * n_width;
-            indices.push_back(tempX);
-
-            float tempY = i + (j + 1) * n_height;
-            indices.push_back(tempY);
-        }
-
-        // A new strip will begin when this index is reached
-        indices.push_back(999999);
-    }
-
-    terrainMesh->set_vbo<OpenGP::Vec3>("vposition", points);
-    terrainMesh->set_triangles(indices);
-    terrainMesh->set_vtexcoord(texCoords);
-}
-
-/*
  * Sets up buffers for meshes loaded from file.
  *
  * Returns:
  *      0 if succesfully completed. TODO: return -1 if failed
  */
 int Renderer::setupBuffersMesh() {
-    GLfloat verticesMesh[this->meshInstance.pVertices.size()];
-    GLuint indicesMesh[this->meshInstance.pIndices.size()];
 
-    std::copy(this->meshInstance.pVertices.begin(), this->meshInstance.pVertices.end(), verticesMesh);
-    std::copy(this->meshInstance.pIndices.begin(), this->meshInstance.pIndices.end(), indicesMesh);
-
+    // Generate buffers
     glGenVertexArrays(1, &this->VAO);
     glGenBuffers(1, &this->VBO);
     glGenBuffers(1, &this->EBO);
 
     glBindVertexArray(this->VAO);
 
+    // Setup VBO
     glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(verticesMesh), verticesMesh, GL_STATIC_DRAW);
-    printf("\nsizeOfVerticesMesh: %lu | sizeOfVerticesMeshNew: %lu \n", sizeof(verticesMesh), this->meshInstance.numIndices * 8 * sizeof(GLfloat));
+    glBufferData(GL_ARRAY_BUFFER, this->meshInstance.numIndices * 8 * sizeof(GLfloat), this->meshInstance.verticesMesh, GL_STATIC_DRAW);
 
+    // Setup EBO
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesMesh), indicesMesh, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->meshInstance.numIndices * sizeof(GLuint), this->meshInstance.indicesMesh, GL_STATIC_DRAW);
 
     // Position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *) 0 );
@@ -314,7 +219,6 @@ int Renderer::setupBuffersMesh() {
 int Renderer::updateImguiText() {
 
     // Pairing function
-
     if (this->pairingFunction == 0) {
         imguiPairingFunction = "Pairing Function: Linear";
     } else if (this->pairingFunction  == 1) {
@@ -433,32 +337,49 @@ int Renderer::saveBMP(std::string filename, GLFWwindow* w) {
  */
 int Renderer::renderApplication() {
 
-    /**
-     * Note:    The below 5 function calls need to be moved into the rendering loop so that the user can dynamically
-     *          generate noise, load meshes, run analysis, save images and render such applications.
-     */
-
-    // Generate noise
-    Renderer::noiseHelper();
-
     // Generate title
     std::string fileNoise = Renderer::generateFilenames(0);
     std::string fileApp = Renderer::generateFilenames(1);
 
-    // Save generated noise
-    this->imageInstance->saveBMP(this->noise, this->saveImageFlag, this->width, this->height, fileNoise);
+    /// ========================== GENERATE NOISE/RUN ANALYSIS/SAVE IMAGE ==========================
+    int generateNoise = 0;
+    if (generateNoise == 0) {
+        std::vector<Noise::Point> noise;
+        if (this->noiseType == 0) {
+            noise = this->NoiseInstance->generatePerlin(this->pairingFunction, this->noiseType, this->width, this->height);
+        } else if (this->noiseType == 1) {
+            noise = this->NoiseInstance->generateGabor(this->pairingFunction, this->noiseType, this->width, this->height);
+        } else if (this->noiseType == 2) {
+            noise = this->NoiseInstance->generateMarble(this->pairingFunction, this->noiseType, this->width, this->height);
+        } else if (this->noiseType == 3) {
+            noise = this->NoiseInstance->generateWorley(this->pairingFunction, this->noiseType, this->width, this->height);
+        } else if (this->noiseType == 4) {
+            noise = this->NoiseInstance->generateExperiental(this->pairingFunction, this->noiseType, this->width, this->height);
+        } else if (this->noiseType == 5) {
+            noise = this->NoiseInstance->generateSplatter(this->pairingFunction, this->noiseType, this->width, this->height);
+        } else if (this->noiseType == 6) {
+            noise = this->NoiseInstance->generateWood(this->pairingFunction, this->noiseType, this->width, this->height);
+        } else {
+            // TODO: Throw error
+        }
 
-    // Run analysis
-    if (this->analysisFlag == 1) {
-        printf("\nStarting analysis.\n");
-        this->AnalysisInstance->runAnalysis(this->noise, this->pairingFunction, this->noiseType, this->width, this->height, this->amplitudeAnalysisFlag, this->fourierAnalysisFlag);
-        printf("Successfully completed analysis.\n");
+        // Save generated noise
+        this->imageInstance->saveBMP(noise, this->saveImageFlag, this->width, this->height, fileNoise);
+
+        // Run analysis
+        if (this->analysisFlag == 1) {
+            printf("\nStarting analysis.\n");
+            this->AnalysisInstance->runAnalysis(noise, this->pairingFunction, this->noiseType, this->width, this->height, this->amplitudeAnalysisFlag, this->fourierAnalysisFlag);
+            printf("Successfully completed analysis.\n");
+        }
+
+        delete imageInstance;
+        delete AnalysisInstance;
+        delete NoiseInstance;
     }
 
-    delete imageInstance;
-    delete AnalysisInstance;
-    delete NoiseInstance;
 
+    /// ================================ GLFW/GLEW CONFIGURATION ================================
     // GLFW Window Generation
     if (!glfwInit()) {
         printf("Error glfwInit.\n");
@@ -470,6 +391,7 @@ int Renderer::renderApplication() {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     //glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    //glfwWindowHint(GLFW_SAMPLES, 8);
 
     // Get primary monitory dimensions
     GLFWmonitor* monitor = glfwGetPrimaryMonitor();
@@ -499,7 +421,10 @@ int Renderer::renderApplication() {
         return -1;
     }
 
+
+    /// ================================= OPENGL CONFIGURATION =================================
     glViewport(0, 0, fbWidth, fbHeight);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
     // Allow for alpha channel to be supported
     glEnable(GL_BLEND);
@@ -509,14 +434,129 @@ int Renderer::renderApplication() {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
-    // Create and compile shaders
-    Shader ourShader("../res/shaders/core.vert", "../res/shaders/core.frag");
+    // Allow for seamless cubemap
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-    // Generate mesh
-    if (this->applicationType == 0) {               // Vase
+    // Mipmap requirement
+    glEnable(GL_TEXTURE_2D);
+
+    //glEnable(GL_MULTISAMPLE);
+    //glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
+
+
+    /// =============== SHADER COMPILATION/LINKAGE & TEXTURE GENERATION/LINKAGE ===============
+    /// Noise shader and texture setup
+    Shader noiseShader("../res/shaders/core.vert", "../res/shaders/core.frag");
+    noiseShader.bind();
+
+    // Generate 7 textures
+    glGenTextures(8, this->textures);
+
+    // Activate texture and bind current texture
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, this->textures[0]);
+
+    // Load texture from file
+    this->textureInstance.generateNoiseTexture(this->textures);
+
+    // Set uniform
+    glUniform1i(glGetUniformLocation(noiseShader.Program, "noiseTexture"), 0);
+
+    // Unbind texture and shader
+    glBindTexture(GL_TEXTURE_2D, 0);
+    noiseShader.unbind();
+
+    /// Skybox shader and texture setup
+    printf("\nStarting skybox texture generation.");
+    Shader skyboxShader("../res/shaders/skybox.vert", "../res/shaders/skybox.frag");
+    skyboxShader.bind();
+
+    // Load skybox textures
+    const std::string filenameSkybox[] = {"../res/textures/miramar_ft.png", "../res/textures/miramar_bk.png",
+                                    "../res/textures/miramar_dn.png", "../res/textures/miramar_up.png",
+                                    "../res/textures/miramar_rt.png", "../res/textures/miramar_lf.png"
+    };
+
+    // Bind current texture
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, this->textures[1]);
+
+    // Load skybox textures from file
+    for (int i = 0; i < 6; i++) {
+        this->textureInstance.generateSkyboxTexture(i, filenameSkybox[i]);
+    }
+
+    // Set texture filtering
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    // Unbind texture and shader
+    glBindTexture(GL_TEXTURE_2D, 0);
+    skyboxShader.unbind();
+
+    printf("Successfully completed skybox texture generation.\n");
+
+    /// Terrain shaders and textures setup
+    printf("\nStarting terrain texture generation.");
+    Shader terrainShader("../res/shaders/terrain.vert", "../res/shaders/terrain.frag");
+    terrainShader.bind();
+
+    const char* uniformTerrain[6] = {"grass", "rock", "sand", "snow", "water", "lunar"};
+    const std::string filenameTerrain[] = {"../res/textures/grass.png", "../res/textures/rock.png",
+                                           "../res/textures/sand.png", "../res/textures/snow.png",
+                                           "../res/textures/water.png", "../res/textures/lunar.png"};
+
+    // Load terrain textures from file
+    for (int i = 0; i < 6; i++) {
+
+        int tempIndex = i + 2;
+
+        // Bind current texture
+        glActiveTexture(GL_TEXTURE2 + i);
+        glBindTexture(GL_TEXTURE_2D, this->textures[tempIndex]);
+
+        this->textureInstance.generateTerrainTexture(i, filenameTerrain[i]);
+
+        // Link to Shader Uniform
+        glUniform1i(glGetUniformLocation(terrainShader.Program, uniformTerrain[i]), tempIndex);
+
+        // Unbind current texture
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    // Set noise texture uniform
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, this->textures[0]);
+    glUniform1i(glGetUniformLocation(terrainShader.Program, "noiseTexture"), 0);
+
+    // Unbind current texture
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    // Rebind GL_TEXTURE0 and unbind shader
+    glActiveTexture(GL_TEXTURE0);
+    terrainShader.unbind();
+
+    printf("Successfully completed terrain texture generation.\n");
+
+    /// =============================== GENERATE MESH/UPDATE INITIAL VARIABLES ===============================
+    if (this->applicationType == 0) {               // Wavefront (OBJ object)
         this->meshInstance.generateMeshFromFile();
-    } else if (this->applicationType == 1) {        // Landscape
-        this->meshInstance.generateMeshFromNoise(this->noise, this->width, this->height);
+    } else if (this->applicationType == 1) {        // Procedural Landscape
+        this->meshInstance.generateMeshFromNoise(this->width, this->height);
+
+        /// TODO: move
+        this->translationStart = glm::vec3(4.615f, 0.000f, 0.000f);
+        this->rotationStart = glm::vec3(0.035f, 0.000f, 0.000f);
+        this->scaleStart = glm::vec3(2.000f, 2.000f, 2.000f);
+
+        // Initial factors
+        this->fovFactor = 86.0f;
+        this->rotateFactor = 20.769f;
+        this->scaleFactor = 2.0f;
+        ///
     } else {
         // TODO: throw error
     }
@@ -524,14 +564,12 @@ int Renderer::renderApplication() {
     // Setup buffers
     Renderer::setupBuffersMesh();
 
-    // Generate texture from file
-    this->textureInstance.generateTexture();
-
     /*
     //glEnable(GL_SCISSOR_TEST);
     //glScissor(0,0, fbWidth * .75, fbHeight *.75);
-     */
+    */
 
+    /// =============================== IMGUI SETUP ===============================
     // ImGui initialization
     const char* glsl_version = "#version 330";
     bool toolActiveFlag = true;
@@ -544,10 +582,11 @@ int Renderer::renderApplication() {
     glm::vec4 clearColor  = glm::vec4(1.000f, 1.000f, 1.000f, 1.000f);
     glm::vec4 texColor    = glm::vec4(1.000f, 1.000f, 1.000f, 1.000f);
 
+    /// =============================== CAMERA SETUP ===============================
     // Initialize camera
     Camera camera = Camera(fbWidth, fbHeight, this->cameraPosition, this->cameraUp, -90.f, 0.0f);
 
-    // Render
+    /// ================================== RENDER ==================================
     while (!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS) {
         glfwPollEvents();
 
@@ -559,44 +598,122 @@ int Renderer::renderApplication() {
         glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Activate shader
-        ourShader.Use();
+        if (this->applicationType == 0) {
 
-        // Activate textures
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, this->textureInstance.texture);
-        glUniform1i(glGetUniformLocation(ourShader.Program, "marbleTexture"), 0);
+            // Activate shader
+            noiseShader.bind();
 
-        // Projection
-        int fbWidthNew, fbHeightNew;
-        glfwGetFramebufferSize(window, &fbWidthNew, &fbHeightNew);
-        camera.updateCameraZoom(this->fovFactor);
-        camera.updateProjection(fbWidthNew, fbHeightNew);
-        glm::mat4 projection = camera.getProjection();
+            // Bind texture
+            glBindTexture(GL_TEXTURE_2D, this->textures[0]);
 
-        // View
-        camera.updateCameraPosition(this->cameraPosition);
-        camera.updateCameraDirection(this->cameraLookatOrigin);
-        glm::mat4 view = camera.getView();
+            // Projection
+            int fbWidthNew, fbHeightNew;
+            glfwGetFramebufferSize(window, &fbWidthNew, &fbHeightNew);
+            camera.updateCameraZoom(this->fovFactor);
+            camera.updateProjection(fbWidthNew, fbHeightNew);
+            glm::mat4 projection = camera.getProjection();
 
-        // Model
-        camera.updateModel(this->translationStart, this->rotationStart, this->scaleStart * this->scaleFactor, this->rotateFactor);
-        glm::mat4 model = glm::mat4(1.0f);
-        model = camera.getModel();
+            // View
+            camera.updateCameraPosition(this->cameraPosition);
+            camera.updateCameraDirection(this->cameraLookatOrigin);
+            glm::mat4 view = camera.getView();
 
-        // Aggregate MVP matrices into single transform matrix
-        glm::mat4 transform = projection * view * model;
+            // Model
+            camera.updateModel(this->translationStart, this->rotationStart, this->scaleStart * this->scaleFactor, this->rotateFactor);
+            glm::mat4 model = glm::mat4(1.0f);
+            model = camera.getModel();
 
-        // Get matrix's uniform location and set matrix
+            // Aggregate MVP matrices into single transform matrix
+            glm::mat4 transform = projection * view * model;
 
-        GLint transformLocation = glGetUniformLocation(ourShader.Program, "transform");
-        glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform));
+            // Get matrix's uniform location and set matrix
+            GLint transformLocation = glGetUniformLocation(noiseShader.Program, "transform");
+            glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform));
 
-        // Draw container
-        glBindVertexArray(this->VAO);
-        glDrawElements(GL_TRIANGLES, this->meshInstance.numIndices, GL_UNSIGNED_INT, 0);
-        //glDrawElements(GL_TRIANGLE_STRIP, this->meshInstance.numIndices, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
+            // Draw container
+            glBindVertexArray(this->VAO);
+            glDrawElements(GL_TRIANGLES, this->meshInstance.numIndices, GL_UNSIGNED_INT, 0);
+            glBindVertexArray(0);
+
+        } else if (this->applicationType == 1) {
+
+            // Activate shader
+            terrainShader.bind();
+
+            // Bind noise texture (heightmap)
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, this->textures[0]);
+
+            // Bind Grass
+            glActiveTexture(GL_TEXTURE2);
+            glBindTexture(GL_TEXTURE_2D, this->textures[2]);
+
+            // Bind Rock
+            glActiveTexture(GL_TEXTURE3);
+            glBindTexture(GL_TEXTURE_2D, this->textures[3]);
+
+            // Bind Sand
+            glActiveTexture(GL_TEXTURE4);
+            glBindTexture(GL_TEXTURE_2D, this->textures[4]);
+
+            // Bind Snow
+            glActiveTexture(GL_TEXTURE5);
+            glBindTexture(GL_TEXTURE_2D, this->textures[5]);
+
+            // Bind Water
+            glActiveTexture(GL_TEXTURE6);
+            glBindTexture(GL_TEXTURE_2D, this->textures[6]);
+
+            // Bind Lunar
+            glActiveTexture(GL_TEXTURE7);
+            glBindTexture(GL_TEXTURE_2D, this->textures[7]);
+
+            // Projection
+            int fbWidthNew, fbHeightNew;
+            glfwGetFramebufferSize(window, &fbWidthNew, &fbHeightNew);
+            camera.updateCameraZoom(this->fovFactor);
+            camera.updateProjection(fbWidthNew, fbHeightNew);
+            glm::mat4 projection = camera.getProjection();
+
+            // View
+            camera.updateCameraPosition(this->cameraPosition);
+            camera.updateCameraDirection(this->cameraLookatOrigin);
+            glm::mat4 view = camera.getView();
+
+            // Model
+            camera.updateModel(this->translationStart, this->rotationStart, this->scaleStart * this->scaleFactor, this->rotateFactor);
+            glm::mat4 model = glm::mat4(1.0f);
+            model = camera.getModel();
+
+            // Aggregate MVP matrices into single transform matrix
+            glm::mat4 transform = projection * view * model;
+
+            // Get matrix's uniform location and set matrix
+            GLint transformLocation = glGetUniformLocation(terrainShader.Program, "transform");
+            glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform));
+
+            // Set updated viewPos
+            GLint viewPosLocation = glGetUniformLocation(terrainShader.Program, "viewPos");
+            glUniform3f(viewPosLocation, this->cameraPosition.x, this->cameraPosition.y, this->cameraPosition.z);
+
+            // Set updated wave motion
+            if (this->waveMotion > 1.0f) {
+                this->waveMotion = 0.0f;
+            } else {
+                this->waveMotion += 0.0001f;
+            }
+
+            GLint waveMotionLocation = glGetUniformLocation(terrainShader.Program, "waveMotion");
+            glUniform1f(waveMotionLocation, this->waveMotion);
+
+            // Draw container
+            glBindVertexArray(this->VAO);
+            glDrawElements(GL_TRIANGLES, this->meshInstance.numIndices, GL_UNSIGNED_INT, 0);
+            glBindVertexArray(0);
+
+        } else {
+            // TODO: throw error
+        }
 
         // Main Menu Bar
         if (ImGui::BeginMainMenuBar()) {

@@ -1,4 +1,5 @@
 #version 330 core
+
 in vec3 uvw;
 
 out vec4 color;
