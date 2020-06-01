@@ -2,7 +2,7 @@
  * Renderer.cpp
  * Authors: Sheldon Taylor, Jiju Poovvancheri
  *
- * Implementation of GLFW & OpenGL-based rendering.
+ * Implementation of GLFW & OpenGL-based rendering with ImGui.
  */
 
 #include "Renderer.h"
@@ -129,6 +129,8 @@ std::string Renderer::generateFilenames(int filenameType) {
             title = "Perlin_Splatter_Noise_" + title;
         } else if (this->noiseType == 6) {
             title = "Perlin_Wood_Noise_" + title;
+        } else if (this->noiseType == 7) {
+            title = "Primed_Gradient_Noise";
         } else {
             // TODO: Throw error
         }
@@ -151,6 +153,8 @@ std::string Renderer::generateFilenames(int filenameType) {
             title = "Perlin_Splatter_" + title;
         } else if (this->noiseType == 6) {
             title = "Perlin_Wood_" + title;
+        } else if (this->noiseType == 6) {
+            title = "Primed_Gradient";
         } else {
             // TODO: Throw error
         }
@@ -359,6 +363,8 @@ int Renderer::renderApplication() {
             noise = this->NoiseInstance->generateSplatter(this->pairingFunction, this->noiseType, this->width, this->height);
         } else if (this->noiseType == 6) {
             noise = this->NoiseInstance->generateWood(this->pairingFunction, this->noiseType, this->width, this->height);
+        } else if (this->noiseType == 7) {
+            noise = this->NoiseInstance->generatePrimedGradient(this->pairingFunction, this->noiseType, this->width, this->height);
         } else {
             // TODO: Throw error
         }
@@ -445,6 +451,8 @@ int Renderer::renderApplication() {
 
 
     /// =============== SHADER COMPILATION/LINKAGE & TEXTURE GENERATION/LINKAGE ===============
+    printf("\nStarting texture generation.");
+
     /// Noise shader and texture setup
     Shader noiseShader("../res/shaders/core.vert", "../res/shaders/core.frag");
     noiseShader.bind();
@@ -467,7 +475,7 @@ int Renderer::renderApplication() {
     noiseShader.unbind();
 
     /// Skybox shader and texture setup
-    printf("\nStarting skybox texture generation.");
+    printf("\n    Starting skybox texture generation.");
     Shader skyboxShader("../res/shaders/skybox.vert", "../res/shaders/skybox.frag");
     skyboxShader.bind();
 
@@ -497,10 +505,10 @@ int Renderer::renderApplication() {
     glBindTexture(GL_TEXTURE_2D, 0);
     skyboxShader.unbind();
 
-    printf("Successfully completed skybox texture generation.\n");
+    printf("    Successfully completed skybox texture generation.\n");
 
     /// Terrain shaders and textures setup
-    printf("\nStarting terrain texture generation.");
+    printf("\n    Starting terrain texture generation.");
     Shader terrainShader("../res/shaders/terrain.vert", "../res/shaders/terrain.frag");
     terrainShader.bind();
 
@@ -539,7 +547,7 @@ int Renderer::renderApplication() {
     glActiveTexture(GL_TEXTURE0);
     terrainShader.unbind();
 
-    printf("Successfully completed terrain texture generation.\n");
+    printf("    Successfully completed terrain texture generation.\n");
 
     /// =============================== GENERATE MESH/UPDATE INITIAL VARIABLES ===============================
     if (this->applicationType == 0) {               // Wavefront (OBJ object)

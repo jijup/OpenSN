@@ -620,7 +620,7 @@ glm::mat4 camera(float Translate, glm::vec2 const& Rotate)
 - Fixed missing doxygen @endcond tag #211
 - Fixed instruction set detection with Clang #158
 - Fixed orientate3 function #207
-- Fixed lerp when cosTheta is close to 1 in quaternion slerp #210
+- Fixed fade when cosTheta is close to 1 in quaternion slerp #210
 - Added GTX_io for io with <iostream> #144
 - Fixed fastDistance ambiguity #215
 - Fixed tweakedInfinitePerspective #208 and added user-defined epsilon to
@@ -784,7 +784,7 @@ glm::mat4 camera(float Translate, glm::vec2 const& Rotate)
 - Fixed quat slerp using mix function when cosTheta close to 1
 - Improved fvec4SIMD and fmat4x4SIMD implementations
 - Fixed assert messages
-- Added slerp and lerp quaternion functions and tests
+- Added slerp and fade quaternion functions and tests
 
 ---
 ### GLM 0.9.4.0 - 2012-11-18

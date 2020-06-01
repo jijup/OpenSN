@@ -16,33 +16,33 @@
 using namespace std;
 
 /// Noise Dimension Configuration
-#define WIDTH 1000                // X Resolution
-#define HEIGHT 1000               // Y Resolution
+#define WIDTH 1000                  // X Resolution
+#define HEIGHT 1000                 // Y Resolution
 
 /// Noise Type Configuration
-//#define NOISE_TYPE 0                // Perlin noise
+//#define NOISE_TYPE 0              // Perlin noise
 //#define NOISE_TYPE 1              // Gabor noise
-#define NOISE_TYPE 2              // Perlin noise (marble)
+//#define NOISE_TYPE 2              // Perlin noise (marble)
 //#define NOISE_TYPE 3              // Worley noise
 //#define NOISE_TYPE 4              // New noise
 //#define NOISE_TYPE 5              // Perlin noise (splatter)
 //#define NOISE_TYPE 6              // Perlin noise (wood)
-//#define NOISE_TYPE 7              // Curl noise                     TODO: IMPLEMENT & RENAME
+#define NOISE_TYPE 7                // Primed Perlin noise with Szudzik
 
 /// Pairing Function Configuration
 //#define PAIRING_FUNCTION 0 	    // Linear
-//#define PAIRING_FUNCTION 1 	        // Cantor
-//#define PAIRING_FUNCTION 2 	    // Szudzik
+//#define PAIRING_FUNCTION 1 	    // Cantor
+#define PAIRING_FUNCTION 2 	        // Szudzik
 //#define PAIRING_FUNCTION 3        // Rosenberg-Strong
-#define PAIRING_FUNCTION 4        // Original Perlin Noise Pairing Function
+//#define PAIRING_FUNCTION 4        // Original Perlin Noise Pairing Function
 
 /// Noise Image Save Configuration
 //#define SAVE_NOISE_IMAGE 0        // Save noise image off
 #define SAVE_NOISE_IMAGE 1		    // Save noise image on
 
 /// Application Configuration
-#define APPLICATION_TYPE 0          // Apply texture to vase (or other object)
-//#define APPLICATION_TYPE 1        // Procedural landscape model
+//#define APPLICATION_TYPE 0        // Apply texture to vase (or other object)
+#define APPLICATION_TYPE 1          // Procedural landscape model
 
 /// Analysis Mode Configuration
 //#define ANALYSIS 0		        // Analysis mode off

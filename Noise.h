@@ -7,7 +7,6 @@
 
 #include "Fractal.h"
 #include "HashFunctions.h"
-//#include "NoiseTypes/Marble.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -31,6 +30,9 @@ public:
 
     // Generates Perlin noise
     std::vector<Noise::Point> generatePerlin(int pairingFunction, int noiseType, int width, int height);
+
+    // Generates Primed Perlin Noise
+    std::vector<Noise::Point> generatePrimedGradient(int pairingFunction, int noiseType, int width, int height);
     
     // Generates Gabor noise
     std::vector<Noise::Point> generateGabor(int pairingFunction, int noiseType, int width, int height);

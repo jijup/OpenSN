@@ -15,6 +15,7 @@
 #include "NoiseTypes/ExperimentalNoise.h"
 #include "NoiseTypes/Splatter.h"
 #include "NoiseTypes/Wood.h"
+#include "NoiseTypes/PrimeGradient.h"
 
 class Fractal {
 public:
@@ -52,10 +53,11 @@ public:
 
 private:
 	Perlin *perlinSource;
+	PrimeGradient *primeSource;
 	Gabor *gaborSource;
 	Marble *marbleSource;
 	Worley *worleySource;
-	ExperimentalNoise *curlSource;
+	ExperimentalNoise *experimentalSource;
 	Splatter *valueSplatterSource;
 	Wood *valueWoodSource;
 

@@ -5,6 +5,8 @@
  * Implementation of Worley noise.
  */
 
+#include "../HashFunctions.h"
+
 #include <iostream>
 #include <cstdlib>
 #include <ctime>

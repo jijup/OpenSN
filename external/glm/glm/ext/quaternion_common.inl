@@ -28,7 +28,7 @@ namespace glm
 	template<typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER qua<T, Q> lerp(qua<T, Q> const& x, qua<T, Q> const& y, T a)
 	{
-		GLM_STATIC_ASSERT(std::numeric_limits<T>::is_iec559, "'lerp' only accept floating-point inputs");
+		GLM_STATIC_ASSERT(std::numeric_limits<T>::is_iec559, "'fade' only accept floating-point inputs");
 
 		// Lerp is only defined in [0, 1]
 		assert(a >= static_cast<T>(0));

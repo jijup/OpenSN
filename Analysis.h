@@ -6,6 +6,7 @@
  */
 
 #include "Noise.h"
+#include "HashFunctions.h"
 #include <iostream>
 #include <fstream>
 #include <string>

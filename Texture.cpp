@@ -20,7 +20,7 @@ Texture::~Texture() {}
  */
 int Texture::readNoiseTexture(GLuint *tex) {
 
-    printf("\nAttempting to read noise texture from file.\n");
+    printf("\n    Attempting to read noise texture from file.\n");
 
     // Set our texture parameters and texture filtering
     //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -43,7 +43,7 @@ int Texture::readNoiseTexture(GLuint *tex) {
     glGenerateMipmap(GL_TEXTURE_2D);
 
     // Debug
-    printf("    BMP file read: %s\nSuccessfully read noise texture from file.\n", filename.c_str());
+    printf("        BMP file read: %s\n    Successfully read noise texture from file.\n", filename.c_str());
 
     // Cleanup
     stbi_image_free(image);
@@ -59,16 +59,15 @@ int Texture::readNoiseTexture(GLuint *tex) {
  */
 int Texture::readSkyboxTexture(int i, std::string filename) {
 
-    printf("\nAttempting to read skybox texture from file.\n");
+    printf("\n    Attempting to read skybox texture from file.\n");
 
     int texWidth, texHeight;
-
 
     unsigned char* image = stbi_load(filename.c_str(), &texWidth, &texHeight, 0, 4);
     glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, texWidth, texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 
     // Debug
-    printf("    PNG file read: %s\nSuccessfully read skybox texture from file.\n", filename.c_str());
+    printf("        PNG file read: %s\n    Successfully read skybox texture from file.\n", filename.c_str());
 
     // Cleanup
     stbi_image_free(image);
@@ -83,7 +82,7 @@ int Texture::readSkyboxTexture(int i, std::string filename) {
  *      0 if succesfully completed. TODO: return -1 if failed
  */
 int Texture::readTerrainTexture(int i, std::string filename) {
-    printf("\nAttempting to read terrain texture from file.\n");
+    printf("\n    Attempting to read terrain texture from file.\n");
 
     int texWidth, texHeight;
 
@@ -106,7 +105,7 @@ int Texture::readTerrainTexture(int i, std::string filename) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
     // Debug
-    printf("    PNG file read: %s\nSuccessfully read terrain texture from file.\n", filename.c_str());
+    printf("        PNG file read: %s\n    Successfully read terrain texture from file.\n", filename.c_str());
 
     // Cleanup
     stbi_image_free(image);
@@ -123,9 +122,9 @@ int Texture::readTerrainTexture(int i, std::string filename) {
 int Texture::generateNoiseTexture(GLuint *tex) {
 
     // Read texture from file
-    printf("\nStarting noise texture generation.");
+    printf("\n    Starting noise texture generation.");
     Texture::readNoiseTexture(tex);
-    printf("Successfully completed noise texture generation.\n");
+    printf("    Successfully completed noise texture generation.\n");
 
     return 0;
 }

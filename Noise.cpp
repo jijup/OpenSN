@@ -54,7 +54,8 @@ std::vector<Noise::Point> Noise::generatePerlin(int pairingFunction, int noiseTy
         for (int y = 0; y < height; ++y) {
             
             // Generate noise value - f(x, y, z)
-            noise = noiseGenerator -> noise(float(x) * invWidth, float(y) * invHeight, 0.72);
+            //noise = noiseGenerator -> noise(float(x) * invWidth, float(y) * invHeight, 0.72f);
+            noise = noiseGenerator -> noise(float(x) * invWidth, float(y) * invHeight, 0.5f);
 
             /// Warping domain
             /*
@@ -63,7 +64,9 @@ std::vector<Noise::Point> Noise::generatePerlin(int pairingFunction, int noiseTy
 
             // Generate noise value - f((x, y, z) + f((x, y, z) + f(x, y, z)))
             float fp2 = noiseGenerator -> noise(fp1 + float(x) * invWidth, fp1 + float(y) * invHeight, fp1 + 0.72);
-            noise = fp2;
+            float fp3 = noiseGenerator -> noise(fp2 + float(x) * invWidth, fp2 + float(y) * invHeight, fp2 + 0.72);
+            float fp4 = noiseGenerator -> noise(fp3 + float(x) * invWidth, fp3 + float(y) * invHeight, fp3 + 0.72);
+            noise = fp4;
              */
 
             // Set noise value dependant on hashed value
@@ -80,9 +83,11 @@ std::vector<Noise::Point> Noise::generatePerlin(int pairingFunction, int noiseTy
             }
         }
     }
-    
+
     // Convert noise values to pixel colour values.
     float temp = 1.0f / (max - min);
+
+    printf("    Noise Values: Max: %f | Min: %f\n", max, min);
     
     // Invert Hash Functions
     for (int x = 0; x < width; ++x) {
@@ -111,6 +116,118 @@ std::vector<Noise::Point> Noise::generatePerlin(int pairingFunction, int noiseTy
 
 
     printf("Successfully generated Perlin noise.\n");
+
+    delete noiseGenerator;
+    delete[] noiseArray;
+    delete[] indexArray;
+    return points;
+}
+
+/*
+ * Generates gradient noise with Prime numbers replacing gradients.
+ *
+ * Parameters:
+ *      pairingFunction: pairing function to be used
+ *      noiseType: type of noise to be used
+ *      width: number of x-axis pixels
+ *      height: number of y-axis pixels
+ *
+ * Returns:
+ *      vector: structs including Gradient noise values and coordinates.
+ */
+std::vector<Noise::Point> Noise::generatePrimedGradient(int pairingFunction, int noiseType, int width, int height) {
+
+    printf("\nStarting primed gradient noise generation.\n");
+
+    HashFunctions HashInstance;
+    Fractal *noiseGenerator = new Fractal(noiseType);
+    noiseGenerator->setPerlinDimensions(width, height);
+    noiseGenerator->setPairingFunction(pairingFunction);
+    noiseGenerator->setInitFrequency(4.0f);
+
+    // Define array size
+    unsigned long long int arr_size = pow(width, 2) * pow(height, 2);
+    int *indexArray = new int[width * height];
+    int indexArrayCurr = 0;
+
+    // Intialize nosie array
+    float *noiseArray = new float[arr_size];
+
+    // Generate a noise value for each pixel
+    float invWidth = 1.0f / float(width);
+    float invHeight = 1.0f / float(height);
+    float noise;
+    float min = 0.0f;
+    float max = 0.0f;
+
+    std::vector<Noise::Point> points;
+
+    for (int x = 0; x < width; ++x) {
+        for (int y = 0; y < height; ++y) {
+
+            // Generate noise value - f(x, y, z)
+            //noise = noiseGenerator -> noise(float(x) * invWidth, float(y) * invHeight, 0.72f);
+            noise = noiseGenerator -> noise(float(x) * invWidth, float(y) * invHeight, 0.5f);
+
+            /// Warping domain
+            /*
+            // Generate noise value - f((x, y, z) + f(x, y, z))
+            float fp1 = noiseGenerator -> noise(noise + float(x) * invWidth, noise + float(y) * invHeight, noise + 0.72);
+
+            // Generate noise value - f((x, y, z) + f((x, y, z) + f(x, y, z)))
+            float fp2 = noiseGenerator -> noise(fp1 + float(x) * invWidth, fp1 + float(y) * invHeight, fp1 + 0.72);
+            float fp3 = noiseGenerator -> noise(fp2 + float(x) * invWidth, fp2 + float(y) * invHeight, fp2 + 0.72);
+            float fp4 = noiseGenerator -> noise(fp3 + float(x) * invWidth, fp3 + float(y) * invHeight, fp3 + 0.72);
+            noise = fp4;
+             */
+
+            // Set noise value dependant on hashed value
+            int index = HashInstance.linearPair(x, y, width);
+            noiseArray[index] = noise;
+
+            // Keep track of minimum and maximum noise values
+            if (noise < min) {
+                min = noise;
+            }
+
+            if (noise > max) {
+                max = noise;
+            }
+        }
+    }
+
+    // Convert noise values to pixel colour values.
+    float temp = 1.0f / (max - min);
+
+    printf("    Noise Values: Max: %f | Min: %f\n", max, min);
+
+    // Invert Hash Functions
+    for (int x = 0; x < width; ++x) {
+        for (int y = 0; y < height; ++y) {
+
+            int index = HashInstance.linearPair(x, y, width);
+            noise = noiseArray[index];
+
+            // Use gaussian distribution of noise values to fill [-1, 1] range.
+            noise = -1.0f + 2.0f * (noise - min) * temp;
+
+            // Remap to RGB friendly colour values in range [0, 1].
+            noise += 1.0f;
+            noise *= 0.5f;
+
+            points.push_back(Noise::Point());
+
+            int i = x * height + y;
+            points[i].x = x;
+            points[i].y = y;
+            points[i].colour = noise;
+
+            //printf("X[%f] Y[%f] COLOUR[%f]\n", points[i].x, points[i].y, points[i].colour);
+        }
+    }
+
+
+    printf("Successfully generated primed gradient noise.\n");
 
     delete noiseGenerator;
     delete[] noiseArray;
@@ -180,6 +297,8 @@ std::vector<Noise::Point> Noise::generateGabor(int pairingFunction, int noiseTyp
 
     // Convert noise values to pixel colour values.
     float temp = 1.0f / (max - min);
+
+    printf("    Noise Values: Max: %f | Min: %f\n", max, min);
 
     // Invert Hash Functions
     for (int x = 0; x < width; ++x) {
@@ -281,6 +400,8 @@ std::vector<Noise::Point> Noise::generateMarble(int pairingFunction, int noiseTy
     // Convert noise values to pixel colour values.
     float temp = 1.0f / (max - min);
 
+    printf("    Noise Values: Max: %f | Min: %f\n", max, min);
+
     // Invert Hash Functions
     for (int x = 0; x < width; ++x) {
         for (int y = 0; y < height; ++y) {
@@ -367,6 +488,24 @@ std::vector<Noise::Point> Noise::generateWorley(int pairingFunction, int noiseTy
             // Generate noise value
             noise = noiseGenerator -> noise(float(x) * invWidth, float(y) * invHeight, 0.72);
 
+            /// Warp domain
+            /**/
+            // Generate noise value - f((x, y, z) + f(x, y, z))
+            //float fp1 = noiseGenerator -> noise(noise + float(x) * invWidth, noise + float(y) * invHeight, noise + 0.72);
+            //noise = fp1;
+
+            // Generate noise value - f((x, y, z) + f((x, y, z) + f(x, y, z)))
+            //float fp2 = noiseGenerator -> noise(fp1 + float(x) * invWidth, fp1 + float(y) * invHeight, fp1 + 0.72);
+            //noise = fp2;
+
+            // Generate noise value - f((x, y, z) + f((x, y, z) + f((x, y, z) + f(x, y, z))))
+            //float fp3 = noiseGenerator -> noise(fp2 + float(x) * invWidth, fp2 + float(y) * invHeight, fp2 + 0.72);
+            //noise = fp3;
+
+            //noise = (noise + fp1) / 2.0f;
+            //noise = (noise + fp1 + fp2) / 3.0f;
+            //noise = (noise + fp1 + fp2 + fp3) / 4.0f;
+
             // Set noise value dependant on hashed value
             int index = HashInstance.linearPair(x, y, width);
             noiseArray[index] = noise;
@@ -415,7 +554,7 @@ std::vector<Noise::Point> Noise::generateWorley(int pairingFunction, int noiseTy
         /// ======= End display progress
     }
 
-    printf("max: %f | min: %f\n", max, min);
+    printf("    Noise Values: Max: %f | Min: %f\n", max, min);
 
     // Convert noise values to pixel colour values.
     float temp = 1.0f / (max - min);
@@ -493,6 +632,13 @@ std::vector<Noise::Point> Noise::generateExperiental(int pairingFunction, int no
 
     std::vector<Noise::Point> points;
 
+    /// Progress variables
+    int currLevel = 0;
+    int percentFinished = 0;
+    time_t startTime;
+    time(&startTime);
+    /// End progress variables
+
     for (int x = 0; x < width; ++x) {
         for (int y = 0; y < height; ++y) {
 
@@ -529,12 +675,44 @@ std::vector<Noise::Point> Noise::generateExperiental(int pairingFunction, int no
             if (noise > max) {
                 max = noise;
             }
-
         }
+
+        /// ======= Display progress
+        int progressFlag = 1;   //  0 - off  ||  1 - on
+        if (progressFlag == 1) {
+            if (x > currLevel) {
+
+                int minutes, seconds;
+
+                // Increment level and percent
+                currLevel += 10;
+                percentFinished += 1;
+
+                // Get current time
+                time_t currTime;
+                time(&currTime);
+
+                // Calculate total seconds to completion
+                float timeDiff = difftime(currTime, startTime);
+                float totalSeconds = timeDiff * (100.0f / ((float)percentFinished)) * (1.0f - ((float)percentFinished / 100.0f));
+                int totalSecondsInt = (int) floor(totalSeconds);
+
+                // Update minutes/seconds then print
+                minutes = totalSecondsInt / 60;
+                seconds = totalSecondsInt % 60;
+
+                if (percentFinished > 5) {
+                    printf("    Percent completed: %2d%% [Estimated time to completion: %d:%02d]\n", percentFinished - 5, minutes, seconds);
+                } else {
+                    printf("    Percent completed: --%% [Estimated time to completion: -:--]\n");
+                }
+            }
+        }
+        /// ======= End display progress
     }
 
     // Debug
-    printf("    max: %f | min: %f\n", max, min);
+    printf("    Noise Values: Max: %f | Min: %f\n", max, min);
 
     // Convert noise values to pixel colour values.
     float temp = 1.0f / (max - min);
@@ -639,6 +817,8 @@ std::vector<Noise::Point> Noise::generateSplatter(int pairingFunction, int noise
     // Convert noise values to pixel colour values.
     float temp = 1.0f / (max - min);
 
+    printf("    Noise Values: Max: %f | Min: %f\n", max, min);
+
     // Invert Hash Functions
     for (int x = 0; x < width; ++x) {
         for (int y = 0; y < height; ++y) {
@@ -736,6 +916,8 @@ std::vector<Noise::Point> Noise::generateWood(int pairingFunction, int noiseType
 
     // Convert noise values to pixel colour values.
     float temp = 1.0f / (max - min);
+
+    printf("    Noise Values: Max: %f | Min: %f\n", max, min);
 
     // Invert Hash Functions
     for (int x = 0; x < width; ++x) {

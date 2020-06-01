@@ -24,7 +24,7 @@ void ImageOutput::saveBMP(std::vector<Noise::Point> points, int writeBMP, int wi
 
     if (writeBMP == 1) {
 
-        int colorType = 1; // 0 - Grayscale | 1 - Colour
+        int colorType = 0; // 0 - Grayscale | 1 - Colour
 
         if (colorType == 0) {
             uint8_t colourByte;
@@ -99,7 +99,7 @@ void ImageOutput::saveBMP(std::vector<Noise::Point> points, int writeBMP, int wi
                     */
 
                     /// Interpolating Marble Textures [M]
-                    /**/
+                    /*
                     glm::vec3 startColor = glm::vec3(121,121,121);
                     glm::vec3 startColorSecondary = glm::vec3(221,221,221);
                     glm::vec3 endColor = glm::vec3(255,255,255);
@@ -117,17 +117,18 @@ void ImageOutput::saveBMP(std::vector<Noise::Point> points, int writeBMP, int wi
                         g = ((endColor.y - startColorSecondary.y) * x) + startColorSecondary.y;
                         b = ((endColor.z - startColorSecondary.z) * x) + startColorSecondary.z;
                     }
+                     */
 
 
                     /// Interpolating Water Textures [BL]
-                    /*
+                    /**/
                     glm::vec3 startColor = glm::vec3(4, 78, 74);
                     glm::vec3 endColor = glm::vec3(228, 222, 201);
                     float x = rgb[i][j] / 255.0f;
                     float r = ((endColor.x - startColor.x) * x) + startColor.x;
                     float g = ((endColor.y - startColor.y) * x) + startColor.y;
                     float b = ((endColor.z - startColor.z) * x) + startColor.z;
-                    */
+
 
                     /// Interpolating Basketball [BSK]
                     /*

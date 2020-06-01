@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <cmath>
+#include <glm/glm/glm.hpp>
 
 #ifndef _PERLIN_H_
 #define _PERLIN_H_
@@ -26,8 +27,8 @@ public:
     // Sets hashing mechanism
     void setPairingFunction(int pairingFunction);
 
-	// Interpolates value
-	float lerp(float x);
+	// Smooth value
+	float fade(float x);
 
 	// Generates a Perlin noise value, given some 3D coordinates (X, Y, Z).
 	float noise(float sample_x, float sample_y, float sample_z);

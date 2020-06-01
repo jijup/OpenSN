@@ -14,10 +14,11 @@ Fractal::Fractal(int noiseType) {
     this->noiseType = noiseType;
 
     this->perlinSource = new Perlin();
+    this->primeSource = new PrimeGradient();
     this->gaborSource = new Gabor();
     this->marbleSource = new Marble();
     this->worleySource = new Worley();
-    this->curlSource = new ExperimentalNoise();
+    this->experimentalSource = new ExperimentalNoise();
     this->valueSplatterSource = new Splatter();
     this->valueWoodSource = new Wood();
 
@@ -30,10 +31,11 @@ Fractal::Fractal(int noiseType) {
 
 Fractal::~Fractal() {
 	delete this->perlinSource;
+	delete this->primeSource;
     delete this->gaborSource;
     delete this->marbleSource;
     delete this->worleySource;
-    delete this->curlSource;
+    delete this->experimentalSource;
     delete this->valueSplatterSource;
     delete this->valueWoodSource;
 }
@@ -74,11 +76,11 @@ float Fractal::noise(float xCoord, float yCoord, float zCoord) {
             amp *= this->persistence;
         } else if (this->noiseType == 4) {    // Experimental Noise
 	        if (xCoord == 0 && yCoord == 0 && i == 0) {
-                printf("    Number of Bezier curves being generated: %d.\n", this->curlSource->getNumberOfCurves());
+                printf("    Number of Bezier curves being generated: %d.\n", this->experimentalSource->getNumberOfCurves());
                 this->octaves = 1;
 	        }
 
-            sum += this->curlSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+            sum += this->experimentalSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
 
             freq *= this->lacunarity;
             amp *= this->persistence;
@@ -90,12 +92,18 @@ float Fractal::noise(float xCoord, float yCoord, float zCoord) {
             sum = this->valueWoodSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
 
             break;
+        } else if (this->noiseType == 7) {    // Prime Gradient (wood)
+            sum += this->primeSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+
+            freq *= this->lacunarity;
+            amp *= this->persistence;
         } else {
 	        // TODO: Throw error
 	    }
 	}
 
-	return sum;
+	return sum; // 1
+	//return sin(xCoord + 1.0f / sum); // 2
 }
 
 void Fractal::setPerlinDimensions(int width, int height) {
@@ -111,7 +119,7 @@ void Fractal::setPairingFunctionMarble(int pairingFunction) {
 }
 
 void Fractal::setPairingFunctionExperimental(int pairingFunction) {
-    this->curlSource->setPairingFunction(pairingFunction);
+    this->experimentalSource->setPairingFunction(pairingFunction);
 }
 
 void Fractal::setPairingFunctionSplatter(int pairingFunction) {

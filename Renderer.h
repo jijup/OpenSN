@@ -18,9 +18,6 @@
 #include "Analysis.h"
 #include "Texture.h"
 
-#include <OpenGP/external/LodePNG/lodepng.h>
-//#include "loadTexture.h"
-
 #include <memory>
 #include <OpenGP/types.h>
 #include <OpenGP/GL/Texture.h>
@@ -52,14 +49,6 @@ public:
 
     // Generate filenames
     std::string generateFilenames(int filenameType);
-
-    // Helper function to determine type of noise to create
-    int noiseHelper();
-
-    // Terrain
-    void genTerrainMesh();
-    void genCubeMesh();
-    OpenGP::R32FTexture* generateR32();
 
     // Setup OpenGL buffers
     int setupBuffersMesh();
@@ -93,8 +82,8 @@ private:
     bool saveImageFlag;         // Flag to determine whether the noise generated should be saved as an image
 
     ///----- Application Variables
-    GLuint textures[8];
     int applicationType;
+    GLuint textures[8];
     GLfloat waveMotion;
 
     ///----- Analysis variables

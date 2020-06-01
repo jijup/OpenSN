@@ -13,7 +13,7 @@ ExperimentalNoise::ExperimentalNoise() {
     srand(time(NULL));
 
     int numBaseCurves = 4;
-    this->numCurves = 4;
+    this->numCurves = 12;
     this->bezierCurves = new glm::vec2*[this->numCurves + numBaseCurves];
 
     for (int i = 0; i < this->numCurves; i++) {
@@ -338,8 +338,8 @@ float ExperimentalNoise::noise(float sample_x, float sample_y, float sample_z) {
         float ed = distance(st, this->bezierCurves[i], 0.05f);
         float mhd = mahalanobisDistance(st, this->bezierCurves[i], 0.05f);
 
-        //float currDistance = ed;                                                    // Cracked (domain warped) or Ridges (domain normal)
-        float currDistance = (cd + ed + md) / 3.0f;                                 // Ridges (domain warped or unwarped)
+        float currDistance = ed;                                                    // Cracked (domain warped) or Ridges (domain normal)
+        //float currDistance = (cd + ed + md) / 3.0f;                                 // Ridges (domain warped or unwarped)
         //float currDistance = ((ed - cd) / (md - cd)) / 2.0f;
         //float currDistance = mhd;
         //float currDistance = (cd + ed + md + mhd) / 4.0f;
@@ -361,11 +361,15 @@ float ExperimentalNoise::noise(float sample_x, float sample_y, float sample_z) {
     return 1.0f - sqrt(thirdMinDist);
     //return sqrt(thirdMinDist);
 
+    //return 1.0f - sqrt(minDist);
+
     //return sqrt(secondMinDist - minDist);
     //return 1.0f - sqrt(secondMinDist - minDist);
 
     // Average of three closest points
     //return 1.0f - (sqrt(minDist) + sqrt(secondMinDist) + sqrt(thirdMinDist)) / 3.0f;
+    //return 1.0f - (sqrt(minDist) + sqrt(secondMinDist) + sqrt(thirdMinDist)) / 3.0f;
+    //return 1.0f - sqrt((sqrt(minDist) + sqrt(secondMinDist) + sqrt(thirdMinDist)) / 3.0f);
 }
 
 /*

@@ -18,7 +18,7 @@ void Analysis::runAnalysis(std::vector<Noise::Point> points, int pairingFunction
     // Amplitude analysis
     if (ampAnalysis == 1) {
 
-        printf("Starting amplitude analysis.\n");
+        printf("    Starting amplitude analysis.\n");
 
         // Create title of output
         std::string title = "../Analysis/Amplitude/AmplitudeAnalysis_Pair" + std::to_string(pairingFunction) + "_Noise" + std::to_string(noiseType)
@@ -33,8 +33,8 @@ void Analysis::runAnalysis(std::vector<Noise::Point> points, int pairingFunction
         plt::hist(test_data, 1000);
         plt::save(title);
 
-        printf("    Amplitude analysis written: %s\n", title.c_str());
-        printf("Successfully completed amplitude analysis.\n");
+        printf("        Amplitude analysis written: %s\n", title.c_str());
+        printf("    Successfully completed amplitude analysis.\n");
 
         /*
         // PREVIOUS AMPLITUDE ANALYSIS - SAVE TO CSV
@@ -66,13 +66,13 @@ void Analysis::runAnalysis(std::vector<Noise::Point> points, int pairingFunction
     // Fourier analysis
     if (fourierAnalysis == 1) {
 
-        printf("Starting Fourier analysis.\n");
+        printf("    Starting Fourier analysis.\n");
 
         // Read noise file via OpenCV imread (properly formats into cv::Mat object)
         const char* filename = "../Output/temp/noise_output.bmp";
         cv::Mat I = imread( cv::samples::findFile(filename), cv::IMREAD_GRAYSCALE);
         if(I.empty()) {
-            std::cout << "[Analysis.cpp] Error: reading image from" << filename << std::endl;
+            std::cout << "    [Analysis.cpp] Error: reading image from" << filename << std::endl;
         }
 
         // Expand input image to optimal size
@@ -158,7 +158,14 @@ void Analysis::runAnalysis(std::vector<Noise::Point> points, int pairingFunction
 
         stbi_write_bmp(title.c_str(), width, height, 1, data);
 
-        printf("    Fourier analysis written: %s\n", title.c_str());
-        printf("Successfully completed Fourier analysis.\n");
+        printf("        Fourier analysis written: %s\n", title.c_str());
+        printf("    Successfully completed Fourier analysis.\n");
+
+        // Restore original image
+        /*cv::Mat inverseTransform;
+        cv::dft(complexI, inverseTransform, cv::DFT_INVERSE | cv::DFT_REAL_OUTPUT);
+        normalize(inverseTransform, inverseTransform, 0, 1, cv::NORM_MINMAX);
+        imshow("Reconstructed", inverseTransform);
+        cv::waitKey();*/
     }
 }
