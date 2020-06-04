@@ -10,20 +10,78 @@
 PrimeGradient::PrimeGradient() {
     srand(time(NULL));
 
-    // Randomize prime table
-    int swapIndex = 0;
-    int temp = 0;
+    // Setup primes generation factors
+    this->numPrimes = 256;
+    this->offset = 2;
+    this->prime = new int[this->numPrimes];
 
-    for (int i = 0; i < 256; i++) {
-        swapIndex = rand() & 255;
+    // Sieve for primes
+    sieve(this->offset, this->numPrimes);
 
-        temp = prime[i];
-        prime[i] = prime[swapIndex];
-        prime[swapIndex] = temp;
+    // TODO: DEBUG ONLY - FOR DESMOS ANALYSIS
+    int desmosFlag = 0;         // 0 - off | 1 - on
+    if (desmosFlag == 1) {
+        printf("p = [");
+        for (int i = 0; i < (this->numPrimes - 1); i++) {
+            printf("%d, ", this->prime[i]);
+        }
+        printf("%d]", this->prime[this->numPrimes - 1]);
+    }
+
+    int randomizeFlag = 0;      // 0 - off | 1 - on
+    if (randomizeFlag == 1) {
+        // Randomize prime table
+        int swapIndex = 0;
+        int temp = 0;
+
+        for (int i = 0; i < 256; i++) {
+            swapIndex = rand() & 255;
+
+            temp = prime[i];
+            prime[i] = prime[swapIndex];
+            prime[swapIndex] = temp;
+        }
     }
 }
 
-PrimeGradient::~PrimeGradient() {}
+PrimeGradient::~PrimeGradient() {
+    delete[] prime;
+}
+
+bool PrimeGradient::isPrime(int val) {
+
+    for (int i = 2; i*i <= val; i++) {
+        if (val % i == 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+void PrimeGradient::sieve(int offset, int numPrimes) {
+
+    int current = 2;
+    int count = 0;
+    int countOffset = 0;
+
+    // Loop until numPrimes is reached
+    while (count < numPrimes) {
+
+        if (current == 2 || current == 3 || isPrime(current)) {
+
+            if (++countOffset > offset) {
+                this->prime[count] = current;
+
+                if (++count > numPrimes) {
+                    break;
+                }
+            }
+        }
+
+        current++;
+    }
+}
 
 void PrimeGradient::setDimensions(int width, int height) {
     this->width = width;

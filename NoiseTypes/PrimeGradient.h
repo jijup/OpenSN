@@ -33,6 +33,12 @@ public:
 	// Interpolate value
 	float lerp(float a, float b, float x);
 
+	// Determines if a single value is prime
+	bool isPrime(int val);
+
+	// Find all primes up to a certain value
+	void sieve(int offset, int numPrimes);
+
 	// Generates a Perlin noise value, given some 3D coordinates (X, Y, Z).
 	float noise(float sample_x, float sample_y, float sample_z);
 
@@ -42,6 +48,9 @@ private:
 
 	HashFunctions hashInstance;
 	int pairingFunction;
+
+    int numPrimes, offset;
+	int *prime;
 
 	// 256 smallest primes
     int prime_sm[256] {
@@ -73,7 +82,7 @@ private:
             1597,   1601,   1607,   1609,   1613,   1619
     };
 
-    int prime[256] = {
+    int prime_lg[256] = {
             65537,  65539,  65543,  65551,  65557,  65563,  65579,  65581,
             65587,  65599,  65609,  65617,  65629,  65633,  65647,  65651,  65657,  65677,
             65687,  65699,  65701,  65707,  65713,  65717,  65719,  65729,  65731,  65761,
