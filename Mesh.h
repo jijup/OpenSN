@@ -37,16 +37,26 @@ public:
     // Creates a flat mesh
     void generateFlatMesh(int width, int height);
 
+    // Creates cube mesh
+    void generateCubeMesh();
+
     // Driver function accessed from outside class for mesh generation via external file
     void generateMeshFromFile();
 
     // Driver function accessed from outside class for mesh generation via Noise
     void generateMeshFromNoise(int width, int height);
 
+    // Driver function accessed from outside class for mesh generation for skybox
+    void generateSkybox();
+
     // Mesh variables
     int numIndices;
     GLfloat *verticesMesh;
     GLuint *indicesMesh;
+
+    int numIndicesSkybox;
+    GLfloat *verticesMeshSkybox;
+    GLuint *indicesMeshSkybox;
 };
 
 #endif

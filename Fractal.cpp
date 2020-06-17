@@ -15,6 +15,7 @@ Fractal::Fractal(int noiseType) {
 
     this->perlinSource = new Perlin();
     this->primeSource = new PrimeGradient();
+    this->primeDensitySource = new PrimeGradientDensity();
     this->gaborSource = new Gabor();
     this->marbleSource = new Marble();
     this->worleySource = new Worley();
@@ -32,6 +33,7 @@ Fractal::Fractal(int noiseType) {
 Fractal::~Fractal() {
 	delete this->perlinSource;
 	delete this->primeSource;
+    delete this->primeDensitySource;
     delete this->gaborSource;
     delete this->marbleSource;
     delete this->worleySource;
@@ -42,7 +44,9 @@ Fractal::~Fractal() {
 
 float Fractal::noise(float xCoord, float yCoord, float zCoord) {
 	float sum = 0;
-	float freq = this->initFrequency;
+	//float freq = 128;
+    //float freq = 8;
+    float freq = this->initFrequency;
 	float amp = this->initAmplitude;
 
 	for (int i = 0; i < this->octaves; i++) {
@@ -92,11 +96,21 @@ float Fractal::noise(float xCoord, float yCoord, float zCoord) {
             sum = this->valueWoodSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
 
             break;
-        } else if (this->noiseType == 7) {    // Prime Gradient (wood)
+        } else if (this->noiseType == 7) {    // Prime Gradient
+            this->primeSource->updateCurrentOctave(i);
             sum += this->primeSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
 
             freq *= this->lacunarity;
             amp *= this->persistence;
+        } else if (this->noiseType == 8) {    // Prime Density
+            sum += this->primeDensitySource->noise(xCoord, yCoord, zCoord);
+            sum += this->primeSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+	        break;
+
+            /*sum += this->primeSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+
+            freq *= this->lacunarity;
+            amp *= this->persistence;*/
         } else {
 	        // TODO: Throw error
 	    }
@@ -128,6 +142,11 @@ void Fractal::setPairingFunctionSplatter(int pairingFunction) {
 
 void Fractal::setPairingFunctionWood(int pairingFunction) {
     this->valueWoodSource->setPairingFunction(pairingFunction);
+}
+
+void Fractal::setPGNOctaves(int numOctaves) {
+    this->primeSource->setNumOctaves(numOctaves);
+    this->primeSource->generatePrimeTable();
 }
 
 void Fractal::setOctaves(int o) {

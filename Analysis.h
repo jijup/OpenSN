@@ -27,6 +27,9 @@ public:
     ~Analysis();
 
     void runAnalysis(std::vector<Noise::Point> points, int pairingFunction, int noiseType, int width, int height, int ampAnalysis, int fourierAnalysis);
+
+    void headerSVG(std::ofstream& outfile, int width, int height, std::string file);
+    void footerSVG(std::ofstream& outfile);
 };
 
 #endif

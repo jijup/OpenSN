@@ -39,7 +39,7 @@ public:
     int generateNoiseTexture(GLuint *tex);
 
     // Reads in skybox textures from file
-    int readSkyboxTexture(int i, std::string filename);
+    int readSkyboxTexture(unsigned int i, std::string filename);
     int generateSkyboxTexture(int i, std::string filename);
 
     // Reads in skybox textures from file

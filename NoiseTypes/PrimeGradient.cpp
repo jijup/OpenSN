@@ -8,27 +8,22 @@
 #include "PrimeGradient.h"
 
 PrimeGradient::PrimeGradient() {
-    srand(time(NULL));
+    /*srand(time(NULL));
+
+    this->currentOctave = 0;
 
     // Setup primes generation factors
     this->numPrimes = 256;
-    this->offset = 2;
+
+    //this->offset = pow(2, 16);
+    this->offset = 0;
     this->prime = new int[this->numPrimes];
 
     // Sieve for primes
     sieve(this->offset, this->numPrimes);
 
-    // TODO: DEBUG ONLY - FOR DESMOS ANALYSIS
-    int desmosFlag = 0;         // 0 - off | 1 - on
-    if (desmosFlag == 1) {
-        printf("p = [");
-        for (int i = 0; i < (this->numPrimes - 1); i++) {
-            printf("%d, ", this->prime[i]);
-        }
-        printf("%d]", this->prime[this->numPrimes - 1]);
-    }
-
-    int randomizeFlag = 0;      // 0 - off | 1 - on
+    // Randomize prime table
+    int randomizeFlag = 0;          //  0 - off | 1 - on
     if (randomizeFlag == 1) {
         // Randomize prime table
         int swapIndex = 0;
@@ -37,11 +32,11 @@ PrimeGradient::PrimeGradient() {
         for (int i = 0; i < 256; i++) {
             swapIndex = rand() & 255;
 
-            temp = prime[i];
-            prime[i] = prime[swapIndex];
-            prime[swapIndex] = temp;
+            temp = this->prime[i];
+            this->prime[i] = this->prime[swapIndex];
+            this->prime[swapIndex] = temp;
         }
-    }
+    }*/
 }
 
 PrimeGradient::~PrimeGradient() {
@@ -69,7 +64,6 @@ void PrimeGradient::sieve(int offset, int numPrimes) {
     while (count < numPrimes) {
 
         if (current == 2 || current == 3 || isPrime(current)) {
-
             if (++countOffset > offset) {
                 this->prime[count] = current;
 
@@ -90,6 +84,47 @@ void PrimeGradient::setDimensions(int width, int height) {
 
 void PrimeGradient::setPairingFunction(int pairingFunction) {
     this->pairingFunction = pairingFunction;
+}
+
+void PrimeGradient::setNumOctaves(int numOctaves) {
+    this->numOctaves = numOctaves;
+    generatePrimeTable();
+}
+
+void PrimeGradient::updateCurrentOctave(int currentOctave) {
+    this->currentOctave = currentOctave;
+}
+
+void PrimeGradient::generatePrimeTable() {
+    srand(time(NULL));
+
+    // Setup primes generation factors
+    int initialNumPrimes = 256;
+    //this->numPrimes = initialNumPrimes + (this->numOctaves * this->shift);
+    this->numPrimes = initialNumPrimes + pow(2, this->numOctaves);
+
+    //this->offset = pow(2, 16);
+    this->offset = 0;
+    this->prime = new int[this->numPrimes];
+
+    // Sieve for primes
+    sieve(this->offset, this->numPrimes);
+
+    // Randomize prime table
+    int randomizeFlag = 0;          //  0 - off | 1 - on
+    if (randomizeFlag == 1) {
+        // Randomize prime table
+        int swapIndex = 0;
+        int temp = 0;
+
+        for (int i = 0; i < 256; i++) {
+            swapIndex = rand() & 255;
+
+            temp = this->prime[i];
+            this->prime[i] = this->prime[swapIndex];
+            this->prime[swapIndex] = temp;
+        }
+    }
 }
 
 float PrimeGradient::fade(float x) {
@@ -144,7 +179,7 @@ float PrimeGradient::noise(float xCoord, float yCoord, float zCoord) {
     float dotX0Y0Z0, dotX0Y0Z1, dotX0Y1Z0, dotX0Y1Z1, dotX1Y0Z0, dotX1Y0Z1, dotX1Y1Z0, dotX1Y1Z1;
 
     // Generate vectors
-    int dimensionFlag = 1;          // 0 - Hybrid | 1 - 3D | 2 - 2D | 3 - Experimental
+    int dimensionFlag = 3;          // 0 - Hybrid | 1 - 3D | 2 - 2D | 3 - Experimental
     if (dimensionFlag == 0) {
         prime = this->prime[this->hashInstance.szudzikPair(gradientX0, gradientY0) & 255];
         dotX0Y0Z0 = pointX0 * cos(prime) + pointY0 * sin(prime);
@@ -170,29 +205,45 @@ float PrimeGradient::noise(float xCoord, float yCoord, float zCoord) {
         prime = this->prime[this->hashInstance.szudzikPair(gradientX1, gradientY1) & 255];
         dotX1Y1Z1 = pointX1 * cos(prime) + pointY1 * sin(prime);
     } else if (dimensionFlag == 1) {
-        prime = this->prime[this->hashInstance.szudzikPair(this->hashInstance.szudzikPair(gradientX0, gradientY0) & 255, gradientZ0) & 255];
-        dotX0Y0Z0 = pointX0 * sin(prime*prime) * cos(sqrt(prime)) + pointY0 * sin(prime*prime) * sin(sqrt(prime)) + pointZ0 * cos(prime*prime);
+        prime = this->prime[this->hashInstance.szudzikPair(this->hashInstance.szudzikPair(gradientX0, gradientY0) & 255,
+                                                           gradientZ0) & 255];
+        dotX0Y0Z0 = pointX0 * sin(prime * prime) * cos(sqrt(prime)) + pointY0 * sin(prime * prime) * sin(sqrt(prime)) +
+                    pointZ0 * cos(prime * prime);
 
-        prime = this->prime[this->hashInstance.szudzikPair(this->hashInstance.szudzikPair(gradientX1, gradientY0) & 255, gradientZ0) & 255];
-        dotX1Y0Z0 = pointX1 * sin(prime*prime) * cos(sqrt(prime)) + pointY0 * sin(prime*prime) * sin(sqrt(prime)) + pointZ0 * cos(prime*prime);
+        prime = this->prime[this->hashInstance.szudzikPair(this->hashInstance.szudzikPair(gradientX1, gradientY0) & 255,
+                                                           gradientZ0) & 255];
+        dotX1Y0Z0 = pointX1 * sin(prime * prime) * cos(sqrt(prime)) + pointY0 * sin(prime * prime) * sin(sqrt(prime)) +
+                    pointZ0 * cos(prime * prime);
 
-        prime = this->prime[this->hashInstance.szudzikPair(this->hashInstance.szudzikPair(gradientX0, gradientY1) & 255, gradientZ0) & 255];
-        dotX0Y1Z0 = pointX0 * sin(prime*prime) * cos(sqrt(prime)) + pointY1 * sin(prime*prime) * sin(sqrt(prime)) + pointZ0 * cos(prime*prime);
+        prime = this->prime[this->hashInstance.szudzikPair(this->hashInstance.szudzikPair(gradientX0, gradientY1) & 255,
+                                                           gradientZ0) & 255];
+        dotX0Y1Z0 = pointX0 * sin(prime * prime) * cos(sqrt(prime)) + pointY1 * sin(prime * prime) * sin(sqrt(prime)) +
+                    pointZ0 * cos(prime * prime);
 
-        prime = this->prime[this->hashInstance.szudzikPair(this->hashInstance.szudzikPair(gradientX1, gradientY1) & 255, gradientZ0) & 255];
-        dotX1Y1Z0 = pointX1 * sin(prime*prime) * cos(sqrt(prime)) + pointY1 * sin(prime*prime) * sin(sqrt(prime)) + pointZ0 * cos(prime*prime);
+        prime = this->prime[this->hashInstance.szudzikPair(this->hashInstance.szudzikPair(gradientX1, gradientY1) & 255,
+                                                           gradientZ0) & 255];
+        dotX1Y1Z0 = pointX1 * sin(prime * prime) * cos(sqrt(prime)) + pointY1 * sin(prime * prime) * sin(sqrt(prime)) +
+                    pointZ0 * cos(prime * prime);
 
-        prime = this->prime[this->hashInstance.szudzikPair(this->hashInstance.szudzikPair(gradientX0, gradientY0) & 255, gradientZ1) & 255];
-        dotX0Y0Z1 = pointX0 * sin(prime*prime) * cos(sqrt(prime)) + pointY0 * sin(prime*prime) * sin(sqrt(prime)) + pointZ1 * cos(prime*prime);
+        prime = this->prime[this->hashInstance.szudzikPair(this->hashInstance.szudzikPair(gradientX0, gradientY0) & 255,
+                                                           gradientZ1) & 255];
+        dotX0Y0Z1 = pointX0 * sin(prime * prime) * cos(sqrt(prime)) + pointY0 * sin(prime * prime) * sin(sqrt(prime)) +
+                    pointZ1 * cos(prime * prime);
 
-        prime = this->prime[this->hashInstance.szudzikPair(this->hashInstance.szudzikPair(gradientX1, gradientY0) & 255, gradientZ1) & 255];
-        dotX1Y0Z1 = pointX1 * sin(prime*prime) * cos(sqrt(prime)) + pointY0 * sin(prime*prime) * sin(sqrt(prime)) + pointZ1 * cos(prime*prime);
+        prime = this->prime[this->hashInstance.szudzikPair(this->hashInstance.szudzikPair(gradientX1, gradientY0) & 255,
+                                                           gradientZ1) & 255];
+        dotX1Y0Z1 = pointX1 * sin(prime * prime) * cos(sqrt(prime)) + pointY0 * sin(prime * prime) * sin(sqrt(prime)) +
+                    pointZ1 * cos(prime * prime);
 
-        prime = this->prime[this->hashInstance.szudzikPair(this->hashInstance.szudzikPair(gradientX0, gradientY1) & 255, gradientZ1) & 255];
-        dotX0Y1Z1 = pointX0 * sin(prime*prime) * cos(sqrt(prime)) + pointY1 * sin(prime*prime) * sin(sqrt(prime)) + pointZ1 * cos(prime*prime);
+        prime = this->prime[this->hashInstance.szudzikPair(this->hashInstance.szudzikPair(gradientX0, gradientY1) & 255,
+                                                           gradientZ1) & 255];
+        dotX0Y1Z1 = pointX0 * sin(prime * prime) * cos(sqrt(prime)) + pointY1 * sin(prime * prime) * sin(sqrt(prime)) +
+                    pointZ1 * cos(prime * prime);
 
-        prime = this->prime[this->hashInstance.szudzikPair(this->hashInstance.szudzikPair(gradientX1, gradientY1) & 255, gradientZ1) & 255];
-        dotX1Y1Z1 = pointX1 * sin(prime*prime) * cos(sqrt(prime)) + pointY1 * sin(prime*prime) * sin(sqrt(prime)) + pointZ1 * cos(prime*prime);
+        prime = this->prime[this->hashInstance.szudzikPair(this->hashInstance.szudzikPair(gradientX1, gradientY1) & 255,
+                                                           gradientZ1) & 255];
+        dotX1Y1Z1 = pointX1 * sin(prime * prime) * cos(sqrt(prime)) + pointY1 * sin(prime * prime) * sin(sqrt(prime)) +
+                    pointZ1 * cos(prime * prime);
     } else if (dimensionFlag == 2) {
         prime = this->prime[this->hashInstance.szudzikPair(gradientX0, gradientY0) & 255];
         dotX0Y0Z0 = pointX0 * cos(prime) + pointY0 * sin(prime);
@@ -210,16 +261,25 @@ float PrimeGradient::noise(float xCoord, float yCoord, float zCoord) {
         float uv = lerp(dotX0Y1Z0, dotX1Y1Z0, pointX0);
         float result = lerp(st, uv, pointY0);
         return result;
+    } else if (dimensionFlag == 3) {
+        prime = this->prime[(this->hashInstance.szudzikPair(gradientX0, gradientY0) & 255) + (int)(pow(2, this->currentOctave)) - 1];
+        dotX0Y0Z0 = pointX0 * cos(prime) + pointY0 * sin(prime);
+
+        prime = this->prime[(this->hashInstance.szudzikPair(gradientX1, gradientY0) & 255) + (int)(pow(2, this->currentOctave)) - 1];
+        dotX1Y0Z0 = pointX1 * cos(prime) + pointY0 * sin(prime);
+
+        prime = this->prime[(this->hashInstance.szudzikPair(gradientX0, gradientY1) & 255) + (int)(pow(2, this->currentOctave)) - 1];
+        dotX0Y1Z0 = pointX0 * cos(prime) + pointY1 * sin(prime);
+
+        prime = this->prime[(this->hashInstance.szudzikPair(gradientX1, gradientY1) & 255) + (int)(pow(2, this->currentOctave)) - 1];
+        dotX1Y1Z0 = pointX1 * cos(prime) + pointY1 * sin(prime);
+
+        float st = lerp(dotX0Y0Z0, dotX1Y0Z0, pointX0);
+        float uv = lerp(dotX0Y1Z0, dotX1Y1Z0, pointX0);
+        float result = lerp(st, uv, pointY0);
+        return result;
     } else {
-
-        uint32_t seed = uint32_t(xCoord) * 1087;
-        seed ^= 0xE56FAA12;
-        seed += uint32_t(yCoord) * 2749;
-        seed ^= 0x69628a2d;
-        seed += uint32_t(zCoord) * 3433;
-        seed ^= 0xa7b2c49a;
-
-        return (float(int(seed & 2047) - 1024) / 1024.0f);
+        // TODO: Throw error
     }
 
     float s = lerp(dotX0Y0Z1, dotX1Y0Z1, pointX0);

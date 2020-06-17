@@ -27,7 +27,8 @@ using namespace std;
 //#define NOISE_TYPE 4              // New noise
 //#define NOISE_TYPE 5              // Perlin noise (splatter)
 //#define NOISE_TYPE 6              // Perlin noise (wood)
-#define NOISE_TYPE 7                // Primed Perlin noise with Szudzik
+#define NOISE_TYPE 7                // Prime Gradient noise with Szudzik
+//#define NOISE_TYPE 8                // Primed Density noise with Szudzik
 
 /// Pairing Function Configuration
 //#define PAIRING_FUNCTION 0 	    // Linear
@@ -41,8 +42,8 @@ using namespace std;
 #define SAVE_NOISE_IMAGE 1		    // Save noise image on
 
 /// Application Configuration
-//#define APPLICATION_TYPE 0        // Apply texture to vase (or other object)
-#define APPLICATION_TYPE 1          // Procedural landscape model
+#define APPLICATION_TYPE 0        // Apply texture to vase (or other object)
+//#define APPLICATION_TYPE 1          // Procedural landscape model
 
 /// Analysis Mode Configuration
 //#define ANALYSIS 0		        // Analysis mode off

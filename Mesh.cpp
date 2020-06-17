@@ -17,9 +17,12 @@ Mesh::~Mesh() {}
 void Mesh::generateFileMesh() {
 
     // File to Mesh
-    std::string filename = "../res/meshes/ModernVase.obj";
-    //std::string filename = "../res/meshes/Basketball_Triangulated.obj";
-    //std::string filename = "../res/meshes/untitled.obj"; // tree
+    std::string filename = "../res/meshes/ModernVase.obj";                          // Vase
+    //std::string filename = "../res/meshes/Basketball_Triangulated.obj";           // Basketball
+    //std::string filename = "../res/meshes/untitled.obj";                          // Tree
+    //std::string filename = "../res/meshes/chair.obj";                             // Chair
+    //std::string filename = "../res/meshes/Hat_Triangulated.obj";                  // Hat
+    //std::string filename = "../res/meshes/Sphere_Triangulated.obj";               // Sphere
 
     std::vector<GLfloat> pVertices;
     std::vector<GLuint> pIndices;
@@ -143,6 +146,118 @@ void Mesh::generateFlatMesh(int width, int height) {
 }
 
 /*
+ * Generates cube mesh and stores in vertices and indices arrays.
+ */
+void Mesh::generateCubeMesh() {
+
+
+    std::vector<GLfloat> pVertices;
+    std::vector<GLuint> pIndices;
+
+    /*GLfloat vertices[] = {
+            -1.0f,-1.0f,-1.0f,
+            -1.0f,-1.0f, 1.0f,
+            -1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f,-1.0f,
+            -1.0f,-1.0f,-1.0f,
+            -1.0f, 1.0f,-1.0f,
+            1.0f,-1.0f, 1.0f,
+            -1.0f,-1.0f,-1.0f,
+            1.0f,-1.0f,-1.0f,
+            1.0f, 1.0f,-1.0f,
+            1.0f,-1.0f,-1.0f,
+            -1.0f,-1.0f,-1.0f,
+            -1.0f,-1.0f,-1.0f,
+            -1.0f, 1.0f, 1.0f,
+            -1.0f, 1.0f,-1.0f,
+            1.0f,-1.0f, 1.0f,
+            -1.0f,-1.0f, 1.0f,
+            -1.0f,-1.0f,-1.0f,
+            -1.0f, 1.0f, 1.0f,
+            -1.0f,-1.0f, 1.0f,
+            1.0f,-1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f,
+            1.0f,-1.0f,-1.0f,
+            1.0f, 1.0f,-1.0f,
+            1.0f,-1.0f,-1.0f,
+            1.0f, 1.0f, 1.0f,
+            1.0f,-1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f,-1.0f,
+            -1.0f, 1.0f,-1.0f,
+            1.0f, 1.0f, 1.0f,
+            -1.0f, 1.0f,-1.0f,
+            -1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f,
+            -1.0f, 1.0f, 1.0f,
+            1.0f,-1.0f, 1.0f
+    };*/
+
+    GLfloat vertices[] = {
+            -1.0f,  1.0f, -1.0f,
+            -1.0f, -1.0f, -1.0f,
+            1.0f, -1.0f, -1.0f,
+            1.0f, -1.0f, -1.0f,
+            1.0f,  1.0f, -1.0f,
+            -1.0f,  1.0f, -1.0f,
+
+            -1.0f, -1.0f,  1.0f,
+            -1.0f, -1.0f, -1.0f,
+            -1.0f,  1.0f, -1.0f,
+            -1.0f,  1.0f, -1.0f,
+            -1.0f,  1.0f,  1.0f,
+            -1.0f, -1.0f,  1.0f,
+
+            1.0f, -1.0f, -1.0f,
+            1.0f, -1.0f,  1.0f,
+            1.0f,  1.0f,  1.0f,
+            1.0f,  1.0f,  1.0f,
+            1.0f,  1.0f, -1.0f,
+            1.0f, -1.0f, -1.0f,
+
+            -1.0f, -1.0f,  1.0f,
+            -1.0f,  1.0f,  1.0f,
+            1.0f,  1.0f,  1.0f,
+            1.0f,  1.0f,  1.0f,
+            1.0f, -1.0f,  1.0f,
+            -1.0f, -1.0f,  1.0f,
+
+            -1.0f,  1.0f, -1.0f,
+            1.0f,  1.0f, -1.0f,
+            1.0f,  1.0f,  1.0f,
+            1.0f,  1.0f,  1.0f,
+            -1.0f,  1.0f,  1.0f,
+            -1.0f,  1.0f, -1.0f,
+
+            -1.0f, -1.0f, -1.0f,
+            -1.0f, -1.0f,  1.0f,
+            1.0f, -1.0f, -1.0f,
+            1.0f, -1.0f, -1.0f,
+            -1.0f, -1.0f,  1.0f,
+            1.0f, -1.0f,  1.0f
+    };
+
+    GLuint indices[36];
+    for (int i = 0; i < 36; ++i) {
+        indices[i] = i;
+    }
+
+    this->numIndicesSkybox = 36;
+    this->verticesMeshSkybox = new GLfloat[108];
+    this->indicesMeshSkybox = new GLuint[36];
+
+    this->verticesMeshSkybox = vertices;
+    this->indicesMeshSkybox = indices;
+
+    /*this->numIndicesSkybox = pIndices.size();
+    this->verticesMeshSkybox = new GLfloat[pVertices.size()];
+    this->indicesMeshSkybox = new GLuint[pIndices.size()];
+
+    std::copy(pVertices.begin(), pVertices.end(), verticesMeshSkybox);
+    std::copy(pIndices.begin(), pIndices.end(), indicesMeshSkybox);*/
+}
+
+/*
  * Drives mesh generation from external files.
  *
  * Returns:
@@ -168,6 +283,20 @@ void Mesh::generateMeshFromNoise(int width, int height) {
     printf("\nStarting mesh generation (flat mesh).");
     generateFlatMesh(width, height);
     printf("\nSuccessfully completed mesh generation (flat mesh).\n");
+}
+
+/*
+ * Drives skybox generation.
+ *
+ * Returns:
+ *      Vector of Meshes (typically just one mesh)
+ */
+void Mesh::generateSkybox() {
+
+    // Read object file into Mesh
+    printf("\nStarting mesh generation (skybox).");
+    generateCubeMesh();
+    printf("\nSuccessfully completed mesh generation (skybox).\n");
 }
 
 

@@ -33,6 +33,9 @@ public:
 
     // Generates Primed Perlin Noise
     std::vector<Noise::Point> generatePrimedGradient(int pairingFunction, int noiseType, int width, int height);
+
+    // Generates Primed Density Noise
+    std::vector<Noise::Point> generatePrimedDensity(int pairingFunction, int noiseType, int width, int height);
     
     // Generates Gabor noise
     std::vector<Noise::Point> generateGabor(int pairingFunction, int noiseType, int width, int height);

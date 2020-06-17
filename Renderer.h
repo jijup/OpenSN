@@ -15,6 +15,7 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "ImageOutput.h"
+#include "PrimePlot.h"
 #include "Analysis.h"
 #include "Texture.h"
 
@@ -52,6 +53,7 @@ public:
 
     // Setup OpenGL buffers
     int setupBuffersMesh();
+    int setupBuffersMeshSkybox();
 
     // Set ImGui text rendering variables
     int updateImguiText();
@@ -83,7 +85,8 @@ private:
 
     ///----- Application Variables
     int applicationType;
-    GLuint textures[8];
+    //GLuint textures[8];
+    GLuint *textures;
     GLfloat waveMotion;
 
     ///----- Analysis variables
@@ -101,6 +104,11 @@ private:
     GLuint VBO;
     GLuint VAO;
     GLuint EBO;
+
+    // Framebuffer variables
+    GLuint sbVBO;
+    GLuint sbVAO;
+    GLuint sbEBO;
 
     // ImGui slider adjustment variables
     glm::vec3 translationStart;

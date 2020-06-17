@@ -121,24 +121,24 @@ void ImageOutput::saveBMP(std::vector<Noise::Point> points, int writeBMP, int wi
 
 
                     /// Interpolating Water Textures [BL]
-                    /**/
+                    /*
                     glm::vec3 startColor = glm::vec3(4, 78, 74);
                     glm::vec3 endColor = glm::vec3(228, 222, 201);
                     float x = rgb[i][j] / 255.0f;
                     float r = ((endColor.x - startColor.x) * x) + startColor.x;
                     float g = ((endColor.y - startColor.y) * x) + startColor.y;
                     float b = ((endColor.z - startColor.z) * x) + startColor.z;
-
+                    */
 
                     /// Interpolating Basketball [BSK]
-                    /*
+                    /**/
                     glm::vec3 startColor = glm::vec3(117, 78, 29);
                     glm::vec3 endColor = glm::vec3(64, 41, 12);
                     float x = rgb[i][j] / 255.0f;
                     float r = ((endColor.x - startColor.x) * x) + startColor.x;
                     float g = ((endColor.y - startColor.y) * x) + startColor.y;
                     float b = ((endColor.z - startColor.z) * x) + startColor.z;
-                     */
+
 
                     /// Interpolating Rock [RK]
                     /*
@@ -213,5 +213,104 @@ void ImageOutput::saveBMP(std::vector<Noise::Point> points, int writeBMP, int wi
             printf("    BMP written: %s\n", filenameTemp.c_str());
             printf("Successfully wrote noise as BMP.\n");
         }
+    }
+}
+
+/*
+ * Output SVG header.
+ */
+void ImageOutput::headerSVG(std::ofstream& outfile, int width, int height, std::string file) {
+
+    std::string svgHeaderPart1="<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
+		"<!-- Created with CurveBenchmark -->\n"
+		"<svg\n"
+		"    xmlns:dc=\"http://purl.org/dc/elements/1.1/\"\n"
+		"    xmlns:cc=\"http://creativecommons.org/ns#\"\n"
+		"    xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n"
+		"    xmlns:svg=\"http://www.w3.org/2000/svg\"\n"
+		"    xmlns=\"http://www.w3.org/2000/svg\"\n"
+		"    xmlns:sodipodi=\"http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd\"\n"
+		"    xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\"\n"
+		"    width=\"";
+	std::string svgHeaderPart2="\"\n"
+		"    height=\"";
+	std::string svgHeaderPart3="\"\n"
+		"    id=\"svg2\"\n"
+		"    version=\"1.1\"\n"
+//		"    inkscape:version=\"0.48.1 r9760\"\n";
+		"    sodipodi:docname=\"";
+	std::string svgHeaderPart4 = "\">\n"
+		"<defs\n"
+		"    id=\"defs4\" />\n"
+		"<metadata\n"
+		"    id=\"metadata7\">\n"
+		"    <rdf:RDF>\n"
+		"        <cc:Work\n"
+		"            rdf:about=\"\">\n"
+		"            <dc:format>image/svg+xml</dc:format>\n"
+		"            <dc:type\n"
+		"                rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" />\n"
+		"            <dc:title></dc:title>\n"
+		"        </cc:Work>\n"
+		"    </rdf:RDF>\n"
+		"</metadata>\n"
+		"<g\n"
+		"    inkscape:label=\"Layer 1\"\n"
+		"    inkscape:groupmode=\"layer\"\n"
+		"    id=\"layer1\">\n";
+
+	outfile << svgHeaderPart1 << width << svgHeaderPart2 << height << svgHeaderPart3 << file << svgHeaderPart4 << std::endl;
+}
+
+/*
+ * Output SVG footer.
+ */
+void ImageOutput::footerSVG(std::ofstream& outfile) {
+    std::string svgFooter = "    </g>\n"
+                       "</svg>";
+
+    outfile << svgFooter << std::endl;
+}
+
+/*
+ * Saves image as SVG file, if enabled in driver.
+ *
+ * Parameters:
+ *      points: Vector of point structs
+ *      writeBMP: 0 being do no create BMP and 1 being create BMP
+ *      width: pixels in x-dimension
+ *      height: pixels in y-dimension
+ */
+void ImageOutput::saveSVG(std::vector<Noise::Point> points, int writeSVG, int width, int height, std::string file) {
+
+    // TODO: Add coloured output
+    // TODO: Add support for analysis and Fourier save
+
+    if (writeSVG == 1) {
+
+        std::string filename = "../Output/Noise/" + file + ".svg";
+        printf("\nAttempting to write noise as SVG.\n");
+
+        std::ofstream outfile;
+        outfile.open(filename);
+
+        int outputWidth = 1200, outputHeight = 1200, padding = 100;
+        float radius = 1.0f;
+
+        headerSVG(outfile, outputWidth, outputHeight, file);
+
+        for (int i = 0; i < points.size(); i++) {
+            int temp = floor(255.0f * points[i].colour);
+
+            // FIXME: Rendering flipped x & y
+            //outfile << "    <circle cx=\"" << (padding + points[i].y) / 2.0f << "\" cy=\"" << (padding + points[i].x) / 2.0f << "\" r=\"" << radius << "\" fill=\"rgb(" << temp << ", " << temp << ", " << temp << ")\" id=\"circle" << i << "\"/>\n";
+            outfile << "    <rect x=\"" << (padding + points[i].y) - 0.5 << "\" y=\"" << (padding + points[i].x) - 0.5 << "\" width=\"1.25\" height=\"1.25\" stoke=\"rgb(" << temp << ", " << temp << ", " << temp << ")\" fill=\"rgb(" << temp << ", " << temp << ", " << temp << ")\" id=\"rect" << i << "\"/>\n";
+        }
+
+        footerSVG(outfile);
+        outfile.close();
+
+        printf("    SVG written: %s\n", filename.c_str());
+        printf("Successfully wrote noise as SVG.\n");
     }
 }

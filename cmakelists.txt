@@ -56,6 +56,7 @@ add_executable(Perlin
         NoiseTypes/Splatter.cpp
         NoiseTypes/Wood.cpp
         NoiseTypes/PrimeGradient.cpp
+        NoiseTypes/PrimeGradientDensity.cpp
         Fractal.cpp
         Noise.cpp
         HashFunctions.cpp
@@ -65,6 +66,7 @@ add_executable(Perlin
         Texture.cpp
         Camera.cpp
         Renderer.cpp
+        PrimePlot.cpp
         Shader.h
         external/tinycolormap/tinycolormap.hpp
         external/stb_image/stb_image.cpp

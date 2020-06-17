@@ -57,7 +57,7 @@ int Texture::readNoiseTexture(GLuint *tex) {
  * Returns:
  *      0 if succesfully completed. TODO: return -1 if failed
  */
-int Texture::readSkyboxTexture(int i, std::string filename) {
+int Texture::readSkyboxTexture(unsigned int i, std::string filename) {
 
     printf("\n    Attempting to read skybox texture from file.\n");
 
