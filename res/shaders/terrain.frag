@@ -6,7 +6,7 @@ uniform sampler2D rock;
 uniform sampler2D sand;
 uniform sampler2D snow;
 uniform sampler2D water;
-uniform sampler2D lunar;
+//uniform sampler2D lunar;
 
 uniform sampler2D noiseTexture;
 uniform float waveMotion;

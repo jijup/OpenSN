@@ -11,7 +11,7 @@ Worley::Worley() {
     srand(time(NULL));
 
     this->maxCells = 90;
-    this->numCells = 20;
+    this->numCells = 100;
     this->cellPoints = new glm::vec2[this->numCells];
 
     for (int i = 0; i < this->numCells; i++) {
@@ -21,7 +21,7 @@ Worley::Worley() {
 
     this->maxDistance = sqrt(pow(-2.0f - 2.0f, 2) + pow(-2.0f - 2.0f, 2));
 
-    float divide = 0.85f;
+    /*float divide = 0.85f;
     this->a = (float(rand()) / (RAND_MAX)) * divide;
     this->d = divide - this->a;
     this->b = (float(rand()) / (RAND_MAX)) * (1.0f - divide);
@@ -52,7 +52,7 @@ Worley::Worley() {
         gradientX[i] = (float(rand()) / (RAND_MAX));
         gradientY[i] = (float(rand()) / (RAND_MAX));
         gradientZ[i] = (float(rand()) / (RAND_MAX));
-    }
+    }*/
 
     // Debug
     //printf("    Randomized Covariance Matrix: a: %f | b: %f | c: %f | d: %f | divide: %f\n", this->a, this->b, this->c, this->d, divide);
@@ -140,11 +140,11 @@ float Worley::noise(float sample_x, float sample_y, float sample_z) {
 
     /// Worley Noise
     glm::vec2 st = glm::vec2(sample_x, sample_y);
-    glm::vec2 rand = glm::vec2(0.5f + sin(sample_x * sample_y) * 0.5f);
+    /*glm::vec2 rand = glm::vec2(0.5f + sin(sample_x * sample_y) * 0.5f);*/
 
     /// Nth closest point
     float minDist = this->maxDistance;
-    float secondMinDist = this->maxDistance;
+    /*float secondMinDist = this->maxDistance;
     float thirdMinDist = this->maxDistance;
     float maxDist = -999999.0f;
     float secondMaxDist = -999999.0f;
@@ -155,22 +155,24 @@ float Worley::noise(float sample_x, float sample_y, float sample_z) {
     int thirdMinDistIndex = 0;
     int maxDistIndex = 0;
     int secondMaxDistIndex = 0;
-    int thirdMaxDistIndex = 0;
+    int thirdMaxDistIndex = 0;*/
 
 
     for (int i = 0; i < this->numCells; i++) {
 
         // Get current distance
         float ed = distance(st, cellPoints[i]);
-        float md = manhattanDistance(st, cellPoints[i]);
-        float cd = chebyshevDistance(st, cellPoints[i]);
-        float mhd = mahalanobisDistance(st, cellPoints[i]);
+        //float md = manhattanDistance(st, cellPoints[i]);
+        //float cd = chebyshevDistance(st, cellPoints[i]);
+        //float mhd = mahalanobisDistance(st, cellPoints[i]);
 
         //float currDistance = mhd;
-        float currDistance = (cd + ed + md + mhd) / 4.0f;
-        //float currDistance = ed;
+        //float currDistance = (cd + ed + md + mhd) / 4.0f;
+        float currDistance = ed;
 
-        if (currDistance < minDist) {
+        if (currDistance < minDist) minDist = currDistance;///
+
+        /*if (currDistance < minDist) {
             thirdMinDist = secondMinDist;
             secondMinDist = minDist;
             minDist = currDistance;
@@ -208,15 +210,15 @@ float Worley::noise(float sample_x, float sample_y, float sample_z) {
             thirdMaxDist = currDistance;
 
             thirdMaxDistIndex = i;
-        }
+        }*/
     }
 
-    int indexMin = this->permTable[minDistIndex];
+    /*int indexMin = this->permTable[minDistIndex];
     int indexSecondMin = this->permTable[secondMinDistIndex];
     int indexThirdMin = this->permTable[thirdMinDistIndex];
     int indexMax = this->permTable[maxDistIndex];
     int indexSecondMax = this->permTable[secondMaxDistIndex];
-    int indexThirdMax = this->permTable[thirdMaxDistIndex];
+    int indexThirdMax = this->permTable[thirdMaxDistIndex];*/
 
     // Gradient lookup
     //return sqrt(minDist * gradientX[indexMin]);                                       // [type 2 - mhd]
@@ -224,7 +226,7 @@ float Worley::noise(float sample_x, float sample_y, float sample_z) {
     //return sqrt(st.x * st.x + st.y * st.y);
 
     // First closest point
-    //return sqrt(minDist);
+    return sqrt(minDist);
 
     // Second closest point
     //return sqrt(secondMinDist);
@@ -238,5 +240,5 @@ float Worley::noise(float sample_x, float sample_y, float sample_z) {
 
     // Average of three closest points
     //return (sqrt(minDist) + sqrt(secondMinDist) + sqrt(thirdMinDist)) / 3.0f;
-    return 1.0f - (sqrt(minDist) + sqrt(secondMinDist) + sqrt(thirdMinDist)) / 3.0f;
+    //return 1.0f - (sqrt(minDist) + sqrt(secondMinDist) + sqrt(thirdMinDist)) / 3.0f;
 }

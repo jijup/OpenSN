@@ -14,11 +14,13 @@
 
 Gabor::Gabor() {
 
+    K_ = 16.0; a_ = 8.0; F_0_ = 2.0;
+
     // Rock like texture: with number_of_impulses_per_current at 64 and with 4-8 octaves  (in Fractal)
     //K_ = 16.0; a_ = 2.0; F_0_ = 2.0;
 
     // Water like texture: with number_of_impulses_per_current at 64 and with 4-8 octaves (in Fractal)
-    K_ = 16.0; a_ = 16.0; F_0_ = 16.0;
+    //K_ = 16.0; a_ = 16.0; F_0_ = 16.0;
 
     omega_0_ = M_PI / 4.0;
 

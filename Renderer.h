@@ -54,6 +54,7 @@ public:
     // Setup OpenGL buffers
     int setupBuffersMesh();
     int setupBuffersMeshSkybox();
+    int setupBuffersMeshPlanet();
 
     // Set ImGui text rendering variables
     int updateImguiText();
@@ -104,11 +105,12 @@ private:
     GLuint VBO;
     GLuint VAO;
     GLuint EBO;
-
-    // Framebuffer variables
     GLuint sbVBO;
     GLuint sbVAO;
     GLuint sbEBO;
+    GLuint plVBO;
+    GLuint plVAO;
+    GLuint plEBO;
 
     // ImGui slider adjustment variables
     glm::vec3 translationStart;
@@ -122,6 +124,13 @@ private:
     GLfloat fovFactor;
     GLfloat rotateFactor;
     GLfloat scaleFactor;
+
+    glm::vec3 planetLocation;
+    glm::vec3 planetScaleVec;
+    GLfloat planetScale;
+
+    GLenum err;
+
 };
 
 

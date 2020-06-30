@@ -25,10 +25,17 @@ int Texture::readNoiseTexture(GLuint *tex) {
     // Set our texture parameters and texture filtering
     //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    GLenum err;
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+    while((err = glGetError()) != GL_NO_ERROR) std::cerr << "[OPENGL ERROR - Texture_readNoiseTexture1] " << err << std::endl;
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    while((err = glGetError()) != GL_NO_ERROR) std::cerr << "[OPENGL ERROR - Texture_readNoiseTexture2] " << err << std::endl;
 
     // Define filename of texture to read
     std::string filename = "../Output/temp/noise_output.bmp";
@@ -52,6 +59,87 @@ int Texture::readNoiseTexture(GLuint *tex) {
 }
 
 /*
+ * Reads noise texture images from file.
+ *
+ * Returns:
+ *      0 if succesfully completed. TODO: return -1 if failed
+ */
+int Texture::readNoiseTextureNormalMap(GLuint *tex) {
+
+    printf("\n    Attempting to read normal map noise texture from file.\n");
+
+    // Set our texture parameters and texture filtering
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+    // Define filename of texture to read
+    std::string filename = "../Output/temp/noise_output_normalmap.png";
+
+    // Read file
+    int texWidth, texHeight;
+    //stbi_set_flip_vertically_on_load(true);
+    unsigned char* image = stbi_load(filename.c_str(), &texWidth, &texHeight, 0, 4);
+
+    // Create texture and generate mipmaps
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texWidth, texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    // Debug
+    printf("        BMP file read: %s\n    Successfully read normal map noise texture from file.\n", filename.c_str());
+
+    // Cleanup
+    stbi_image_free(image);
+
+    return 0;
+}
+
+/*
+ * Reads noise texture images from file.
+ *
+ * Returns:
+ *      0 if succesfully completed. TODO: return -1 if failed
+ */
+int Texture::readNoiseTextureColor(GLuint *tex) {
+
+    printf("\n    Attempting to read colored noise texture from file.\n");
+
+    // Set our texture parameters and texture filtering
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    /*glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);*/
+
+    // Define filename of texture to read
+    std::string filename = "../Output/temp/noise_output_col.bmp";
+
+    // Read file
+    int texWidth, texHeight;
+    //stbi_set_flip_vertically_on_load(true);
+    unsigned char* image = stbi_load(filename.c_str(), &texWidth, &texHeight, 0, 4);
+
+    // Create texture and generate mipmaps
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texWidth, texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+    //glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, texWidth, texHeight, texDepth, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    // Debug
+    printf("        BMP file read: %s\n    Successfully read colored noise texture from file.\n", filename.c_str());
+
+    // Cleanup
+    stbi_image_free(image);
+
+    return 0;
+}
+
+/*
  * Reads skybox texture images from file.
  *
  * Returns:
@@ -61,10 +149,21 @@ int Texture::readSkyboxTexture(unsigned int i, std::string filename) {
 
     printf("\n    Attempting to read skybox texture from file.\n");
 
+    GLenum err;
     int texWidth, texHeight;
 
-    unsigned char* image = stbi_load(filename.c_str(), &texWidth, &texHeight, 0, 4);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, texWidth, texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+    // RGBA, with alpha
+    /*unsigned char* image = stbi_load(filename.c_str(), &texWidth, &texHeight, 0, 4);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, texWidth, texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);*/
+
+    // RGB, no alpha
+    unsigned char* image = stbi_load(filename.c_str(), &texWidth, &texHeight, 0, 3);
+
+    while((err = glGetError()) != GL_NO_ERROR) std::cerr << "[OPENGL ERROR - Texture_readSkyboxTexture1_" << i << "] " << err << std::endl;
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+    while((err = glGetError()) != GL_NO_ERROR) std::cerr << "[OPENGL ERROR - Texture_readSkyboxTexture2_" << i << "] " << err << std::endl;
+    //glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+    //while((err = glGetError()) != GL_NO_ERROR) std::cerr << "[OPENGL ERROR - Texture_readSkyboxTexture3_" << i << "] " << err << std::endl;
 
     // Debug
     printf("        PNG file read: %s\n    Successfully read skybox texture from file.\n", filename.c_str());

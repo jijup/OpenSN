@@ -32,6 +32,7 @@ public:
     void generatePrimePlot();
     void generateUnitCircle();
     void generateGradientSVG();
+    void generateGradientSVGCube();
 
     float fade(float x);
 };

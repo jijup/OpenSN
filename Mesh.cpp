@@ -17,12 +17,23 @@ Mesh::~Mesh() {}
 void Mesh::generateFileMesh() {
 
     // File to Mesh
-    std::string filename = "../res/meshes/ModernVase.obj";                          // Vase
+    //std::string filename = "../res/meshes/ModernVase.obj";                          // Vase
     //std::string filename = "../res/meshes/Basketball_Triangulated.obj";           // Basketball
-    //std::string filename = "../res/meshes/untitled.obj";                          // Tree
-    //std::string filename = "../res/meshes/chair.obj";                             // Chair
-    //std::string filename = "../res/meshes/Hat_Triangulated.obj";                  // Hat
-    //std::string filename = "../res/meshes/Sphere_Triangulated.obj";               // Sphere
+    //std::string filename = "../res/meshes/Chair_Triangulated.obj";                  // Chair
+    //std::string filename = "../res/meshes/torus_triangulated_sphereProj.obj";                            // Torus
+    //std::string filename = "../res/meshes/Sphere_Smooth_Poked.obj";               // Sphere
+
+    //std::string filename = "../res/meshes/sphere.fbx";                            // tangent sphere
+    //std::string filename = "../res/meshes/vase.fbx";                              // tangent vase
+    //std::string filename = "../res/meshes/basketball_origUV.fbx";                 // tangent basketball old UV
+    //std::string filename = "../res/meshes/tree.fbx";                              // tangent tree
+    //std::string filename = "../res/meshes/bootside.fbx";                              // tangent bootside
+    std::string filename = "../res/meshes/bootangle.fbx";                              // tangent bootangle
+    //std::string filename = "../res/meshes/boot2.fbx";                              // tangent boot
+
+    //std::string filename = "../res/meshes/torus1.fbx";                            // tangent torus
+
+
 
     std::vector<GLfloat> pVertices;
     std::vector<GLuint> pIndices;
@@ -56,6 +67,17 @@ void Mesh::generateFileMesh() {
             // Set the uv coordinates
             pVertices.push_back(mesh->mTextureCoords[0][j].x);
             pVertices.push_back(mesh->mTextureCoords[0][j].y);
+
+            ///
+            pVertices.push_back(mesh->mTangents[j].x);
+            pVertices.push_back(mesh->mTangents[j].y);
+            pVertices.push_back(mesh->mTangents[j].z);
+
+            pVertices.push_back(mesh->mBitangents[j].x);
+            pVertices.push_back(mesh->mBitangents[j].y);
+            pVertices.push_back(mesh->mBitangents[j].z);
+            ///
+
         }
 
         // Mesh faces
@@ -82,7 +104,7 @@ void Mesh::generateFileMesh() {
 /*
  * Generates flat mesh and stores in vertices and indices arrays.
  */
-void Mesh::generateFlatMesh(int width, int height) {
+void Mesh::generateFlatMesh(int width, int height, std::vector<Noise::Point> noise) {
 
     // Grid resolution
     int n_width = width;
@@ -102,6 +124,7 @@ void Mesh::generateFlatMesh(int width, int height) {
             // Calculate vertex positions
             pVertices.push_back(-f_width / 2 + j / (float)n_width * f_width);
             pVertices.push_back(0.0f);
+            //pVertices.push_back(noise[j * 1000 + i].colour);
             pVertices.push_back(-f_height / 2 + i / (float)n_height * f_height);
 
             // Push null normals
@@ -237,6 +260,10 @@ void Mesh::generateCubeMesh() {
             1.0f, -1.0f,  1.0f
     };
 
+    /*for (int i = 0; i < 108; i++) {
+        vertices[i] = vertices[i] * 10.0f;
+    }*/
+
     GLuint indices[36];
     for (int i = 0; i < 36; ++i) {
         indices[i] = i;
@@ -255,6 +282,69 @@ void Mesh::generateCubeMesh() {
 
     std::copy(pVertices.begin(), pVertices.end(), verticesMeshSkybox);
     std::copy(pIndices.begin(), pIndices.end(), indicesMeshSkybox);*/
+}
+
+/*
+ * Reads .obj file into vertices and indices arrays.
+ */
+void Mesh::generateSphereMesh() {
+
+    // File to Mesh
+    std::string filename = "../res/meshes/Sphere_Smooth_Poked.obj";               // Sphere
+
+    std::vector<GLfloat> pVertices;
+    std::vector<GLuint> pIndices;
+
+    // Load OBJ file
+    Assimp::Importer importer;
+    printf("\nAttempting to read mesh from file.\n");
+    const aiScene* scene = importer.ReadFile(filename, aiProcess_Triangulate | aiProcess_GenNormals);
+    printf("    OBJ file read: %s\n"
+           "Successfully read mesh from file.\n"
+           "Formatting mesh for rendering.", filename.c_str());
+
+    for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
+
+        // Get current mesh
+        aiMesh* mesh = scene->mMeshes[i];
+
+        // Mesh vertices
+        for (unsigned int j = 0; j < mesh->mNumVertices; ++j) {
+
+            // Set the positions
+            pVertices.push_back(mesh->mVertices[j].x);
+            pVertices.push_back(mesh->mVertices[j].y);
+            pVertices.push_back(mesh->mVertices[j].z);
+
+            // Set the normals
+            pVertices.push_back(mesh->mNormals[j].x);
+            pVertices.push_back(mesh->mNormals[j].y);
+            pVertices.push_back(mesh->mNormals[j].z);
+
+            // Set the uv coordinates
+            pVertices.push_back(mesh->mTextureCoords[0][j].x);
+            pVertices.push_back(mesh->mTextureCoords[0][j].y);
+        }
+
+        // Mesh faces
+        for (unsigned int j = 0; j < mesh->mNumFaces; ++j) {
+
+            // Get the face
+            aiFace face = mesh->mFaces[j];
+
+            for (unsigned int k = 0; k < face.mNumIndices; ++k) {
+                pIndices.push_back(face.mIndices[k]);
+            }
+        }
+    }
+
+    this->numIndicesPlanet = pIndices.size();
+
+    this->verticesMeshPlanet = new GLfloat[pVertices.size()];
+    this->indicesMeshPlanet = new GLuint[pIndices.size()];
+
+    std::copy(pVertices.begin(), pVertices.end(), verticesMeshPlanet);
+    std::copy(pIndices.begin(), pIndices.end(), indicesMeshPlanet);
 }
 
 /*
@@ -277,11 +367,11 @@ void Mesh::generateMeshFromFile() {
  * Returns:
  *      Vector of Meshes (typically just one mesh)
  */
-void Mesh::generateMeshFromNoise(int width, int height) {
+void Mesh::generateMeshFromNoise(int width, int height, std::vector<Noise::Point> noise) {
 
     // Read object file into Mesh
     printf("\nStarting mesh generation (flat mesh).");
-    generateFlatMesh(width, height);
+    generateFlatMesh(width, height, noise);
     printf("\nSuccessfully completed mesh generation (flat mesh).\n");
 }
 
@@ -297,6 +387,20 @@ void Mesh::generateSkybox() {
     printf("\nStarting mesh generation (skybox).");
     generateCubeMesh();
     printf("\nSuccessfully completed mesh generation (skybox).\n");
+}
+
+/*
+ * Drives planet generation.
+ *
+ * Returns:
+ *      Vector of Meshes (typically just one mesh)
+ */
+void Mesh::generatePlanet() {
+
+    // Read object file into Mesh
+    printf("\nStarting mesh generation (planet).");
+    generateSphereMesh();
+    printf("\nSuccessfully completed mesh generation (planet).\n");
 }
 
 

@@ -1,8 +1,10 @@
-/*
+/**
  * Analysis.h
  * Authors: Sheldon Taylor, Jiju Poovvancheri
  *
- * Implementations of various analysis techniques.
+ * Implementations of various analysis techniques. Usage of OpenCV documentation for Fourier analysis. See reference.
+ *
+ * Reference: (https://docs.opencv.org/3.4/d8/d01/tutorial_discrete_fourier_transform.html).
  */
 
 #include "Noise.h"
@@ -15,7 +17,6 @@
 #include <stb_image/stb_image_write.h>
 
 #include <matplotlib-cpp/matplotlibcpp.h>
-//#include <matplotlibcpp.h>
 namespace plt = matplotlibcpp;
 
 #ifndef _ANALYSIS_H_
@@ -27,9 +28,7 @@ public:
     ~Analysis();
 
     void runAnalysis(std::vector<Noise::Point> points, int pairingFunction, int noiseType, int width, int height, int ampAnalysis, int fourierAnalysis);
-
-    void headerSVG(std::ofstream& outfile, int width, int height, std::string file);
-    void footerSVG(std::ofstream& outfile);
+    void runAnalysis(std::vector<Noise::Point3D> points, int pairingFunction, int noiseType, int width, int height, int ampAnalysis, int fourierAnalysis);
 };
 
 #endif

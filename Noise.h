@@ -12,6 +12,7 @@
 #include <vector>
 #include <math.h>
 #include <random>
+#include <time.h>
 
 #ifndef _NOISE_H_
 #define _NOISE_H_
@@ -28,11 +29,19 @@ public:
         float colour;
     };
 
+    struct Point3D {
+        int x;
+        int y;
+        int z;
+        float colour;
+    };
+
     // Generates Perlin noise
     std::vector<Noise::Point> generatePerlin(int pairingFunction, int noiseType, int width, int height);
 
     // Generates Primed Perlin Noise
     std::vector<Noise::Point> generatePrimedGradient(int pairingFunction, int noiseType, int width, int height);
+    std::vector<Noise::Point3D> generatePrimedGradient3D(int pairingFunction, int noiseType, int width, int height);
 
     // Generates Primed Density Noise
     std::vector<Noise::Point> generatePrimedDensity(int pairingFunction, int noiseType, int width, int height);
@@ -54,6 +63,15 @@ public:
 
     // Generate value noise (wood)
     std::vector<Noise::Point> generateWood(int pairingFunction, int noiseType, int width, int height);
+
+    // Generate value noise (wood)
+    std::vector<Noise::Point> generateBetterGradient(int pairingFunction, int noiseType, int width, int height);
+
+    // Generate value noise (wood)
+    std::vector<Noise::Point> generateWavelet(int pairingFunction, int noiseType, int width, int height);
+
+    // Generate value noise (wood)
+    std::vector<Noise::Point> generatePhasor(int pairingFunction, int noiseType, int width, int height);
 };
 
 #endif

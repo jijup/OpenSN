@@ -25,6 +25,7 @@ public:
     
     // Saves as BMP file
     void saveBMP(std::vector<Noise::Point> points, int writeBMP, int width, int height, std::string file);
+    void saveBMP(std::vector<Noise::Point3D> points, int writeBMP, int width, int height, std::string file);
 
     // Saves as SVG file
     void saveSVG(std::vector<Noise::Point> points, int writeSVG, int width, int height, std::string file);

@@ -57,6 +57,9 @@ add_executable(Perlin
         NoiseTypes/Wood.cpp
         NoiseTypes/PrimeGradient.cpp
         NoiseTypes/PrimeGradientDensity.cpp
+        NoiseTypes/BetterGradient.cpp
+        NoiseTypes/Wavelet.cpp
+        NoiseTypes/Phasor.cpp
         Fractal.cpp
         Noise.cpp
         HashFunctions.cpp

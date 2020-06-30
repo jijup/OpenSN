@@ -22,6 +22,9 @@ Fractal::Fractal(int noiseType) {
     this->experimentalSource = new ExperimentalNoise();
     this->valueSplatterSource = new Splatter();
     this->valueWoodSource = new Wood();
+    this->betterGradientSource = new BetterGradient();
+    this->waveletSource = new Wavelet();
+    this->phasorSource = new Phasor();
 
     this->octaves = 8;
     this->lacunarity = 2.0f;
@@ -40,14 +43,19 @@ Fractal::~Fractal() {
     delete this->experimentalSource;
     delete this->valueSplatterSource;
     delete this->valueWoodSource;
+    delete this->betterGradientSource;
+    delete this->waveletSource;
+    delete this->phasorSource;
 }
 
 float Fractal::noise(float xCoord, float yCoord, float zCoord) {
 	float sum = 0;
-	//float freq = 128;
-    //float freq = 8;
+	float tempSum = 0;
+	float newSum = 0;
     float freq = this->initFrequency;
 	float amp = this->initAmplitude;
+
+    float previousValue;
 
 	for (int i = 0; i < this->octaves; i++) {
 
@@ -57,11 +65,12 @@ float Fractal::noise(float xCoord, float yCoord, float zCoord) {
             freq *= this->lacunarity;
             amp *= this->persistence;
         } else if (this->noiseType == 1) {    // Gabor
-            if (xCoord == 0 && yCoord == 0 && i == 0) {
+            /*if (xCoord == 0 && yCoord == 0 && i == 0) {
                 this->octaves = 1;
-            }
+            }*/
 
 	        sum += this->gaborSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+            break;
 
             freq *= this->lacunarity;
             amp *= this->persistence;
@@ -97,8 +106,48 @@ float Fractal::noise(float xCoord, float yCoord, float zCoord) {
 
             break;
         } else if (this->noiseType == 7) {    // Prime Gradient
+
             this->primeSource->updateCurrentOctave(i);
-            sum += this->primeSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+            float increment = this->primeSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+            sum += increment;
+
+            /*int hybrid = 0;     // 0 - additive | 1 - multiplicative
+            if (hybrid == 0) {
+                float increment = this->primeSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+
+                sum += increment;
+
+                // fBm Octave Composition Helper
+                int octaveTest = 3;
+                if (i == octaveTest) {
+                    tempSum = increment;
+                }
+
+                // Hybrid
+                if (i == 0) {
+                    newSum += increment;
+                } else {
+                    float incrementTemp = sum * increment;
+                    newSum += incrementTemp;
+                }
+
+
+            } else {
+                float increment = this->primeSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+
+                if (i == 0) {
+                    sum += increment;
+                } else {
+                    increment *= sum;
+                    sum += increment;
+                }
+
+                // fBm Octave Composition Helper
+                int octaveTest = 3;
+                if (i == octaveTest) {
+                    tempSum = increment;
+                }
+            }*/
 
             freq *= this->lacunarity;
             amp *= this->persistence;
@@ -111,13 +160,33 @@ float Fractal::noise(float xCoord, float yCoord, float zCoord) {
 
             freq *= this->lacunarity;
             amp *= this->persistence;*/
+        } else if (this->noiseType == 9) {
+            sum += this->betterGradientSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+
+            freq *= this->lacunarity;
+            amp *= this->persistence;
+	    } else if (this->noiseType == 10) {
+            sum += this->waveletSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+
+            freq *= this->lacunarity;
+            amp *= this->persistence;
+        } else if (this->noiseType == 11) {
+            sum += this->phasorSource->noise(xCoord * freq, yCoord * freq, zCoord * freq) * amp;
+            break;
+
+            freq *= this->lacunarity;
+            amp *= this->persistence;
         } else {
 	        // TODO: Throw error
 	    }
 	}
 
+	//return tempSum; // fBm Octave Composition Helper
+
 	return sum; // 1
-	//return sin(xCoord + 1.0f / sum); // 2
+	//return sin(abs(sum)); // 2 (marble)
+	//return 1.0f - abs(sum); // 3
+    //return abs(sum); // 4
 }
 
 void Fractal::setPerlinDimensions(int width, int height) {
@@ -146,7 +215,7 @@ void Fractal::setPairingFunctionWood(int pairingFunction) {
 
 void Fractal::setPGNOctaves(int numOctaves) {
     this->primeSource->setNumOctaves(numOctaves);
-    this->primeSource->generatePrimeTable();
+    //this->primeSource->generatePrimeTable();
 }
 
 void Fractal::setOctaves(int o) {

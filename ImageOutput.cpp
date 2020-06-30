@@ -24,9 +24,10 @@ void ImageOutput::saveBMP(std::vector<Noise::Point> points, int writeBMP, int wi
 
     if (writeBMP == 1) {
 
-        int colorType = 0; // 0 - Grayscale | 1 - Colour
+        int grayscale = 1;
+        int colored = 1;
 
-        if (colorType == 0) {
+        if (grayscale == 1) {
             uint8_t colourByte;
 
             // Loop through points and assign noise values to RGB array
@@ -57,7 +58,23 @@ void ImageOutput::saveBMP(std::vector<Noise::Point> points, int writeBMP, int wi
             stbi_write_bmp(filenameTemp.c_str(), width, height, 1, data);
             printf("    BMP written: %s\n", filenameTemp.c_str());
             printf("Successfully wrote noise as BMP.\n");
-        } else {
+
+            if (colored == 0) {
+                std::string filename = "../Output/Noise/" + file + "_Colour.bmp";
+                std::string filenameTemp = "../Output/temp/noise_output_col.bmp";
+
+                printf("\nAttempting to write greyscale noise as BMP in place of coloured output.\n");
+
+                stbi_write_bmp(filename.c_str(), width, height, 1, data);
+                printf("    BMP written: %s\n", filename.c_str());
+
+                stbi_write_bmp(filenameTemp.c_str(), width, height, 1, data);
+                printf("    BMP written: %s\n", filenameTemp.c_str());
+                printf("Successfully wrote noise as BMP.\n");
+            }
+        }
+
+        if (colored == 1) {
             uint8_t colourByte;
 
             // Loop through points and assign noise values to RGB array
@@ -69,7 +86,7 @@ void ImageOutput::saveBMP(std::vector<Noise::Point> points, int writeBMP, int wi
             }
 
             std::string filename = "../Output/Noise/" + file + "_Colour.bmp";
-            std::string filenameTemp = "../Output/temp/noise_output.bmp";
+            std::string filenameTemp = "../Output/temp/noise_output_col.bmp";
 
             int numChannels = 3;
             unsigned char data[width * height * numChannels];
@@ -89,18 +106,16 @@ void ImageOutput::saveBMP(std::vector<Noise::Point> points, int writeBMP, int wi
                     */
 
                     /// Interpolating Cloud Textures [C]
-                    /*
-                    glm::vec3 startColor = glm::vec3(60,136,199);
+                    /*glm::vec3 startColor = glm::vec3(60,136,199);
                     glm::vec3 endColor = glm::vec3(239,238,236);
                     float x = rgb[i][j] / 255.0f;
                     float r = ((endColor.x - startColor.x) * x) + startColor.x;
                     float g = ((endColor.y - startColor.y) * x) + startColor.y;
-                    float b = ((endColor.z - startColor.z) * x) + startColor.z;
-                    */
+                    float b = ((endColor.z - startColor.z) * x) + startColor.z;*/
+
 
                     /// Interpolating Marble Textures [M]
-                    /*
-                    glm::vec3 startColor = glm::vec3(121,121,121);
+                    /*glm::vec3 startColor = glm::vec3(121,121,121);
                     glm::vec3 startColorSecondary = glm::vec3(221,221,221);
                     glm::vec3 endColor = glm::vec3(255,255,255);
 
@@ -116,9 +131,7 @@ void ImageOutput::saveBMP(std::vector<Noise::Point> points, int writeBMP, int wi
                         r = ((endColor.x - startColorSecondary.x) * x) + startColorSecondary.x;
                         g = ((endColor.y - startColorSecondary.y) * x) + startColorSecondary.y;
                         b = ((endColor.z - startColorSecondary.z) * x) + startColorSecondary.z;
-                    }
-                     */
-
+                    }*/
 
                     /// Interpolating Water Textures [BL]
                     /*
@@ -130,35 +143,38 @@ void ImageOutput::saveBMP(std::vector<Noise::Point> points, int writeBMP, int wi
                     float b = ((endColor.z - startColor.z) * x) + startColor.z;
                     */
 
+                    /// Interpolating Darker Water Textures [DBL]
+                    /*glm::vec3 startColor = glm::vec3(15, 32, 39);
+                    glm::vec3 endColor = glm::vec3(44, 83, 100);
+                    float x = rgb[i][j] / 255.0f;
+                    float r = ((endColor.x - startColor.x) * x) + startColor.x;
+                    float g = ((endColor.y - startColor.y) * x) + startColor.y;
+                    float b = ((endColor.z - startColor.z) * x) + startColor.z;*/
+
                     /// Interpolating Basketball [BSK]
-                    /**/
-                    glm::vec3 startColor = glm::vec3(117, 78, 29);
+                    /*glm::vec3 startColor = glm::vec3(117, 78, 29);
                     glm::vec3 endColor = glm::vec3(64, 41, 12);
                     float x = rgb[i][j] / 255.0f;
                     float r = ((endColor.x - startColor.x) * x) + startColor.x;
                     float g = ((endColor.y - startColor.y) * x) + startColor.y;
-                    float b = ((endColor.z - startColor.z) * x) + startColor.z;
+                    float b = ((endColor.z - startColor.z) * x) + startColor.z;*/
 
 
                     /// Interpolating Rock [RK]
-                    /*
-                    glm::vec3 startColor = glm::vec3(46.0f, 40.0f, 34.0f);
+                    /*glm::vec3 startColor = glm::vec3(46.0f, 40.0f, 34.0f);
                     glm::vec3 endColor = glm::vec3(233.0f, 231.0f, 229.0f);
                     float x = rgb[i][j] / 255.0f;
                     float r = ((endColor.x - startColor.x) * x) + startColor.x;
                     float g = ((endColor.y - startColor.y) * x) + startColor.y;
-                    float b = ((endColor.z - startColor.z) * x) + startColor.z;
-                    */
+                    float b = ((endColor.z - startColor.z) * x) + startColor.z;*/
 
                     /// Interpolating Brown [BR]
-                    /*
                     glm::vec3 startColor = glm::vec3(78,53,4);
                     glm::vec3 endColor = glm::vec3(208,186,144);
                     float x = rgb[i][j] / 255.0f;
                     float r = ((endColor.x - startColor.x) * x) + startColor.x;
                     float g = ((endColor.y - startColor.y) * x) + startColor.y;
                     float b = ((endColor.z - startColor.z) * x) + startColor.z;
-                    */
 
                     /// Quintic Smoothing with Blues/Purples [BP]
                     /*
@@ -178,19 +194,17 @@ void ImageOutput::saveBMP(std::vector<Noise::Point> points, int writeBMP, int wi
                     */
 
                     /// Tiny Color Map Implementations
-                    /*
-                    float x = rgb[i][j] / 255.0f;
+                    /*float x = rgb[i][j] / 255.0f;
                     //const tinycolormap::Color color = tinycolormap::GetColor(x, tinycolormap::ColormapType::Magma);         // Black-Purple-Pink-Orange-Yellow
-                    const tinycolormap::Color color = tinycolormap::GetColor(x, tinycolormap::ColormapType::Github);     // White-Green
+                    //const tinycolormap::Color color = tinycolormap::GetColor(x, tinycolormap::ColormapType::Github);     // White-Green
                     //const tinycolormap::Color color = tinycolormap::GetColor(x, tinycolormap::ColormapType::Viridis);     // Purple-Blue-Green-Yellow
                     //const tinycolormap::Color color = tinycolormap::GetColor(x, tinycolormap::ColormapType::Cividis);     // Blue-Brown-Yellow
                     //const tinycolormap::Color color = tinycolormap::GetColor(x, tinycolormap::ColormapType::Heat);        // Blue-Teal-Green-Yellow-Orange-Red
-                    //const tinycolormap::Color color = tinycolormap::GetColor(x, tinycolormap::ColormapType::Hot);         // Black-Burgundy-Red-Orange-Yellow
+                    const tinycolormap::Color color = tinycolormap::GetColor(x, tinycolormap::ColormapType::Hot);         // Black-Burgundy-Red-Orange-Yellow
                     //const tinycolormap::Color color = tinycolormap::GetColor(x, tinycolormap::ColormapType::Gray);         // Gray
                     float r = (float)color.r() * 255.0f;
                     float g = (float)color.g() * 255.0f;
-                    float b = (float)color.b() * 255.0f;
-                    */
+                    float b = (float)color.b() * 255.0f;*/
 
                     //printf("\nRGB[%f]: %f, %f, %f", x, r, g, b);
 
@@ -200,11 +214,7 @@ void ImageOutput::saveBMP(std::vector<Noise::Point> points, int writeBMP, int wi
                 }
             }
 
-            if (colorType == 0) {
-                printf("\nAttempting to write (grayscale) noise as BMP.\n");
-            } else {
-                printf("\nAttempting to write (coloured) noise as BMP.\n");
-            }
+            printf("\nAttempting to write coloured noise as BMP.\n");
 
             stbi_write_bmp(filename.c_str(), width, height, 3, data);
             printf("    BMP written: %s\n", filename.c_str());
@@ -215,6 +225,7 @@ void ImageOutput::saveBMP(std::vector<Noise::Point> points, int writeBMP, int wi
         }
     }
 }
+
 
 /*
  * Output SVG header.

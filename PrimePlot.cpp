@@ -358,22 +358,22 @@ void PrimePlot::generateGradientSVG() {
     outfile << "    <line marker-end=\"url(#arrowheadDarkBlue)\" x1=\"666\" y1=\"333\" x2=\"600\" y2=\"659.3939338\" stroke=\"" << rgb << "\"  stroke-width=\"3\" opacity=\"1.0\" />";     // Top right
     outfile << "    <line marker-end=\"url(#arrowheadDarkBlue)\" x1=\"666\" y1=\"666\" x2=\"866.3322241\" y2=\"400\" stroke=\"" << rgb << "\"  stroke-width=\"3\" opacity=\"1.0\" />";     // Bottom right
 
-    // Labels of gradient vector
-    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"667\" y=\"210\" font-size=\"10px\">"
-               "    <tspan font-size=\"12\" font-style=\"italic\">H(c<tspan font-size=\"8\" baseline-shift=\"sub\">0, 0</tspan>)</tspan>"
+    /*// Labels of gradient vector
+    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"700\" y=\"210\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">H(c<tspan font-size=\"24\" baseline-shift=\"sub\">0, 0</tspan>)</tspan>"
                "</text>";
 
-    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"505\" y=\"362\" font-size=\"10px\">"
-               "    <tspan font-size=\"12\" font-style=\"italic\">H(c<tspan font-size=\"8\" baseline-shift=\"sub\">0, 1</tspan>)</tspan>"
+    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"540\" y=\"362\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">H(c<tspan font-size=\"24\" baseline-shift=\"sub\">0, 1</tspan>)</tspan>"
                "</text>";
 
-    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"575\" y=\"659.3939338\" font-size=\"10px\">"
-               "    <tspan font-size=\"12\" font-style=\"italic\">H(c<tspan font-size=\"8\" baseline-shift=\"sub\">1, 0</tspan>)</tspan>"
+    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"545\" y=\"649\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">H(c<tspan font-size=\"24\" baseline-shift=\"sub\">1, 0</tspan>)</tspan>"
                "</text>";
 
-    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"891\" y=\"400\" font-size=\"10px\">"
-               "    <tspan font-size=\"12\" font-style=\"italic\">H(c<tspan font-size=\"8\" baseline-shift=\"sub\">1, 1</tspan>)</tspan>"
-               "</text>";
+    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"926\" y=\"400\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">H(c<tspan font-size=\"24\" baseline-shift=\"sub\">1, 1</tspan>)</tspan>"
+               "</text>";*/
 
     /// Vectors (point)
     r = 67;         // light blue
@@ -404,9 +404,9 @@ void PrimePlot::generateGradientSVG() {
     rgb += std::to_string(b);
     rgb += ")";
     outfile << "    <circle cx=\"" << 450 << "\" cy=\"" << 528 << "\" r=\"" << 2 << "\" fill=\"" << rgb << "\" stroke=\"" << rgb << "\" id=\"circle" << count++ << "\"/>\n";
-    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"475\" y=\"528\" font-size=\"10px\">"
-               "    <tspan font-size=\"12\" font-style=\"italic\">p</tspan>"
-               "</text>";
+    /*outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"480\" y=\"528\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">p</tspan>"
+               "</text>";*/
 
     /// Lattice
     r = 0;         // black
@@ -433,20 +433,20 @@ void PrimePlot::generateGradientSVG() {
     outfile << "    <circle cx=\"" << 666 << "\" cy=\"" << 666 << "\" r=\"" << 2 << "\" fill=\"" << rgb << "\" stroke=\"" << rgb << "\" id=\"circle" << count++ << "\"/>\n";
 
     // Labels at lattice points
-    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"310\" y=\"333\" font-size=\"10px\">"
-               "    <tspan font-size=\"12\" font-style=\"italic\">c<tspan font-size=\"8\" baseline-shift=\"sub\">0, 0</tspan></tspan>"
+    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"300\" y=\"333\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">c<tspan font-size=\"24\" baseline-shift=\"sub\">0, 0</tspan></tspan>"
                "</text>";
 
-    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"310\" y=\"666\" font-size=\"10px\">"
-               "    <tspan font-size=\"12\" font-style=\"italic\">c<tspan font-size=\"8\" baseline-shift=\"sub\">0, 1</tspan></tspan>"
+    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"300\" y=\"666\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">c<tspan font-size=\"24\" baseline-shift=\"sub\">0, 1</tspan></tspan>"
                "</text>";
 
-    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"690\" y=\"333\" font-size=\"10px\">"
-               "    <tspan font-size=\"12\" font-style=\"italic\">c<tspan font-size=\"8\" baseline-shift=\"sub\">1, 0</tspan></tspan>"
+    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"700\" y=\"333\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">c<tspan font-size=\"24\" baseline-shift=\"sub\">1, 0</tspan></tspan>"
                "</text>";
 
-    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"690\" y=\"666\" font-size=\"10px\">"
-               "    <tspan font-size=\"12\" font-style=\"italic\">c<tspan font-size=\"8\" baseline-shift=\"sub\">1, 1</tspan></tspan>"
+    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"705\" y=\"666\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">c<tspan font-size=\"24\" baseline-shift=\"sub\">1, 1</tspan></tspan>"
                "</text>";
 
 
@@ -455,6 +455,216 @@ void PrimePlot::generateGradientSVG() {
 
     printf("    SVG written: %s\n", filename.c_str());
     printf("Successfully wrote gradient figure as SVG.\n");
+}
+
+/*
+ * Generates gradient figure for report.
+ */
+void PrimePlot::generateGradientSVGCube() {
+    std::string file = "Gradient Figure";
+    printf("\nAttempting to write gradient figure cube as SVG.\n");
+
+    std::string filename = "../Analysis/Distribution/gradientFigureCube.svg";
+    std::ofstream outfile;
+    outfile.open(filename);
+
+    int initialWidth = 1000, initialHeight = 1000;
+
+    headerSVG(outfile, initialWidth, initialHeight, file);
+
+    // Draw points
+    int count = 0;
+    int r = 0;
+    int g = 0;
+    int b = 0;
+    std::string rgb = "rgb(";
+    rgb += std::to_string(r);
+    rgb += ",";
+    rgb += std::to_string(g);
+    rgb += ",";
+    rgb += std::to_string(b);
+    rgb += ")";
+
+    /// Arrowhead
+    outfile << "<marker id=\"arrowheadBlack\" viewBox=\"0 0 60 60\" refX=\"30\" refY=\"30\" markerUnits=\"strokeWidth\" markerWidth=\"4\" markerHeight=\"4\" orient=\"auto\"> <path d=\"M 0 0 L 60 30 L 0 60 z\" fill=\"#000000\" /> </marker>\n";
+    outfile << "<marker id=\"arrowheadLightBlue\" viewBox=\"0 0 60 60\" refX=\"30\" refY=\"30\" markerUnits=\"strokeWidth\" markerWidth=\"4\" markerHeight=\"4\" orient=\"auto\"> <path d=\"M 0 0 L 60 30 L 0 60 z\" fill=\"#43c6ac\" /> </marker>\n";
+    outfile << "<marker id=\"arrowheadDarkBlue\" viewBox=\"0 0 60 60\" refX=\"30\" refY=\"30\" markerUnits=\"strokeWidth\" markerWidth=\"4\" markerHeight=\"4\" orient=\"auto\"> <path d=\"M 0 0 L 60 30 L 0 60 z\" fill=\"#2e7180\" /> </marker>\n";
+
+    /// Vectors (gradient)
+    r = 46;         // dark blue
+    g = 113;
+    b = 128;
+    rgb = "rgb(";
+    rgb += std::to_string(r);
+    rgb += ",";
+    rgb += std::to_string(g);
+    rgb += ",";
+    rgb += std::to_string(b);
+    rgb += ")";
+
+    outfile << "    <line marker-end=\"url(#arrowheadDarkBlue)\" x1=\"333\" y1=\"444\" x2=\"470\" y2=\"603\" stroke=\"" << rgb << "\"  stroke-width=\"3\" opacity=\"1.0\" />";        // Top left
+    outfile << "    <line marker-end=\"url(#arrowheadDarkBlue)\" x1=\"333\" y1=\"666\" x2=\"176\" y2=\"510\" stroke=\"" << rgb << "\"  stroke-width=\"3\" opacity=\"1.0\" />";     // Bottom left
+    outfile << "    <line marker-end=\"url(#arrowheadDarkBlue)\" x1=\"444\" y1=\"333\" x2=\"605\" y2=\"180\" stroke=\"" << rgb << "\"  stroke-width=\"3\" opacity=\"1.0\" />";     // Top right
+    outfile << "    <line marker-end=\"url(#arrowheadDarkBlue)\" x1=\"444\" y1=\"555\" x2=\"390\" y2=\"340\" stroke=\"" << rgb << "\"  stroke-width=\"3\" opacity=\"1.0\" />";     // Bottom right
+    outfile << "    <line marker-end=\"url(#arrowheadDarkBlue)\" x1=\"555\" y1=\"444\" x2=\"767\" y2=\"510\" stroke=\"" << rgb << "\"  stroke-width=\"3\" opacity=\"1.0\" />";        // Top left
+    outfile << "    <line marker-end=\"url(#arrowheadDarkBlue)\" x1=\"555\" y1=\"666\" x2=\"465\" y2=\"463\" stroke=\"" << rgb << "\"  stroke-width=\"3\" opacity=\"1.0\" />";     // Bottom left
+    outfile << "    <line marker-end=\"url(#arrowheadDarkBlue)\" x1=\"666\" y1=\"333\" x2=\"705\" y2=\"552\" stroke=\"" << rgb << "\"  stroke-width=\"3\" opacity=\"1.0\" />";     // Top right
+    outfile << "    <line marker-end=\"url(#arrowheadDarkBlue)\" x1=\"666\" y1=\"555\" x2=\"777\" y2=\"363\" stroke=\"" << rgb << "\"  stroke-width=\"3\" opacity=\"1.0\" />";     // Bottom right
+
+    // Labels of gradient vector
+    /*outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"420\" y=\"603\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">H(c<tspan font-size=\"24\" baseline-shift=\"sub\">0, 0, 0</tspan>)</tspan>"
+               "</text>";
+
+    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"126\" y=\"510\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">H(c<tspan font-size=\"24\" baseline-shift=\"sub\">0, 1, 0</tspan>)</tspan>"
+               "</text>";
+
+    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"555\" y=\"180\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">H(c<tspan font-size=\"24\" baseline-shift=\"sub\">0, 0, 1</tspan>)</tspan>"
+               "</text>";
+
+    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"340\" y=\"340\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">H(c<tspan font-size=\"24\" baseline-shift=\"sub\">0, 1 , 1</tspan>)</tspan>"
+               "</text>";
+
+    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"717\" y=\"510\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">H(c<tspan font-size=\"24\" baseline-shift=\"sub\">1, 0, 0</tspan>)</tspan>"
+               "</text>";
+
+    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"415\" y=\"463\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">H(c<tspan font-size=\"24\" baseline-shift=\"sub\">1, 1, 0</tspan>)</tspan>"
+               "</text>";
+
+    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"655\" y=\"552\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">H(c<tspan font-size=\"24\" baseline-shift=\"sub\">1, 0, 1</tspan>)</tspan>"
+               "</text>";
+
+    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"72 7\" y=\"363\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">H(c<tspan font-size=\"24\" baseline-shift=\"sub\">1, 1, 1</tspan>)</tspan>"
+               "</text>";*/
+
+    /// Vectors (point)
+    r = 67;         // light blue
+    g = 198;
+    b = 172;
+    rgb = "rgb(";
+    rgb += std::to_string(r);
+    rgb += ",";
+    rgb += std::to_string(g);
+    rgb += ",";
+    rgb += std::to_string(b);
+    rgb += ")";
+
+    /*outfile << "    <line marker-end=\"url(#arrowheadLightBlue)\" x1=\"333\" y1=\"333\" x2=\"445\" y2=\"522\" stroke=\"" << rgb << "\" stroke-width=\"3\" opacity=\"1.0\" />";         // Top left
+    outfile << "    <line marker-end=\"url(#arrowheadLightBlue)\" x1=\"333\" y1=\"666\" x2=\"445\" y2=\"533\" stroke=\"" << rgb << "\" stroke-width=\"3\" opacity=\"1.0\" />";         // Bottom left
+    outfile << "    <line marker-end=\"url(#arrowheadLightBlue)\" x1=\"666\" y1=\"333\" x2=\"455\" y2=\"523\" stroke=\"" << rgb << "\" stroke-width=\"3\" opacity=\"1.0\" />";         // Top right
+    outfile << "    <line marker-end=\"url(#arrowheadLightBlue)\" x1=\"666\" y1=\"666\" x2=\"456\" y2=\"533\" stroke=\"" << rgb << "\" stroke-width=\"3\" opacity=\"1.0\" />";         // Bottom right*/
+    outfile << "    <line marker-end=\"url(#arrowheadLightBlue)\" x1=\"333\" y1=\"444\" x2=\"450\" y2=\"523\" stroke=\"" << rgb << "\"  stroke-width=\"3\" opacity=\"1.0\" />";        // Top left
+    outfile << "    <line marker-end=\"url(#arrowheadLightBlue)\" x1=\"333\" y1=\"666\" x2=\"455\" y2=\"540\" stroke=\"" << rgb << "\"  stroke-width=\"3\" opacity=\"1.0\" />";     // Bottom left
+    outfile << "    <line marker-end=\"url(#arrowheadLightBlue)\" x1=\"444\" y1=\"333\" x2=\"457\" y2=\"520\" stroke=\"" << rgb << "\"  stroke-width=\"3\" opacity=\"1.0\" />";     // Top right
+    outfile << "    <line marker-end=\"url(#arrowheadLightBlue)\" x1=\"444\" y1=\"555\" x2=\"455\" y2=\"540\" stroke=\"" << rgb << "\"  stroke-width=\"3\" opacity=\"1.0\" />";     // Bottom right
+    outfile << "    <line marker-end=\"url(#arrowheadLightBlue)\" x1=\"555\" y1=\"444\" x2=\"465\" y2=\"523\" stroke=\"" << rgb << "\"  stroke-width=\"3\" opacity=\"1.0\" />";        // Top left
+    outfile << "    <line marker-end=\"url(#arrowheadLightBlue)\" x1=\"555\" y1=\"666\" x2=\"465\" y2=\"540\" stroke=\"" << rgb << "\"  stroke-width=\"3\" opacity=\"1.0\" />";     // Bottom left
+    outfile << "    <line marker-end=\"url(#arrowheadLightBlue)\" x1=\"666\" y1=\"333\" x2=\"465\" y2=\"523\" stroke=\"" << rgb << "\"  stroke-width=\"3\" opacity=\"1.0\" />";     // Top right
+    outfile << "    <line marker-end=\"url(#arrowheadLightBlue)\" x1=\"666\" y1=\"555\" x2=\"470\" y2=\"530\" stroke=\"" << rgb << "\"  stroke-width=\"3\" opacity=\"1.0\" />";     // Bottom right
+
+    /// Sample point
+    r = 255;
+    g = 0;
+    b = 0;
+    rgb = "rgb(";
+    rgb += std::to_string(r);
+    rgb += ",";
+    rgb += std::to_string(g);
+    rgb += ",";
+    rgb += std::to_string(b);
+    rgb += ")";
+    outfile << "    <circle cx=\"" << 460 << "\" cy=\"" << 530 << "\" r=\"" << 2 << "\" fill=\"" << rgb << "\" stroke=\"" << rgb << "\" id=\"circle" << count++ << "\"/>\n";
+    /*outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"480\" y=\"528\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">p</tspan>"
+               "</text>";*/
+
+    /// Lattice
+    r = 0;         // black
+    g = 0;
+    b = 0;
+    rgb = "rgb(";
+    rgb += std::to_string(r);
+    rgb += ",";
+    rgb += std::to_string(g);
+    rgb += ",";
+    rgb += std::to_string(b);
+    rgb += ")";
+
+    // Draw cube
+    // Bottom left square
+    outfile << "    <line x1=\"333\" y1=\"444\" x2=\"333\" y2=\"666\" stroke=\"black\" stroke-width=\"3\" opacity=\"1.0\"/>";         // Left
+    outfile << "    <line x1=\"555\" y1=\"444\" x2=\"555\" y2=\"666\" stroke=\"black\" stroke-width=\"3\" opacity=\"1.0\"/>";         // Right
+    outfile << "    <line x1=\"333\" y1=\"666\" x2=\"555\" y2=\"666\" stroke=\"black\" stroke-width=\"3\" opacity=\"1.0\"/>";         // Bottom
+    outfile << "    <line x1=\"333\" y1=\"444\" x2=\"555\" y2=\"444\" stroke=\"black\" stroke-width=\"3\" opacity=\"1.0\"/>";          // Top
+
+    // Top right square
+    outfile << "    <line x1=\"444\" y1=\"333\" x2=\"444\" y2=\"555\" stroke=\"black\" stroke-width=\"3\" opacity=\"0.25\"/>";         // Left
+    outfile << "    <line x1=\"666\" y1=\"333\" x2=\"666\" y2=\"555\" stroke=\"black\" stroke-width=\"3\" opacity=\"1.0\"/>";         // Right
+    outfile << "    <line x1=\"444\" y1=\"555\" x2=\"666\" y2=\"555\" stroke=\"black\" stroke-width=\"3\" opacity=\"0.25\"/>";         // Bottom
+    outfile << "    <line x1=\"444\" y1=\"333\" x2=\"666\" y2=\"333\" stroke=\"black\" stroke-width=\"3\" opacity=\"1.0\"/>";          // Top
+
+    // Connecting lines
+    outfile << "    <line x1=\"333\" y1=\"444\" x2=\"444\" y2=\"333\" stroke=\"black\" stroke-width=\"3\" opacity=\"1.0\"/>";         // Left
+    outfile << "    <line x1=\"555\" y1=\"444\" x2=\"666\" y2=\"333\" stroke=\"black\" stroke-width=\"3\" opacity=\"1.0\"/>";         // Right
+    outfile << "    <line x1=\"333\" y1=\"666\" x2=\"444\" y2=\"555\" stroke=\"black\" stroke-width=\"3\" opacity=\"0.25\"/>";         // Bottom
+    outfile << "    <line x1=\"555\" y1=\"666\" x2=\"666\" y2=\"555\" stroke=\"black\" stroke-width=\"3\" opacity=\"1.0\"/>";          // Top
+
+    // Draw points at corners of box
+    outfile << "    <circle cx=\"" << 333 << "\" cy=\"" << 444 << "\" r=\"" << 2 << "\" fill=\"" << rgb << "\" stroke=\"" << rgb << "\" id=\"circle" << count++ << "\"/>\n";
+    outfile << "    <circle cx=\"" << 333 << "\" cy=\"" << 666 << "\" r=\"" << 2 << "\" fill=\"" << rgb << "\" stroke=\"" << rgb << "\" id=\"circle" << count++ << "\"/>\n";
+    outfile << "    <circle cx=\"" << 444 << "\" cy=\"" << 333 << "\" r=\"" << 2 << "\" fill=\"" << rgb << "\" stroke=\"" << rgb << "\" id=\"circle" << count++ << "\"/>\n";
+    outfile << "    <circle cx=\"" << 444 << "\" cy=\"" << 555 << "\" r=\"" << 2 << "\" fill=\"" << rgb << "\" stroke=\"" << rgb << "\" opacity=\"0.25\" id=\"circle" << count++ << "\"/>\n";
+    outfile << "    <circle cx=\"" << 555 << "\" cy=\"" << 444 << "\" r=\"" << 2 << "\" fill=\"" << rgb << "\" stroke=\"" << rgb << "\" id=\"circle" << count++ << "\"/>\n";
+    outfile << "    <circle cx=\"" << 555 << "\" cy=\"" << 666 << "\" r=\"" << 2 << "\" fill=\"" << rgb << "\" stroke=\"" << rgb << "\" id=\"circle" << count++ << "\"/>\n";
+    outfile << "    <circle cx=\"" << 666 << "\" cy=\"" << 333 << "\" r=\"" << 2 << "\" fill=\"" << rgb << "\" stroke=\"" << rgb << "\" id=\"circle" << count++ << "\"/>\n";
+    outfile << "    <circle cx=\"" << 666 << "\" cy=\"" << 555 << "\" r=\"" << 2 << "\" fill=\"" << rgb << "\" stroke=\"" << rgb << "\" id=\"circle" << count++ << "\"/>\n";
+
+    // Labels at lattice points
+    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"290\" y=\"444\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">c<tspan font-size=\"24\" baseline-shift=\"sub\">0, 0, 0</tspan></tspan>"
+               "</text>";
+
+    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"333\" y=\"690\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">c<tspan font-size=\"24\" baseline-shift=\"sub\">0, 1, 0</tspan></tspan>"
+               "</text>";
+
+    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"415\" y=\"310\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">c<tspan font-size=\"24\" baseline-shift=\"sub\">0, 0, 1</tspan></tspan>"
+               "</text>";
+
+    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"388\" y=\"555\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">c<tspan font-size=\"24\" baseline-shift=\"sub\">0, 1, 1</tspan></tspan>"
+               "</text>";
+
+    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"595\" y=\"480\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">c<tspan font-size=\"24\" baseline-shift=\"sub\">1, 0, 0</tspan></tspan>"
+               "</text>";
+
+    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"605\" y=\"670\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">c<tspan font-size=\"24\" baseline-shift=\"sub\">1, 1, 0</tspan></tspan>"
+               "</text>";
+
+    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"675\" y=\"310\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">c<tspan font-size=\"24\" baseline-shift=\"sub\">1, 0, 1</tspan></tspan>"
+               "</text>";
+
+    outfile << "<text font-family=\"Times, serif\" fill=\"black\" text-anchor=\"middle\" alignment-baseline=\"middle\" x=\"695\" y=\"585\" font-size=\"24px\">"
+               "    <tspan font-size=\"36\" font-style=\"italic\">c<tspan font-size=\"24\" baseline-shift=\"sub\">1, 1, 1</tspan></tspan>"
+               "</text>";
+
+
+    footerSVG(outfile);
+    outfile.close();
+
+    printf("    SVG written: %s\n", filename.c_str());
+    printf("Successfully wrote gradient figure cube as SVG.\n");
 }
 
 float PrimePlot::fade(float x) {

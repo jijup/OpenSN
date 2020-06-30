@@ -35,24 +35,33 @@ public:
     void generateFileMesh();
 
     // Creates a flat mesh
-    void generateFlatMesh(int width, int height);
+    void generateFlatMesh(int width, int height, std::vector<Noise::Point> noise);
 
     // Creates cube mesh
     void generateCubeMesh();
+
+    //
+    void generateSphereMesh();
 
     // Driver function accessed from outside class for mesh generation via external file
     void generateMeshFromFile();
 
     // Driver function accessed from outside class for mesh generation via Noise
-    void generateMeshFromNoise(int width, int height);
+    void generateMeshFromNoise(int width, int height, std::vector<Noise::Point> noise);
 
     // Driver function accessed from outside class for mesh generation for skybox
     void generateSkybox();
+
+    void generatePlanet();
 
     // Mesh variables
     int numIndices;
     GLfloat *verticesMesh;
     GLuint *indicesMesh;
+
+    int numIndicesPlanet;
+    GLfloat *verticesMeshPlanet;
+    GLuint *indicesMeshPlanet;
 
     int numIndicesSkybox;
     GLfloat *verticesMeshSkybox;

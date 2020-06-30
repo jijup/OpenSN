@@ -104,6 +104,7 @@ public:
     // Binds the current shader
     void bind() {
         glUseProgram(this->Program);
+        glValidateProgram(this->Program);
     }
 
     // Unbinds the current shader

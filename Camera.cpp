@@ -57,7 +57,7 @@ Camera::Camera() {
  */
 Camera::Camera(GLfloat screenWidth, GLfloat screenHeight, glm::vec3 cameraPosition, glm::vec3 cameraUp, GLfloat yaw, GLfloat pitch) {
 
-    int typeFlag = 0;
+    int typeFlag = 1;
     if (typeFlag == 0) {
         /// Imported Mesh
         this->cameraPosition = cameraPosition;
@@ -80,19 +80,25 @@ Camera::Camera(GLfloat screenWidth, GLfloat screenHeight, glm::vec3 cameraPositi
         this->scaleStart = glm::vec3(0.075f, 0.075f, 0.075f);
     } else if (typeFlag == 1) {
         /// Procedural Landscape
-        this->cameraPosition = cameraPosition;
-        this->cameraFront = glm::vec3(0.0f, 0.0f, 0.0f);
-        this->cameraUp = cameraUp;
-
-        glm::vec3 cameraDirection = glm::normalize(this->cameraFront - this->cameraPosition);
-        this->lastCameraDirection = cameraDirection;
-
-        this->cameraRight = glm::normalize(glm::cross(this->cameraUp, cameraDirection));
-
         // Set initial tilt of camera
         this->roll = 0.0f;
         this->yaw = yaw;
         this->pitch = pitch;
+
+        this->cameraPosition = cameraPosition;
+
+        glm::vec3 tempFront;///
+        tempFront.x = sin(glm::radians(this->pitch));///
+        tempFront.y = cos(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));///
+        tempFront.z = sin(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));///
+
+        this->cameraFront = glm::normalize(tempFront);///
+        //this->cameraFront = glm::vec3(0.0f, 0.0f, 0.0f);
+        this->cameraUp = cameraUp;
+
+        glm::vec3 cameraDirection = glm::normalize(this->cameraFront - this->cameraPosition);///
+        this->lastCameraDirection = cameraDirection;///
+        this->cameraRight = glm::normalize(glm::cross(this->cameraUp, cameraDirection));
     } else {
         // TODO: throw error
     }
@@ -132,7 +138,7 @@ void Camera::updateModel(glm::vec3 translation, glm::vec3 rotation, glm::vec3 sc
 void Camera::updateView() {
 
 
-    int typeFlag = 0;
+    int typeFlag = 1;
     if (typeFlag == 0) {
         /// Imported Mesh
         glm::vec3 tempFront;
@@ -179,8 +185,6 @@ void Camera::updateView() {
  * Updates the projection matrix.
  */
 void Camera::updateProjection(int width, int height) {
-    //this->projection = glm::perspective(glm::radians(90.0f), float(width)/ float(height), 0.1f, 100.0f);
-    //this->projection = glm::perspective(glm::radians(this->fov), float(width) / float(height), 0.1f, 100.0f);
     this->projection = glm::perspective(glm::radians(this->fov), float(width) / float(height), 0.1f, 1000.0f);
 
     // FIXME - DEBUG
@@ -231,6 +235,7 @@ glm::mat4 Camera::getProjection() {
  */
 void Camera::updateCameraPosition(glm::vec3 newPosition) {
     this->cameraPosition = newPosition;
+    //Camera::updateView();
 }
 
 /*
