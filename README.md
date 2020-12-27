@@ -25,7 +25,9 @@ Noise generation and applications using various hashing techniques.
   5. Worley Noise with Bezier Curves
   6. Perlin Noise with Splatter Perturbation
   7. Perlin Noise with Wood Perturbation
-  8. Primed Gradient Noise
+  8. Prime Gradient Noise
+  9. Phasor Noise
+  10. Better Gradient Noise
 
 ### UI Implementation:
 A user inferface, utilizing [Dear, ImGui](https://github.com/ocornut/imgui), has been implemented. This allows for an enhanced view and increased interaction with the application of which is rendered. 
