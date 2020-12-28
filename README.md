@@ -22,7 +22,7 @@ Noise generation and applications using various hashing techniques.
       - Heavily based on the SIGGRAPH paper [Procedural Noise using Sparse Gabor Convolution](http://graphics.cs.kuleuven.be/publications/LLDD09PNSGC/) and related C++ implementation from Ares Lageo, Sylvain Lefebvre, George Drettakis, Philip Dutre, Katholieke Universiteit Leuven and REVES/INRIA Sophia-Antipolis. 
   3. Perlin Noise with Marble Perturbation
   4. Worley Noise
-  5. Worley Noise with Bezier Curves
+  5. Wavelet Noise
   6. Perlin Noise with Splatter Perturbation
   7. Perlin Noise with Wood Perturbation
   8. Prime Gradient Noise
@@ -76,3 +76,6 @@ There are various modes that can be enabled/disabled in [Driver.cpp](https://git
   8. [OpenGL Mathematics](https://glm.g-truc.net/0.9.9/index.html)
   9. [ImGui](https://github.com/ocornut/imgui)
   10. [Single-File Public Domain Libraries](https://github.com/nothings/stb)
+  
+### References
+  Will be updated soon....
