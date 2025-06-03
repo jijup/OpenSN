@@ -78,4 +78,4 @@ There are various modes that can be enabled/disabled in [Driver.cpp](https://git
   10. [Single-File Public Domain Libraries](https://github.com/nothings/stb)
   
 ### References
-  Will be updated soon....
+  Taylor, S., Sharpe, O. & Peethambaran, J. Prime gradient noise. Comp. Visual Media 7, 349–362 (2021). https://doi.org/10.1007/s41095-021-0206-z
